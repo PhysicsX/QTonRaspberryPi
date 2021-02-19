@@ -17,17 +17,17 @@ ubuntu history
   export PATH=$PATH:/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin
   nano ~/.bashrc
   
-  wget http://download.qt.io/official_releases/qt/5.14/5.14.2/single/qt-everywhere-src-5.14.2.tar.xz
-  tar xf qt-everywhere-src-5.14.2.tar.xz 
-  cat qt-everywhere-src-5.14.2/qtbase/mkspecs/linux-arm-gnueabi-g++/qmake.conf
+  wget https://download.qt.io/official_releases/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.2.tar.xz
+  tar xf qt-everywhere-src-5.15.2.tar.xz 
+  cat qt-everywhere-src-5.15.2/qtbase/mkspecs/linux-arm-gnueabi-g++/qmake.conf
   
   ping 192.168.16.25
-  rsync -avz pi@192.168.16.25:/lib sysroot
-  rsync -avz pi@192.168.16.25:/usr/include sysroot/usr
-  rsync -avz pi@192.168.16.25:/lib sysroot
-  rsync -avz pi@192.168.16.25:/usr/lib sysroot/usr 
-  rsync -avz pi@192.168.16.25:/opt/vc sysroot/opt
-  ls sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.0.0
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/lib sysroot
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/include sysroot/usr
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/lib sysroot
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/lib sysroot/usr 
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/opt/vc sysroot/opt
+  ls sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0
   mv sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0 sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0_backup
   ln -s sysroot/opt/vc/lib/libEGL.so sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0
   mv sysroot/usr/lib/arm-linux-gnueabihf/libGLESv2.so.2.1.0 sysroot/usr/lib/arm-linux-gnueabihf/libGLESv2.so.2.1.0_backup
@@ -40,18 +40,18 @@ ubuntu history
   wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py
   chmod +x sysroot-relativelinks.py 
   ./sysroot-relativelinks.py sysroot
-  rsync -avz pi@192.168.16.25:/lib sysroot 
-  rsync -avz pi@192.168.16.25:/usr/include sysroot/usr
-  rsync -avz pi@192.168.16.25:/usr/lib sysroot/usr
-  rsync -avz pi@192.168.16.25:/opt/vc sysroot/opt/
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/lib sysroot 
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/include sysroot/usr
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/lib sysroot/usr
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/opt/vc sysroot/opt/
   ./sysroot-relativelinks.py sysroot
   mkdir qt5build
   cd qt5build/
-  ../qt-everywhere-src-5.14.2/configure -opengl es2 -device linux-rasp-pi4-v3d-g++ -device-option CROSS_COMPILE=/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf- -sysroot /opt/qt5pi/sysroot -prefix /usr/local/qt5pi -opensource -confirm-license -skip qtscript -skip qtwayland -skip qtdatavis3d -nomake examples -make libs -pkg-config -no-use-gold-linker -v
+  ../qt-everywhere-src-5.15.2/configure -opengl es2 -device linux-rasp-pi4-v3d-g++ -device-option CROSS_COMPILE=/opt/qt5pi/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf- -sysroot /opt/qt5pi/sysroot -prefix /usr/local/qt5pi -opensource -confirm-license -skip qtscript -skip qtwayland -skip qtdatavis3d -nomake examples -make libs -pkg-config -no-use-gold-linker -v
   make -j8
   make install
   cd /opt/qt5pi/
-  rsync -avz sysroot/usr/local/qt5pi pi@192.168.16.25:/usr/local
+  rsync -avz --rsync-path="sudo rsync" sysroot/usr/local/qt5pi pi@192.168.16.25:/usr/local
   
   -----------------------------------------------------------------------------------------------------------
   
