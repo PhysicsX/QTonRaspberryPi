@@ -19,14 +19,14 @@ ubuntu history
   
   wget https://download.qt.io/official_releases/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.2.tar.xz
   tar xf qt-everywhere-src-5.15.2.tar.xz 
-  cat qt-everywhere-src-5.14.2/qtbase/mkspecs/linux-arm-gnueabi-g++/qmake.conf
+  cat qt-everywhere-src-5.15.2/qtbase/mkspecs/linux-arm-gnueabi-g++/qmake.conf
   
   ping 192.168.16.25
-  rsync -avz pi@192.168.16.25:/lib sysroot
-  rsync -avz pi@192.168.16.25:/usr/include sysroot/usr
-  rsync -avz pi@192.168.16.25:/lib sysroot
-  rsync -avz pi@192.168.16.25:/usr/lib sysroot/usr 
-  rsync -avz pi@192.168.16.25:/opt/vc sysroot/opt
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/lib sysroot
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/include sysroot/usr
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/lib sysroot
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/lib sysroot/usr 
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/opt/vc sysroot/opt
   ls sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.0.0
   mv sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0 sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0_backup
   ln -s sysroot/opt/vc/lib/libEGL.so sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0
@@ -40,10 +40,10 @@ ubuntu history
   wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py
   chmod +x sysroot-relativelinks.py 
   ./sysroot-relativelinks.py sysroot
-  rsync -avz pi@192.168.16.25:/lib sysroot 
-  rsync -avz pi@192.168.16.25:/usr/include sysroot/usr
-  rsync -avz pi@192.168.16.25:/usr/lib sysroot/usr
-  rsync -avz pi@192.168.16.25:/opt/vc sysroot/opt/
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/lib sysroot 
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/include sysroot/usr
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/lib sysroot/usr
+  rsync -avz --rsync-path="sudo rsync"pi@192.168.16.25:/opt/vc sysroot/opt/
   ./sysroot-relativelinks.py sysroot
   mkdir qt5build
   cd qt5build/
