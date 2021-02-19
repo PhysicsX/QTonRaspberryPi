@@ -43,7 +43,7 @@ ubuntu history
   rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/lib sysroot 
   rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/include sysroot/usr
   rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/lib sysroot/usr
-  rsync -avz --rsync-path="sudo rsync"pi@192.168.16.25:/opt/vc sysroot/opt/
+  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/opt/vc sysroot/opt/
   ./sysroot-relativelinks.py sysroot
   mkdir qt5build
   cd qt5build/
@@ -51,7 +51,7 @@ ubuntu history
   make -j8
   make install
   cd /opt/qt5pi/
-  rsync -avz sysroot/usr/local/qt5pi pi@192.168.16.25:/usr/local
+  rsync -avz --rsync-path="sudo rsync" sysroot/usr/local/qt5pi pi@192.168.16.25:/usr/local
   
   -----------------------------------------------------------------------------------------------------------
   
