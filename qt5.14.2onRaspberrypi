@@ -27,7 +27,7 @@ ubuntu history
   rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/lib sysroot
   rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/lib sysroot/usr 
   rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/opt/vc sysroot/opt
-  ls sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.0.0
+  ls sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0
   mv sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0 sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0_backup
   ln -s sysroot/opt/vc/lib/libEGL.so sysroot/usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0
   mv sysroot/usr/lib/arm-linux-gnueabihf/libGLESv2.so.2.1.0 sysroot/usr/lib/arm-linux-gnueabihf/libGLESv2.so.2.1.0_backup
