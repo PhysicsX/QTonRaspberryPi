@@ -88,3 +88,16 @@ sudo apt-get install libxss-dev libxtst-dev libpci-dev libcap-dev libsrtp0-dev l
 sudo mkdir /usr/local/qt5pi
 sudo chown pi:pi /usr/local/qt5pi
   
+  
+  -----------------------------------------------------------------------------------------------------------
+  
+  Qt creator enable ssh deployment (on Raspberry Pi)
+  
+  -----------------------------------------------------------------------------------------------------------
+  export QT_QPA_PLATFOMRTHEME=qt5ct
+  export DISPLAY=:0.0
+  export XAUTHORITY=/home/pi/.Xauthrity
+  export XDG_SESSION_TYPE=x11
+  
+  
+  
