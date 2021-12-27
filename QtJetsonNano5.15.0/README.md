@@ -5,6 +5,7 @@ Youtube video:
 [![Youtube video link](https://img.youtube.com/vi/PY41CP13p3k/0.jpg)](//www.youtube.com/watch?v=PY41CP13p3k&t=0s "ulas dikme")
 
 Qt Configuration on jetson nano
+Plese watch the video carefully. :)
 
 ## jetson nano
 
@@ -57,7 +58,7 @@ Download qt single, or if you want to build only base then you can do also.
 ```bash
 wget https://download.qt.io/official_releases/qt/5.15/5.15.0/single/qt-everywhere-src-5.15.0.tar.xz
 tar xf qt-everywhere-src-5.15.0.tar.xz
-``
+```
 
 Get the related dependencies for sysroot from nano hardware.
 Becareful about the slashes.
@@ -69,13 +70,13 @@ rsync -avz root@192.168.16.24:/usr/lib sysroot/usr
 wget https://raw.githubusercontent.com/Kukkimonsuta/rpi-buildqt/master/scripts/utils/sysroot-relativelinks.py
 chmod +x sysroot-relativelinks.py
 ./sysroot-relativelinks.py sysroot
-``
+```
 
 Replace the qmake.conf file with the one in the repo
 ```bash
 cp -r qt-everywhere-src-5.15.0/qtbase/mkspecs/devices/linux-jetson-tk1-g++/ qt-everywhere-src-5.15.0/qtbase/mkspecs/devices/linux-jetson-nano
 gedit qt-everywhere-src-5.15.0/qtbase/mkspecs/devices/linux-jetson-nano/qmake.conf
-``
+```
 
 Create a director for building binaries and configure qt 
 
@@ -84,4 +85,9 @@ mkdir qt5buid && cd qt5build
 ../qt-everywhere-src-5.15.0/configure -opengl es2 -device linux-jetson-nano -device-option CROSS_COMPILE=/opt/qt5jnano/gcc-linaro-5.5.0-2017.10-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu- -sysroot /opt/qt5jnano/sysroot -prefix /usr/local/qt5jnano -opensource -confirm-license -skip qtscript -skip wayland -skip qtwebengine -force-debug-info -skip qtdatavis3d -skip qtlocation -nomake examples -make libs -pkg-config -no-use-gold-linker -v
 make -j4
 make install
-``
+```
+Send compiled binaries to jetson nano
+
+```bash
+rsync -avz sysroot/usr/local/qt5jnano root@192.168.16.24:/usr/local
+```
