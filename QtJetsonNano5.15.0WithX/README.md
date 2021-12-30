@@ -5,14 +5,15 @@ This guide is tested with only xcb platform for widget applications
 On Linux, the xcb QPA (Qt Platform Abstraction) platform plugin is used. It provides the basic functionality needed by Qt GUI and Qt Widgets to run against X11.
 https://doc.qt.io/qt-5/linux-requirements.html
 
-you can watch also Youtube video:
+you can watch also Youtube video (this one is for different configuration
+but it can give an idea):
 
 [![Youtube video link](https://img.youtube.com/vi/PY41CP13p3k/0.jpg)](//www.youtube.com/watch?v=PY41CP13p3k&t=0s "ulas dikme")
 
 Qt Configuration on jetson nano
 Plese watch the video carefully. :)
 
-## jetson nano
+## Jetson nano
 
 Update and upgrade the ubuntu(jetpack 4.6)
 
@@ -32,7 +33,7 @@ E: You must put some 'source' URIs in your sources.list
 ```
 Then you will need to enable the "Source code" option in Software and Updates > Ubuntu Software under the "Downloadable from the Internet" section. This setting can also be found by running software-properties-gtk.
 
-otherwise after configuration you will see like this:
+Otherwise If this package is not installed correctly after configuration you will see like this:
 
 ERROR: Feature 'xcb' was enabled, but the pre-condition 'features.thread && libs.xcb && tests.xcb_syslibs && features.xkbcommon-x11' failed.
 
@@ -40,8 +41,9 @@ ERROR: Feature 'xcb' was enabled, but the pre-condition 'features.thread && libs
 Install dependencies
 
 ```bash
-sudo apt install ^libxcb.*-dev and libx11-xcb-dev
+sudo apt install ^libxcb.*-dev libx11-xcb-dev
 sudo apt install '.*libxcb.*' libxrender-dev libxi-dev libfontconfig1-dev libudev-dev libgles2-mesa-dev libgl1-mesa-dev gcc git bison python gperf pkg-config make libclang-dev build-essential
+
 sudo apt install libfontconfig1-dev libudev-dev libegl1-mesa-dev libgbm-dev libgles2-mesa-dev mesa-common-dev libxcomposite1 libx11-xcb-dev libxcb-keysyms1 libxcb-keysyms1-dev libxcb-image0 libxrender-dev libxss-dev libxtst-dev libxrandr-dev
 ```
 
@@ -103,8 +105,8 @@ chmod +x sysroot-relativelinks.py
 
 Replace the qmake.conf file with the one in the repo
 ```bash
-cp -r qt-everywhere-src-5.15.0/qtbase/mkspecs/devices/linux-jetson-tk1-g++/ qt-everywhere-src-5.15.0/qtbase/mkspecs/devices/linux-jetson-nano
-gedit qt-everywhere-src-5.15.0/qtbase/mkspecs/devices/linux-jetson-nano/qmake.conf
+cp -r qtbase-everywhere-src-5.15.0/mkspecs/devices/linux-jetson-tk1-pro-g++/ qtbase-everywhere-src-5.15.0/mkspecs/devices/linux-jetson-nano
+gedit qtbase-everywhere-src-5.15.0/mkspecs/devices/linux-jetson-nano/qmake.conf
 ```
 
 Create a directory for building binaries and configure qt 
