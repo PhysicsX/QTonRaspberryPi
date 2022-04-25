@@ -22,7 +22,6 @@ ubuntu history
   cat qt-everywhere-src-5.15.2/qtbase/mkspecs/linux-arm-gnueabi-g++/qmake.conf
   
   ping 192.168.16.25
-  rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/lib sysroot
   rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/include sysroot/usr
   rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/lib sysroot
   rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/lib sysroot/usr 
