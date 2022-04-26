@@ -71,7 +71,7 @@ cd ~
 wget https://download.qt.io/official_releases/qt/6.2/6.2.4/submodules/qtbase-everywhere-src-6.2.4.tar.xz
 mkdir qt6HostBuild
 cd !$
-tar ../xf qtbase-everywhere-src-6.2.4.tar.xz
+tar xf ../qtbase-everywhere-src-6.2.4.tar.xz
 cd qtbase-everywhere-src-6.2.4
 cmake -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINPUT_opengl=es2 -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/home/ulas/qt6Host
 cmake --build . --parallel 4
