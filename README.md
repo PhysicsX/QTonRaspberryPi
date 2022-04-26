@@ -57,12 +57,12 @@ Update the ubuntu
 Install dependencies
 ```bash
   sudo apt-get install cmake make build-essential libclang-dev ninja-build gcc git bison \
-  python gperf pkg-config libfontconfig1-dev libfreetype6-dev libx11-dev libx11-xcb-dev \
+  python3 gperf pkg-config libfontconfig1-dev libfreetype6-dev libx11-dev libx11-xcb-dev \
   libxext-dev libxfixes-dev libxi-dev libxrender-dev libxcb1-dev libxcb-glx0-dev \
   libxcb-keysyms1-dev libxcb-image0-dev libxcb-shm0-dev libxcb-icccm4-dev libxcb-sync-dev \
   libxcb-xfixes0-dev libxcb-shape0-dev libxcb-randr0-dev libxcb-render-util0-dev \
   libxcb-util-dev libxcb-xinerama0-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev \
-  libatspi2.0-dev ibgl1-mesa-dev libglu1-mesa-dev freeglut3-dev
+  libatspi2.0-dev libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev
 ```
 
 # Build the qt6 for host
