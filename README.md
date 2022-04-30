@@ -184,6 +184,9 @@ $ rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/include sysroot/usr
 $ rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/lib sysroot
 $ rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/lib sysroot/usr 
 $ rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/opt/vc sysroot/opt
+$ wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py
+$ chmod +x sysroot-relativelinks.py 
+$ python3 sysroot-relativelinks.py sysroot
 ```
 
 ## Compile the Qt6.2.4
