@@ -38,7 +38,7 @@ libxkbcommon-dev libegl1-mesa-dev libgbm-dev libgles2-mesa-dev mesa-common-dev \
 libasound2-dev libpulse-dev gstreamer1.0-omx libgstreamer1.0-dev \
 libgstreamer-plugins-base1.0-dev  gstreamer1.0-alsa libvpx-dev libsrtp0-dev libsnappy-dev \
 libnss3-dev "^libxcb.*" flex bison libxslt-dev ruby gperf libbz2-dev libcups2-dev \
-libatkmm-1.6-dev libxi6 libxcomposite1 libfreetype6-dev libicu-dev libsqlite3-dev libxslt1-dev \
+libatkmm-1.6-dev libxi6 libxcomposite1 libfreetype6-dev libicu-dev libsqlite3-dev libxslt1-dev
 
 $ sudo apt-get install -y libavcodec-dev libavformat-dev libswscale-dev \
 libx11-dev freetds-dev libsqlite0-dev libpq-dev libiodbc2-dev firebird-dev \
@@ -201,6 +201,10 @@ Because of cmake we need a toolcain.cmake file(name can be different) which is u
 Update the sysroot path TARGET_SYSROOT. Cross compiler path must be same.
 
 ```bash
+$ cd ..
+$ mkdir qt-cross # for cross qtbase
+$ cd !$ 
+
 $ cat<<EOF > toolchain.cmake
 cmake_minimum_required(VERSION 3.16)
 include_guard(GLOBAL)
@@ -244,9 +248,6 @@ EOF
 
 
 ```bash
-$ cd ..
-$ mkdir qt-cross # for cross qtbase
-$ cd !$ 
 $ tar xf ../qtbase-everywhere-src-6.2.4.tar.xz
 
 $cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DQT_FEATURE_eglfs_egldevice=ON -DQT_FEATURE_eglfs_gbm=ON \
