@@ -99,6 +99,7 @@ CMake suite maintained and supported by Kitware (kitware.com/cmake).
 ```
 Compilation of CMake is easy:
 ```bash
+$ sudo apt install libssl-dev
 $ git clone https://github.com/Kitware/CMake.git
 $ ./bootstrap && make && sudo make install
 ```
@@ -172,9 +173,15 @@ $ mkdir /opt/rpi
 $ cd !$
 $ sudo wget www.ulasdikme.com/yedek/rpi-gcc-8.3.0_linux.tar.xz
 $ tar xf rpi-gcc-8.3.0_linux.tar.xz 
+
+
+ulas@ulas:/opt/rpi$ ls -l | grep rpi-gcc-8.3.0
+drwxr-xr-x 8 ulas ulas      4096 sep  4  2019 rpi-gcc-8.3.0
+-rw-r--r-- 1 root root 200056952 apr 29 12:47 rpi-gcc-8.3.0_linux.tar.xz
+
 ```
 
-Install sysroot from raspberry pi
+Install sysroot from raspberry pi target device. ( be sure it is in the same network. Just ping )
 ```bash
 $ cd $HOME
 $ mkdir qt6pi 
@@ -201,10 +208,6 @@ Because of cmake we need a toolcain.cmake file(name can be different) which is u
 Update the sysroot path TARGET_SYSROOT. Cross compiler path must be same.
 
 ```bash
-$ cd ..
-$ mkdir qt-cross # for cross qtbase
-$ cd !$ 
-
 $ cat<<EOF > toolchain.cmake
 cmake_minimum_required(VERSION 3.16)
 include_guard(GLOBAL)
