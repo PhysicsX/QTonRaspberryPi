@@ -1,7 +1,6 @@
 # Cross compilation of Qt6.2.4 on Raspberry pi 4
-This page is till under test. I tested the commands they are working but I need to check again to be sure. 
-Page can be updated... 
-This instructions for only Qt6.2.4 base, for other modules, page will be updated.
+This page representes the related steps to compile Qt6.3.0 crossly for raspberry pi 4. 
+This instructions for only Qt6.3.0 base, for other modules, page will be updated.
 
 Youtube video: (this is old one, will be updated )
 
@@ -108,13 +107,14 @@ $ ./bootstrap && make && sudo make install
 Qt6 is different then Qt5. If you checked my old videos, you can see that, I installed qt5-default on target. But not anymore.
 We need to build Qt6 on the host then we will pass the path of installation to the cmake which is used to cross compile.
 As I see host version should be same with the cross one.
+All the directories are in the home directory except toolchain. ( so check paths about it. )
 ```bash
 $ cd ~
-$ wget https://download.qt.io/official_releases/qt/6.2/6.2.4/submodules/qtbase-everywhere-src-6.2.4.tar.xz
+$ wget https://download.qt.io/official_releases/qt/6.3/6.3.0/submodules/qtbase-everywhere-src-6.3.0.tar.xz
 $ mkdir qt6HostBuild
 $ cd !$
-$ tar xf ../qtbase-everywhere-src-6.2.4.tar.xz
-$ cd qtbase-everywhere-src-6.2.4
+$ tar xf ../qtbase-everywhere-src-6.3.0.tar.xz
+$ cd qtbase-everywhere-src-6.3.0
 $ cmake -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINPUT_opengl=es2 -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/home/ulas/qt6Host
 $ cmake --build . --parallel 4
 $ cmake --install .
@@ -182,21 +182,23 @@ drwxr-xr-x 8 ulas ulas      4096 sep  4  2019 rpi-gcc-8.3.0
 ```
 
 Install sysroot from raspberry pi target device. ( be sure it is in the same network. Just ping )
+Update the user name and the ip adress of yours.
 ```bash
 $ cd $HOME
 $ mkdir qt6pi 
 $ cd qt6pi
 
-$ rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/include sysroot/usr
-$ rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/lib sysroot
-$ rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/usr/lib sysroot/usr 
-$ rsync -avz --rsync-path="sudo rsync" pi@192.168.16.25:/opt/vc sysroot/opt
+$ rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.20:/usr/include sysroot/usr
+$ rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.20:/lib sysroot
+$ rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.20:/usr/lib sysroot/usr 
+$ rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.20:/opt/vc sysroot/opt
+
 $ wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py
 $ chmod +x sysroot-relativelinks.py 
 $ python3 sysroot-relativelinks.py sysroot
 ```
 
-## Compile the Qt6.2.4
+## Compile the Qt6.3.0
 lets create qt-cross directory where we can compile qt.
 
 ```bash
@@ -205,7 +207,7 @@ $ mkdir qt-cross
 $ cd !$
 ```
 Because of cmake we need a toolcain.cmake file(name can be different) which is used to give the some paths for sysroot and compiler flags. This can be different according to your need. This file will be passed to cmake as an argument. 
-Update the sysroot path TARGET_SYSROOT. Cross compiler path must be same.
+Update the sysroot path TARGET_SYSROOT with user name. Cross compiler path must be same.
 
 ```bash
 $ cat<<EOF > toolchain.cmake
@@ -248,18 +250,18 @@ set(CMAKE_USE_PTHREADS_INIT 1)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 EOF
 ```
-
+We can use the same qtbase src tar file for cross compilation. If you check closely, there are DQT_HOST_PATH, DCMAKE_STAGING_PREFIX, DCMAKE_INSTALL_PREFIX, DCMAKE_PREFIX_PATH, DCMAKE_TOOLCHAIN_FILE paths. Please update these according to yours (Change user name). 
 
 ```bash
-$ tar xf ../qtbase-everywhere-src-6.2.4.tar.xz
+$ tar xf ../qtbase-everywhere-src-6.3.0.tar.xz
 
 $cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DQT_FEATURE_eglfs_egldevice=ON -DQT_FEATURE_eglfs_gbm=ON \
 -DQT_BUILD_TOOLS_WHEN_CROSSCOMPILING=ON  -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF \
 -DQT_HOST_PATH=/home/ulas/qt6Host -DCMAKE_STAGING_PREFIX=/home/ulas/qt6rpi \
 -DCMAKE_INSTALL_PREFIX=/home/ulas/qt6crosspi -DCMAKE_PREFIX_PATH=/home/ulas/rpi-sdk/sysroot/usr/lib/ \
--DCMAKE_TOOLCHAIN_FILE=/home/ulas/qt-cross/toolchain.cmake /home/ulas/qt-cross/qtbase-everywhere-src-6.2.4/
+-DCMAKE_TOOLCHAIN_FILE=/home/ulas/qt-cross/toolchain.cmake /home/ulas/qt-cross/qtbase-everywhere-src-6.3.0/
 ```
-After this you should see like this:
+After this you should see like this (If it is configured successfully):
 
 ```bash
 
@@ -446,20 +448,22 @@ If reconfiguration fails for some reason, try to remove 'CMakeCache.txt' from th
 
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/ulas/qt-cross/qtbase-everywhere-src-6.2.4
+-- Build files have been written to: /home/ulas/qt-cross/qtbase-everywhere-src-6.3.0
 ```
 
-Lets start to build and install
+Lets start to build and install. Binaries will be in qt6rpi directory. 
 ```bash
 cmake --build . --parallel 4
 cmake --install .
 ```
 
-Send binaries to raspberry pi
+Send binaries to raspberry pi.
 ```bash
-rsync -avz --rsync-path="sudo rsync" /home/ulas/qt6rpi pi@192.168.16.20:/usr/local
+rsync -avz --rsync-path="sudo rsync" /home/ulas/qt6rpi ulas@192.168.16.20:/usr/local
 ```
 
+I reccommend you to do not move these directories. There are relative links that script files can work.
+When you compile the modules, helper scripts assume directory is in the same path.
 ## Test compilation
 Lets create hello world application
 We need simple main.cpp and CMakeLists.txt, main.cpp is same with above.
@@ -506,7 +510,7 @@ add_executable(HelloQt6 main.cpp)
 target_link_libraries(HelloQt6 Qt6::Core)
 EOF
 ```
-Compile the binary, we need qt-cmake file which is created after compilation of the Qt6.4.2.
+Compile the binary, we need qt-cmake file which is created after compilation of the Qt6.3.0 .
 It should be in the installation folder.
 qt-cmake file creates makefile.
 ```bash
@@ -552,4 +556,4 @@ ulas@raspberrypi:~ $ ./HelloQt6
 Hello world
 ```
 
-voila  !! You have cross compiled Qt6.2.4 for Raspberry pi !
+voila  !! You have cross compiled Qt6.3.0 for Raspberry pi !
