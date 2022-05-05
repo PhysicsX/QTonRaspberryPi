@@ -557,3 +557,56 @@ Hello world
 ```
 
 voila  !! You have cross compiled Qt6.3.0 for Raspberry pi !
+
+We can play more with Qt Base. For instance there is a gui library inside base.
+Go to host ( ubuntu virtual machine )
+```bash
+$ cd $HOME
+$ mkdir qtCrossExampleGui
+$ cd !$
+
+$ cat<<EOF > main.cpp 
+#include <QApplication>
+#include <QLabel>
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+
+    QImage myImage;
+    myImage.load("/home/ulas/test.jpg");
+
+    QLabel myLabel;
+    myLabel.setPixmap(QPixmap::fromImage(myImage));
+
+    myLabel.show();
+
+    return a.exec();
+}
+EOF
+```
+For CMakeLists.txt
+```bash
+cmake_minimum_required(VERSION 3.5)
+
+project(qtGui LANGUAGES CXX)
+message("CMAKE_SYSROOT " ${CMAKE_SYSROOT})
+message("CMAKE_LIBRARY_ARCHITECTURE " ${CMAKE_LIBRARY_ARCHITECTURE})
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wl,-rpath-link, ${CMAKE_SYSROOT}/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE} -L${CMAKE_SYSROOT}/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wl,-rpath-link,${CMAKE_SYSROOT}/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE} -L${CMAKE_SYSROOT}/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}")
+
+add_executable(qtGui main.cpp)
+#target_compile_options(HelloQt6 PRIVATE -lm -ldl)
+
+target_link_libraries(qtGui -lm -ldl Qt6::Core Qt6::Gui Qt6::Widgets)
+```
+
+Update the path in the main.cpp (  "/home/ulas/test.jpg") according to target. You can use whichever image. (not all extension is supported but jpg and png are fine.)
+Send the binary like before example and run, then:
+
+![alt text](https://github.com/PhysicsX/QTonRaspberryPi/blob/main/voila.png?raw=true)
