@@ -51,11 +51,11 @@ libxrandr-dev libdirectfb-dev libaudio-dev libxkbcommon-x11-dev
 
 sudo apt remove libzstd-dev libharfbuzz-bin libharfbuzz-dev
 ```
-Create a directory for binaries
+Create a directory for binaries.Give enough permission for your user.
 
 ```bash
 $ sudo mkdir /usr/local/qt6pi
-$ sudo chown user:user /usr/local/qt6pi
+$ sudo chown ulas:ulas /usr/local/qt6pi
 ```
 
 # Prepare Ubuntu
@@ -587,6 +587,7 @@ EOF
 ```
 For CMakeLists.txt
 ```bash
+$ cat<<EOF > CMakeLists.txt
 cmake_minimum_required(VERSION 3.5)
 
 project(qtGui LANGUAGES CXX)
@@ -600,10 +601,12 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wl,-rpath-link, ${CMAKE_SYSROOT}/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE} -L${CMAKE_SYSROOT}/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wl,-rpath-link,${CMAKE_SYSROOT}/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE} -L${CMAKE_SYSROOT}/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}")
 
-add_executable(qtGui main.cpp)
-#target_compile_options(HelloQt6 PRIVATE -lm -ldl)
+#include_directories(/home/ulas/qt6rpi/include/)
 
-target_link_libraries(qtGui -lm -ldl Qt6::Core Qt6::Gui Qt6::Widgets)
+add_executable(qtGui main.cpp)
+
+target_link_libraries(qtGui Qt6::Core Qt6::Gui Qt6::Widgets)
+EOF
 ```
 
 Update the path in the main.cpp (  "/home/ulas/test.jpg") according to target. You can use whichever image. (not all extension is supported but jpg and png are fine.)
