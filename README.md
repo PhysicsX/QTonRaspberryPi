@@ -186,7 +186,7 @@ Install sysroot from raspberry pi target device. ( be sure it is in the same net
 Update the user name and the ip adress of yours.
 ```bash
 $ cd $HOME
-$ mkdir rpi-sysroot 
+$ mkdir rpi-sdk 
 $ cd !$
 
 $ rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.20:/usr/include sysroot/usr
@@ -204,7 +204,7 @@ lets create qt-cross directory where we can compile qt.
 
 ```bash
 $ cd ..
-$ mkdir rpi-sdk
+$ mkdir qt-cross
 $ cd !$
 ```
 Because of cmake we need a toolcain.cmake file(name can be different) which is used to give the some paths for sysroot and compiler flags. This can be different according to your need. This file will be passed to cmake as an argument. 
