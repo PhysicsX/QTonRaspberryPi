@@ -91,7 +91,7 @@ libatspi2.0-dev libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev
 During compilation I see a lot of dependency problems because of cmake. Then I simply compiled it from source.
 Latest version is better. My version is:
 ```bash
-ulas@ulas:~/qt-cross/qtbase-everywhere-src-6.3.0$ cmake --version
+ulas@ulas: $ cmake --version
 cmake version 3.23.20220428-g90d5d42
 
 CMake suite maintained and supported by Kitware (kitware.com/cmake).
@@ -100,6 +100,7 @@ Compilation of CMake is easy:
 ```bash
 $ sudo apt install libssl-dev
 $ git clone https://github.com/Kitware/CMake.git
+$ cd CMake
 $ ./bootstrap && make && sudo make install
 ```
 
@@ -122,7 +123,7 @@ $ cmake --install .
 Test the host qt6
 
 ```bash
-cd ..
+$ cd $HOME
 $ mkdir QtHostExample
 $ cd !$
  
@@ -185,8 +186,8 @@ Install sysroot from raspberry pi target device. ( be sure it is in the same net
 Update the user name and the ip adress of yours.
 ```bash
 $ cd $HOME
-$ mkdir qt6pi 
-$ cd qt6pi
+$ mkdir rpi-sysroot 
+$ cd !$
 
 $ rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.20:/usr/include sysroot/usr
 $ rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.20:/lib sysroot
@@ -203,7 +204,7 @@ lets create qt-cross directory where we can compile qt.
 
 ```bash
 $ cd ..
-$ mkdir qt-cross
+$ mkdir rpi-sdk
 $ cd !$
 ```
 Because of cmake we need a toolcain.cmake file(name can be different) which is used to give the some paths for sysroot and compiler flags. This can be different according to your need. This file will be passed to cmake as an argument. 
@@ -514,8 +515,8 @@ Compile the binary, we need qt-cmake file which is created after compilation of 
 It should be in the installation folder.
 qt-cmake file creates makefile.
 ```bash
-/home/ulas/qt6rpi/bin/qt-cmake
-cmake --build .
+$ /home/ulas/qt6rpi/bin/qt-cmake
+$ cmake --build .
 $ file HelloQt6
 HelloQt6: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-armhf.so.3, for GNU/Linux 3.2.0, with debug_info, not stripped
 ```
