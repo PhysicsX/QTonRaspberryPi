@@ -189,6 +189,7 @@ $ cd $HOME
 $ mkdir rpi-sdk 
 $ cd !$
 
+$ mkdir sysroot sysroot/usr sysroot/opt
 $ rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.20:/usr/include sysroot/usr
 $ rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.20:/lib sysroot
 $ rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.20:/usr/lib sysroot/usr 
@@ -208,10 +209,9 @@ $ mkdir qt-cross
 $ cd !$
 ```
 Because of cmake we need a toolcain.cmake file(name can be different) which is used to give the some paths for sysroot and compiler flags. This can be different according to your need. This file will be passed to cmake as an argument. 
-Update the sysroot path TARGET_SYSROOT with user name. Cross compiler path must be same.
-
+Update the sysroot path TARGET_SYSROOT with user name. Cross compiler path must be same. Create a toolchain.cmake file and copy the content below in it.
+toolchain.cmake :
 ```bash
-$ cat<<EOF > toolchain.cmake
 cmake_minimum_required(VERSION 3.16)
 include_guard(GLOBAL)
 
@@ -249,7 +249,6 @@ set(CMAKE_HAVE_THREADS_LIBRARY 1)
 set(CMAKE_USE_WIN32_THREADS_INIT 0)
 set(CMAKE_USE_PTHREADS_INIT 1)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
-EOF
 ```
 We can use the same qtbase src tar file for cross compilation. If you check closely, there are DQT_HOST_PATH, DCMAKE_STAGING_PREFIX, DCMAKE_INSTALL_PREFIX, DCMAKE_PREFIX_PATH, DCMAKE_TOOLCHAIN_FILE paths. Please update these according to yours (Change user name). 
 
@@ -486,8 +485,9 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 EOF
- 
-$ cat<<EOF > CMakeLists.txt
+```
+Copy paste CMakeLists.txt:
+```bash
 cmake_minimum_required(VERSION 3.5)
 
 project(HelloQt6 LANGUAGES CXX)
@@ -509,8 +509,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wl,-rpath-link,${CMAKE_SYSROOT}/u
 add_executable(HelloQt6 main.cpp)
 
 target_link_libraries(HelloQt6 Qt6::Core)
-EOF
 ```
+
 Compile the binary, we need qt-cmake file which is created after compilation of the Qt6.3.0 .
 It should be in the installation folder.
 qt-cmake file creates makefile.
