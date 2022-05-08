@@ -2,9 +2,9 @@
 This page representes the related steps to compile Qt6.3.0 crossly for raspberry pi 4. 
 This instructions for only Qt6.3.0 base, for other modules, page will be updated.
 
-Youtube video: (this is old one, will be updated )
+Youtube video (this video shows only qt3base cross compilation for raspberry pi 4)
 
-[![Youtube video link](https://img.youtube.com/vi/TmtN3Rmx9Rk/0.jpg)](//www.youtube.com/watch?v=TmtN3Rmx9Rk?t=0s "ulas dikme")
+[![Youtube video link](https://img.youtube.com/vi/oWpomXg9yj0/0.jpg)](//www.youtube.com/watch?v=oWpomXg9yj0?t=0s "ulas dikme")
 
 # Prepare Raspberry pi 4
 My raspberry pi image is : 2022-04-04-raspios-bullseye-armhf
