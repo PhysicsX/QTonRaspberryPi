@@ -170,10 +170,10 @@ Get toolchain
 toolchain must be extracted under /opt/rpi/
 
 ```bash
-$ mkdir /opt/rpi
+$ sudo mkdir /opt/rpi
 $ cd !$
 $ sudo wget www.ulasdikme.com/yedek/rpi-gcc-8.3.0_linux.tar.xz
-$ tar xf rpi-gcc-8.3.0_linux.tar.xz 
+$ sudo tar xf rpi-gcc-8.3.0_linux.tar.xz 
 
 
 ulas@ulas:/opt/rpi$ ls -l | grep rpi-gcc-8.3.0
@@ -262,6 +262,8 @@ $cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DQT_FEATURE_eglfs_egldevice=ON -DQT_F
 -DCMAKE_TOOLCHAIN_FILE=/home/ulas/qt-cross/toolchain.cmake /home/ulas/qt-cross/qtbase-everywhere-src-6.3.0/
 ```
 After this you should see like this (If it is configured successfully):
+(If the configuration result is not in the output check the config.summary file in the same directory. It should be exist after configuration. It is explained in the video.)
+
 
 ```bash
 
