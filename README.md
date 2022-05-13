@@ -616,3 +616,154 @@ Update the path in the main.cpp (  "/home/ulas/test.jpg") according to target. Y
 Send the binary like before example and run, then:
 
 ![alt text](https://github.com/PhysicsX/QTonRaspberryPi/blob/main/voila.png?raw=true)
+
+## Build QML( qtdeclerative ) module
+Now it is time to build declerative module. You can build others using same idea. 
+But be careful. Modules can depend on each other. So when you try to configure it, check dependencies.yaml file in the related module directory. According to information in this directory you can choose the dependecies or needed modules.
+As I tested, declerative module depends on qtshadertools module for qt6.3.0
+
+```bash
+$ cd $HOME
+$ wget https://download.qt.io/official_releases/qt/6.3/6.3.0/submodules/qtshadertools-everywhere-src-6.3.0.tar.xz
+$ wget https://download.qt.io/official_releases/qt/6.3/6.3.0/submodules/qtdeclarative-everywhere-src-6.3.0.tar.xz
+```
+first you need to build these for base before cross compilation. 
+```bash
+
+$ cd ../qt6HostBuild
+$ tar xf ../qtshadertools-everywhere-src-6.3.0.tar.xz
+$ tar xf ../qtdeclarative-everywhere-src-6.3.0.tar.xz
+
+$ cd qtshadertools-everywhere-src-6.3.0
+$ /home/ulas/qt6Host/bin/qt-configure-module
+$ cmake --build . --parallel 4
+$ cmake install .
+
+$ cd qtdeclarative-everywhere-src-6.3.0
+$ /home/ulas/qt6Host/bin/qt-configure-module
+$ cmake --build . --parallel 4
+$ cmake --install .
+
+```
+Now we have qml binaries for host. If you want you can test it.
+Then we can make cross compilation for these modules for raspberry pi 4.
+```bash
+
+$ cd ../qt-cross
+$ tar xf ../qtshadertools-everywhere-src-6.3.0.tar.xz
+$ tar xf ../qtdeclarative-everywhere-src-6.3.0.tar.xz
+
+$ cd qtshadertools-everywhere-src-6.3.0
+$ /home/ulas/qt6rpi/bin/qt-configure-module
+$ cmake --build . --parallel 4
+$ cmake --install .
+
+$ cd qtdeclarative-everywhere-src-6.3.0
+$ /home/ulas/qt6rpi/bin/qt-configure-module
+$ cmake --build . --parallel 4
+$ cmake --install .
+
+```
+That is it! Lets send these to rasp, like we did before.
+```bash
+rsync -avz --rsync-path="sudo rsync" /home/ulas/qt6rpi ulas@192.168.16.20:/usr/local
+```
+## Test QML( qtdeclerative ) module
+```bash
+$ cd $HOME
+$ mkdir qtCrossExampleQml
+$ cd !$
+```
+Copy paste following files (All in the qtCrossExampleQml directory):
+for CMakeLists.txt
+```bash
+cmake_minimum_required(VERSION 3.5)
+
+project(HelloQt6Qml LANGUAGES CXX)
+message("CMAKE_SYSROOT " ${CMAKE_SYSROOT})
+message("CMAKE_LIBRARY_ARCHITECTURE " ${CMAKE_LIBRARY_ARCHITECTURE})
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(Qt6 COMPONENTS Core Quick REQUIRED)
+
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wl,-rpath-link, ${CMAKE_SYSROOT}/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE} -L${CMAKE_SYSROOT}/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wl,-rpath-link,${CMAKE_SYSROOT}/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE} -L${CMAKE_SYSROOT}/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}")
+
+add_executable(HelloQt6Qml main.cpp)
+
+target_link_libraries(HelloQt6Qml -lm -ldl Qt6::Core Qt6::Quick)
+```
+For main.cpp ( becareful for the path link in the main function. Update it accordingly for your raspberry pi user name)
+```bash
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+    QGuiApplication app(argc, argv);
+
+    QQmlApplicationEngine engine;
+    const QUrl url(QStringLiteral("/home/ulas/main.qml"));
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+        if (!obj && url == objUrl)
+            QCoreApplication::exit(-1);
+    }, Qt::QueuedConnection);
+    engine.load(url);
+
+    return app.exec();
+}
+```
+For main.qml
+```bash
+import QtQuick 2.12
+import QtQuick.Window 2.12
+
+Window {
+    visible: true
+    width: 640
+    height: 480
+    title: qsTr("CROSS COMPILED QT6")
+
+
+	Rectangle {
+	    width: parent.width
+	    height: parent.height
+
+	    Rectangle {
+		id: button
+
+		width: 100
+		height: 30
+		color: "blue"
+		anchors.centerIn: parent
+
+		Text {
+		    id: buttonText
+		    text: qsTr("Button")
+		    color: "white"
+		    anchors.centerIn: parent
+		}
+
+		MouseArea {
+		    anchors.fill: parent
+		    onClicked: {
+		        buttonText.text = qsTr("Clicked");
+		        buttonText.color = "black";
+		    }
+		}
+	    }
+	}
+}
+```
+
+Compile the example and send the binary and qml file to rasp. ( we did not embed the qml to binary for this example )
+```bash
+$ /home/ulas/qt6rpi/bin/qt-cmake
+$ cmake --build .
+$ scp HelloQt6Qml main.qml ulas@192.168.16.20:/home/ulas/
+```
+
