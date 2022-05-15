@@ -1,6 +1,8 @@
 # Cross compilation of Qt6.2.4 on Raspberry pi 4
-This page representes the related steps to compile Qt6.3.0 crossly for raspberry pi 4. 
-This instructions for only Qt6.3.0 base, for other modules, page will be updated.
+This page representes the related steps to compile Qt6.3.0 crossly for raspberry pi 4 ( And link to video contents which shows how to make cross compilation step by step).  
+Before start, If you use different rasp version or different ubuntu version then you can see that steps may fail.
+
+Related instructions is tested for only Qt6.3.0. The below video is only for qt6base. For qtdeclarative scroll down.
 
 Youtube video (this video shows only qt3base cross compilation for raspberry pi 4)
 
@@ -618,6 +620,8 @@ Send the binary like before example and run, then:
 ![alt text](https://github.com/PhysicsX/QTonRaspberryPi/blob/main/voila.png?raw=true)
 
 ## Build QML( qtdeclerative ) module
+[![Youtube video link](https://img.youtube.com/vi/GGhUtBKVy18/0.jpg)](//www.youtube.com/watch?v=GGhUtBKVy18?t=0s "ulas dikme")
+
 Now it is time to build declerative module. You can build others using same idea. 
 But be careful. Modules can depend on each other. So when you try to configure it, check dependencies.yaml file in the related module directory. According to information in this directory you can choose the dependecies or needed modules.
 As I tested, declerative module depends on qtshadertools module for qt6.3.0
@@ -668,7 +672,7 @@ That is it! Lets send these to rasp, like we did before.
 ```bash
 rsync -avz --rsync-path="sudo rsync" /home/ulas/qt6rpi ulas@192.168.16.20:/usr/local
 ```
-## Test QML( qtdeclerative ) module
+## Test QML( qtdeclarative ) module
 ```bash
 $ cd $HOME
 $ mkdir qtCrossExampleQml
