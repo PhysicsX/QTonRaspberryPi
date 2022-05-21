@@ -1,5 +1,5 @@
 # Cross compilation of Qt6.2.4 on Raspberry pi 4
-This page representes the related steps to compile Qt6.3.0 crossly for raspberry pi 4 ( And link to video contents which shows how to make cross compilation step by step).  
+This page represents the related steps to compile Qt6.3.0 crossly for raspberry pi 4 ( And link to video contents which shows how to make cross compilation step by step).  
 Before start, If you use different rasp version or different ubuntu version then you can see that steps may fail.
 
 Related instructions is tested for only Qt6.3.0. The below video is only for qt6base. For qtdeclarative scroll down.
@@ -619,12 +619,12 @@ Send the binary like before example and run, then:
 
 ![alt text](https://github.com/PhysicsX/QTonRaspberryPi/blob/main/voila.png?raw=true)
 
-## Build QML( qtdeclerative ) module
+## Build QML( qtdeclarative ) module
 [![Youtube video link](https://img.youtube.com/vi/GGhUtBKVy18/0.jpg)](//www.youtube.com/watch?v=GGhUtBKVy18?t=0s "ulas dikme")
 
-Now it is time to build declerative module. You can build others using same idea. 
+Now it is time to build declarative module. You can build others using same idea. 
 But be careful. Modules can depend on each other. So when you try to configure it, check dependencies.yaml file in the related module directory. According to information in this directory you can choose the dependecies or needed modules.
-As I tested, declerative module depends on qtshadertools module for qt6.3.0
+As I tested, declarative module depends on qtshadertools module for qt6.3.0
 
 ```bash
 $ cd $HOME
@@ -639,12 +639,12 @@ $ tar xf ../qtshadertools-everywhere-src-6.3.0.tar.xz
 $ tar xf ../qtdeclarative-everywhere-src-6.3.0.tar.xz
 
 $ cd qtshadertools-everywhere-src-6.3.0
-$ /home/ulas/qt6Host/bin/qt-configure-module
+$ /home/ulas/qt6Host/bin/qt-configure-module .
 $ cmake --build . --parallel 4
 $ cmake install .
 
 $ cd qtdeclarative-everywhere-src-6.3.0
-$ /home/ulas/qt6Host/bin/qt-configure-module
+$ /home/ulas/qt6Host/bin/qt-configure-module .
 $ cmake --build . --parallel 4
 $ cmake --install .
 
@@ -658,12 +658,12 @@ $ tar xf ../qtshadertools-everywhere-src-6.3.0.tar.xz
 $ tar xf ../qtdeclarative-everywhere-src-6.3.0.tar.xz
 
 $ cd qtshadertools-everywhere-src-6.3.0
-$ /home/ulas/qt6rpi/bin/qt-configure-module
+$ /home/ulas/qt6rpi/bin/qt-configure-module .
 $ cmake --build . --parallel 4
 $ cmake --install .
 
 $ cd qtdeclarative-everywhere-src-6.3.0
-$ /home/ulas/qt6rpi/bin/qt-configure-module
+$ /home/ulas/qt6rpi/bin/qt-configure-module .
 $ cmake --build . --parallel 4
 $ cmake --install .
 
