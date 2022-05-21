@@ -1,4 +1,4 @@
-# Cross compilation of Qt6.2.4 on Raspberry pi 4
+# Cross compilation of Qt6.3.0 on Raspberry pi 4
 This page represents the related steps to compile Qt6.3.0 crossly for raspberry pi 4 ( And link to video contents which shows how to make cross compilation step by step).  
 Before start, If you use different rasp version or different ubuntu version then you can see that steps may fail.
 
