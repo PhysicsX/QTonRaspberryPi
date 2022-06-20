@@ -641,7 +641,7 @@ $ tar xf ../qtdeclarative-everywhere-src-6.3.0.tar.xz
 $ cd qtshadertools-everywhere-src-6.3.0
 $ /home/ulas/qt6Host/bin/qt-configure-module .
 $ cmake --build . --parallel 4
-$ cmake install .
+$ cmake --install .
 
 $ cd qtdeclarative-everywhere-src-6.3.0
 $ /home/ulas/qt6Host/bin/qt-configure-module .
