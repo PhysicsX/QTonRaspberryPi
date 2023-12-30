@@ -198,6 +198,7 @@ We need to pull some libraries/headers from raspberry pi
 
 ```bash
 cd ~
+mkdir rpi-sysroot rpi-sysroot/usr rpi-sysroot/opt
 rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.25:/usr/include rpi-sysroot/usr
 rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.25:/lib rpi-sysroot
 rsync -avz --rsync-path="sudo rsync" ulas@192.168.16.25:/usr/lib rpi-sysroot/usr 
@@ -210,7 +211,6 @@ wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-r
 chmod +x sysroot-relativelinks.py 
 python3 sysroot-relativelinks.py rpi-sysroot
 ```
-
 
 Create toolchain.cmake under qt6 directory
 
