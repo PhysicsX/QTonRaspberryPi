@@ -184,10 +184,9 @@ Now you have croos toolchain, if you like, you can compile simple hello world ap
 ### Qt compilation
 First we need to compile Qt for host. 
 
-wget https://download.qt.io/official_releases/qt/6.6/6.6.1/submodules/qtbase-everywhere-src-6.6.1.tar.xz
-
 ```bash
 cd ~
+wget https://download.qt.io/official_releases/qt/6.6/6.6.1/submodules/qtbase-everywhere-src-6.6.1.tar.xz
 mkdir qt6 qt6/host qt6/pi qt6/host-build qt6/pi-build qt6/src
 tar xf qtbase-everywhere-src-6.6.1.tar.xz 
 cd qt6/host-build/
