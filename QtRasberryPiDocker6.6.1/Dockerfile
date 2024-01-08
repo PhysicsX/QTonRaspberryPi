@@ -39,7 +39,7 @@ RUN { \
 
 # Stage 2: Building the cross-compiler and tools
 # Start from the Ubuntu Focal Fossa (20.04) image
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -47,6 +47,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Update and install some necessary packages
 RUN { \
     apt-get update && apt-get install -y \
+    wget \
     git \
     build-essential \
     make \
@@ -99,30 +100,31 @@ WORKDIR /build
 RUN mkdir sysroot sysroot/usr sysroot/opt
 
 # Copy the necessary files from the 'rasp' stage or image
-COPY --from=rasp /lib/ /sysroot/lib/
-COPY --from=rasp /usr/include/ /sysroot/usr/include/
-COPY --from=rasp /usr/lib/ /sysroot/usr/lib/
+COPY --from=rasp /lib/ /build/sysroot/lib/
+COPY --from=rasp /usr/include/ /build/sysroot/usr/include/
+COPY --from=rasp /usr/lib/ /build/sysroot/usr/lib/
 
 # Clone the Raspberry Pi firmware repository
 RUN git clone --depth=1 https://github.com/raspberrypi/firmware firmware 2>&1 | tee -a /build.log
 
 # Copy the opt directory from the cloned repository to sysroot/opt
-RUN mkdir -p /sysroot/opt && \
-    cp -r firmware/opt /sysroot/opt 2>&1 | tee -a /build.log
+RUN cp -r firmware/opt sysroot/opt 2>&1 | tee -a /build.log
 
 # Create a directory for the tools and change into it
-RUN mkdir /crossTools && cd /crossTools 2>&1 | tee -a /build.log
+RUN mkdir crossTools && cd crossTools 2>&1 | tee -a /build.log
 
 # Download the necessary tar files
-RUN wget https://mirror.lyrahosting.com/gnu/binutils/binutils-2.40.tar.gz && \
+RUN cd crossTools && \
+    wget https://mirror.lyrahosting.com/gnu/binutils/binutils-2.40.tar.gz && \
     wget https://ftp.nluug.nl/pub/gnu/glibc/glibc-2.36.tar.gz && \
     wget https://ftp.nluug.nl/pub/gnu/gcc/gcc-12.2.0/gcc-12.2.0.tar.gz && \
     git clone --depth=1 https://github.com/raspberrypi/linux 2>&1 | tee -a /build.log
 
 # Extract the tar files
-RUN tar xf /crossTools/binutils-2.40.tar.gz && \
-    tar xf /crossTools/glibc-2.36.tar.gz && \
-    tar xf /crossTools/gcc-12.2.0.tar.gz 2>&1 | tee -a /build.log
+RUN cd crossTools && \
+    tar xf binutils-2.40.tar.gz && \
+    tar xf glibc-2.36.tar.gz && \
+    tar xf gcc-12.2.0.tar.gz 2>&1 | tee -a /build.log
 
 RUN mkdir -p /opt/cross-pi-gcc 2>&1 | tee -a /build.log
 
@@ -132,6 +134,7 @@ ENV PATH=/opt/cross-pi-gcc/bin:$PATH
 # Create directories, download, extract, and compile everything in one RUN command
 RUN { \
     cd linux/ && \
+    KERNEL=kernel8 && \ 
     make ARCH=arm64 INSTALL_HDR_PATH=/opt/cross-pi-gcc/aarch64-linux-gnu headers_install && \
     cd ../ && \
     mkdir build-binutils && cd build-binutils && \
@@ -159,7 +162,55 @@ RUN { \
     make install && \
     cd ../build-gcc/ && \
     make -j$(nproc) && \
-    make install \
+    make install; \
 } 2>&1 | tee -a /build.log
+
+COPY toolchain.cmake /build/
+
+RUN { \
+    wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py && \
+    chmod +x sysroot-relativelinks.py && \
+    python3 sysroot-relativelinks.py /build/sysroot && \
+    mkdir -p qt6 qt6/host qt6/pi qt6/host-build qt6/pi-build qt6/src && \
+    cd qt6/src && \
+    wget https://download.qt.io/official_releases/qt/6.6/6.6.1/submodules/qtbase-everywhere-src-6.6.1.tar.xz && \
+    wget https://download.qt.io/official_releases/qt/6.6/6.6.1/submodules/qtshadertools-everywhere-src-6.6.1.tar.xz && \
+    wget https://download.qt.io/official_releases/qt/6.6/6.6.1/submodules/qtdeclarative-everywhere-src-6.6.1.tar.xz && \
+    cd ../host-build && \
+    tar xf ../src/qtbase-everywhere-src-6.6.1.tar.xz && \
+    tar xf ../src/qtshadertools-everywhere-src-6.6.1.tar.xz && \
+    tar xf ../src/qtdeclarative-everywhere-src-6.6.1.tar.xz && \
+    cd qtbase-everywhere-src-6.6.1 && \
+    cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/build/qt6/host && \
+    cmake --build . --parallel 4 && \
+    cmake --install . && \
+    cd ../qtshadertools-everywhere-src-6.6.1 && \
+    /build/qt6/host/bin/qt-configure-module . && \
+    cmake --build . --parallel 4 && \
+    cmake --install . && \
+    cd ../qtdeclarative-everywhere-src-6.6.1 && \
+    /build/qt6/host/bin/qt-configure-module . && \
+    cmake --build . --parallel 4 && \
+    cmake --install . && \
+    cd ../../pi-build && \
+    tar xf ../src/qtbase-everywhere-src-6.6.1.tar.xz && \
+    tar xf ../src/qtshadertools-everywhere-src-6.6.1.tar.xz && \
+    tar xf ../src/qtdeclarative-everywhere-src-6.6.1.tar.xz && \
+    cd qtbase-everywhere-src-6.6.1 && \
+    cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DINPUT_opengl=es2 -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF -DQT_HOST_PATH=/build/qt6/host -DCMAKE_STAGING_PREFIX=/build/qt6/pi -DCMAKE_INSTALL_PREFIX=/usr/local/qt6 -DCMAKE_TOOLCHAIN_FILE=/build/toolchain.cmake -DQT_QMAKE_TARGET_MKSPEC=devices/linux-rasp-pi4-aarch64 -DQT_FEATURE_xcb=ON -DFEATURE_xcb_xlib=ON -DQT_FEATURE_xlib=ON && \
+    cmake --build . --parallel 4 && \
+    cmake --install . && \
+    cd ../qtshadertools-everywhere-src-6.6.1 && \
+    /build/qt6/pi/bin/qt-configure-module . && \
+    cmake --build . --parallel 4 && \
+    cmake --install . && \
+    cd ../qtdeclarative-everywhere-src-6.6.1 && \
+    /build/qt6/pi/bin/qt-configure-module . && \
+    cmake --build . --parallel 4 && \
+    cmake --install .; \
+} 2>&1 | tee -a /build.log
+
+# After compiling and installing Qt into /build/qt/pi
+RUN tar -czvf qt-pi-binaries.tar.gz -C /build/qt6/pi .
 
 
