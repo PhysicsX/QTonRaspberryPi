@@ -38,7 +38,7 @@ RUN { \
 } 2>&1 | tee -a /build.log
 
 # Stage 2: Building the cross-compiler and tools
-# Start from the Ubuntu Focal Fossa (20.04) image
+# Start from the Ubuntu Focal Fossa (22.04) image
 FROM ubuntu:22.04
 
 # Avoid interactive prompts during package installation
@@ -51,7 +51,7 @@ RUN { \
     git \
     build-essential \
     make \
-    cmake \
+    # cmake \
     libclang-dev \
     ninja-build \
     gcc \
@@ -87,6 +87,8 @@ RUN { \
     libgl1-mesa-dev \
     libglu1-mesa-dev \
     freeglut3-dev \
+    ninja-build \
+    libssl-dev \
     libgmp-dev \
     libmpfr-dev \
     libmpc-dev && \
@@ -133,6 +135,12 @@ ENV PATH=/opt/cross-pi-gcc/bin:$PATH
 
 # Create directories, download, extract, and compile everything in one RUN command
 RUN { \
+    mkdir cmakeBuild && \
+    cd cmakeBuild && \
+    git clone https://github.com/Kitware/CMake.git && \
+    cd CMake && \
+    ./bootstrap && make -j8 && make install && \
+    cd ../../ && \
     cd linux/ && \
     KERNEL=kernel8 && \ 
     make ARCH=arm64 INSTALL_HDR_PATH=/opt/cross-pi-gcc/aarch64-linux-gnu headers_install && \
