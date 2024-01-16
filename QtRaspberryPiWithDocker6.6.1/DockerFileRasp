@@ -1,0 +1,45 @@
+# Stage 1: Setting up the environment and copying necessary files from Raspberry Pi OS
+FROM --platform=linux/arm64 arm64v8/debian:bookworm as rasp
+
+# Avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Create a log file
+RUN touch /build.log
+
+# Update the package list and install necessary packages
+RUN { \
+    echo "deb http://deb.debian.org/debian bookworm main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb-src http://deb.debian.org/debian bookworm main contrib non-free" >> /etc/apt/sources.list && \
+    echo "deb http://security.debian.org/debian-security bookworm-security main contrib non-free" >> /etc/apt/sources.list && \
+    echo "deb-src http://security.debian.org/debian-security bookworm-security main contrib non-free" >> /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get full-upgrade -y && \
+    apt-get install -y \
+    libboost-all-dev libudev-dev libinput-dev libts-dev libmtdev-dev \
+    libjpeg-dev libfontconfig1-dev libssl-dev libdbus-1-dev libglib2.0-dev \
+    libxkbcommon-dev libegl1-mesa-dev libgbm-dev libgles2-mesa-dev \
+    mesa-common-dev libasound2-dev libpulse-dev gstreamer1.0-omx \
+    libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-alsa \
+    libvpx-dev libsrtp2-dev libsnappy-dev libnss3-dev "^libxcb.*" \
+    flex bison libxslt-dev ruby gperf libbz2-dev libcups2-dev \
+    libatkmm-1.6-dev libxi6 libxcomposite1 libfreetype6-dev libicu-dev \
+    libsqlite3-dev libxslt1-dev libavcodec-dev libavformat-dev libswscale-dev \
+    libx11-dev freetds-dev libpq-dev libiodbc2-dev firebird-dev \
+    libxext-dev libxcb1 libxcb1-dev libx11-xcb1 libx11-xcb-dev \
+    libxcb-keysyms1 libxcb-keysyms1-dev libxcb-image0 libxcb-image0-dev \
+    libxcb-shm0 libxcb-shm0-dev libxcb-icccm4 libxcb-icccm4-dev \
+    libxcb-sync1 libxcb-sync-dev libxcb-render-util0 libxcb-render-util0-dev \
+    libxcb-xfixes0-dev libxrender-dev libxcb-shape0-dev libxcb-randr0-dev \
+    libxcb-glx0-dev libxi-dev libdrm-dev libxcb-xinerama0 libxcb-xinerama0-dev \
+    libatspi2.0-dev libxcursor-dev libxcomposite-dev libxdamage-dev \
+    libxss-dev libxtst-dev libpci-dev libcap-dev libxrandr-dev \
+    libdirectfb-dev libaudio-dev libxkbcommon-x11-dev gdbserver; \
+} 2>&1 | tee -a /build.log
+
+WORKDIR /build
+
+RUN tar cvfz rasp.tar.gz -C / lib usr/include usr/lib
+
+
+
