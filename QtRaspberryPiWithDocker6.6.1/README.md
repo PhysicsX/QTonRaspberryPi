@@ -2,9 +2,12 @@
 In this content, you can find a way to make cross compilation Qt6.6.1 for Raspberry pi 4 hardware with Docker isolation.
 The main advantage of the docker is to isolate the build environment, that means you can build the Qt without need of Raspberry pi (real hardware) and regardless of host software as long as you are able to run docker (and with QEMU) and you do not need to handle dependencies anymore (I am not kidding). It will be more easy and less painfull.
 
-I tested on ubuntu 22 and 20, regardless of version, I sucessfully compiled the Qt and build hello world application for raspberry pi.
+I tested on ubuntu 22 and 20, regardless of version, Qt is sucessfully compiled and build hello world application for raspberry pi.
 
 The steps will show you how to make your host environment(in this case ubuntu) ready and run the docker comamnds to build Qt6.6.1. But as I told you, you do not need to use ubuntu, as long as you run the Docker engine and QEMU then you should have same result.
+
+If you want to check with virtual machine you can find tutorial [Here](https://github.com/PhysicsX/QTonRaspberryPi/tree/main/QtRaspberryPi6.6.1). Steps are quite same, for this case you need raspberry pi. It is classical way that you can find in this repository. Or If you want more infromation, check old videos about it.
+If you want to understand theory in detail, you can watch this [video](https://www.youtube.com/watch?v=oWpomXg9yj0?t=0s) which shows how to compile Qt 6.3.0 for raspberry pi(only toolchain is not compiled).
 
 # Install Docker
 NOTE: If you see error during installation, then search on the internet how to install docker and qemu for your os. During time this steps can be different as you expect.
@@ -69,6 +72,22 @@ We also need to install QEMU, with it, it is possible to emulate/run raspbian os
 $ sudo apt-get install qemu qemu-user-static qemu-user binfmt-support
 $ docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 ```
+Update the config.json file to enable experimental feature.
+
+```bash
+nano ~/.docker/config.json
+```
+
+```bash
+{
+  "experimental": "enabled"
+}
+```
+
+It is a good idea to restart Docker
+```bash
+sudo systemctl restart docker
+```
 
 # Compile Qt 6.6.1 with Docker
 
@@ -83,7 +102,7 @@ When it will finish, you will find in the image there is a rasp.tar.gz file unde
 Lets copy it in the same location where Dockerfile is exist. Just copy where you pull branch.
 To copy, it is needed to create temporary container with "create" command. You can delete this temporary container later if you like.
 ```bash
-docker create --name temp-arm raspimage
+$ docker create --name temp-arm raspimage
 $ docker cp temp-arm:/build/rasp.tar.gz ./rasp.tar.gz
 ```
 This rasp.tar.gz file will be copied by the another image. Location is important. You do not need to extract it. Do not touch it.
@@ -99,7 +118,7 @@ As you see there is no buildx in this command because buildx uses qemu for ubunt
 
 ```bash
 $ docker create --name tmpbuild qtcrossbuild
-$ docker cp tmpbuild:/build/qtCrossExample/HelloQt6 ./HelloQt6
+$ docker cp tmpbuild:/build/project/HelloQt6 ./HelloQt6
 ```
 
 As you see, example application is compiled for arm.
@@ -123,6 +142,11 @@ So now, you can build your application just add your files under project directo
 $ docker build -t qtcrossbuild .
 ```
 Docker caches the previous commands so when you run this command it will not start from scratch. Only latest command where you want to compile your applicaiton. Compilation process will start in the image then like you did before create a temp container and copy your binary. 
+
+if you do not want to cache, or start to build same image then:
+```bash
+$ docker build -t qtcrossbuild . --no-cache
+```
 
 But If you do not want to run these steps, I shared the tar files that I compiled for raspberry pi and related sysroot and toolchain. You can download it. In this case you need to have correct dependencies. It is up to you.
 
