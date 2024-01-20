@@ -1,4 +1,6 @@
 # Stage 1: Setting up the environment and copying necessary files from Raspberry Pi OS
+# If you want to choose 32 bit Rasbian then change this line accordingly. Otherwise compilation will fail
+# In this file it is 64 bit -> 2023-12-05-raspios-bookworm-arm64.img
 FROM --platform=linux/arm64 arm64v8/debian:bookworm as rasp
 
 # Avoid interactive prompts during package installation
