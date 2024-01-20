@@ -3,7 +3,6 @@ FROM ubuntu:22.04 as ubuntuenv
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-
 # Update and install some necessary packages
 RUN { \
     set -e && \
@@ -12,7 +11,7 @@ RUN { \
     git \
     build-essential \
     make \
-    # cmake \
+    cmake \
     rsync \
     sed \
     libclang-dev \
@@ -50,19 +49,13 @@ RUN { \
     libgl1-mesa-dev \
     libglu1-mesa-dev \
     freeglut3-dev \
-    ninja-build \
     libssl-dev \
     libgmp-dev \
     libmpfr-dev \
     libmpc-dev \
-    build-essential \
-    bison \
     flex \
     gawk \
     texinfo \
-    libgmp-dev \
-    libmpfr-dev \
-    libmpc-dev \
     libisl-dev \
     zlib1g-dev \
     libtool \
@@ -76,12 +69,10 @@ RUN { \
     liblzma-dev \
     libffi-dev \
     libsqlite3-dev \
-    libssl-dev \
     libbsd-dev \
     perl \
     patch \
     m4 \
-    libx11-dev \
     libncurses5-dev \
     gettext && \
     apt-get clean && \
@@ -114,11 +105,11 @@ RUN mkdir -p /opt/cross-pi-gcc 2>&1 | tee -a /build.log
 # Set the PATH environment variable
 ENV PATH=/opt/cross-pi-gcc/bin:$PATH
 
-# Create directories, download, extract, and compile everything in one RUN command
+# Compile toolchain - Reference https://docs.slackware.com/howtos:hardware:arm:gcc-10.x_aarch64_cross-compiler
 RUN { \
     set -e && \
     cd /build/crossTools/linux/ && \
-    KERNEL=kernel8 && \ 
+    KERNEL=kernel8 && \
     make ARCH=arm64 INSTALL_HDR_PATH=/opt/cross-pi-gcc/aarch64-linux-gnu headers_install && \
     cd ../ && \
     mkdir build-binutils && cd build-binutils && \
@@ -132,7 +123,7 @@ RUN { \
     ../gcc-12.2.0/configure --prefix=/opt/cross-pi-gcc --target=aarch64-linux-gnu --enable-languages=c,c++ --disable-multilib && \
     make -j4 all-gcc && \
     make install-gcc && \
-    echo "Gcc start" && \
+    echo "Compile glibc partly" && \
     cd ../ && \
     mkdir build-glibc && cd build-glibc && \
     ../glibc-2.36/configure --prefix=/opt/cross-pi-gcc/aarch64-linux-gnu --build=$MACHTYPE --host=aarch64-linux-gnu --target=aarch64-linux-gnu --with-headers=/opt/cross-pi-gcc/aarch64-linux-gnu/include --disable-multilib libc_cv_forced_unwind=yes && \
@@ -141,15 +132,15 @@ RUN { \
     install csu/crt1.o csu/crti.o csu/crtn.o /opt/cross-pi-gcc/aarch64-linux-gnu/lib && \
     aarch64-linux-gnu-gcc -nostdlib -nostartfiles -shared -x c /dev/null -o /opt/cross-pi-gcc/aarch64-linux-gnu/lib/libc.so && \
     touch /opt/cross-pi-gcc/aarch64-linux-gnu/include/gnu/stubs.h && \
-    echo "Glibc start" && \
+    echo "Build gcc partly" && \
     cd ../build-gcc/ && \
     make -j4 all-target-libgcc && \
     make install-target-libgcc && \
-    echo "build gcc start" && \
+    echo "build complete glibc" && \
     cd ../build-glibc/ && \
     make -j4 && \
     make install && \
-    echo "build glibgcc start" && \
+    echo "build complete gcc" && \
     cd ../build-gcc/ && \
     make -j4 && \
     make install && \
@@ -236,9 +227,9 @@ RUN tar -czvf cross-pi-gcc.tar.gz -C /opt/cross-pi-gcc .
 RUN tar -czvf qt-host-binaries.tar.gz -C /build/qt6/host .
 RUN tar -czvf qt-pi-binaries.tar.gz -C /build/qt6/pi .
 
-RUN mkdir /build/qtCrossExample
+RUN mkdir /build/project
 
-COPY project /build
+COPY project /build/project
 
 RUN { \
     cd project && \
