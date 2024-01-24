@@ -1,13 +1,18 @@
-# Cross compilation of Qt6.6.1 on Raspberry pi 4 with Docker
-In this content, you can find a way to make cross compilation Qt6.6.1 for Raspberry pi 4 hardware with Docker isolation.
-The main advantage of the docker is to isolate the build environment, that means you can build the Qt without need of Raspberry pi (real hardware) and regardless of host software as long as you are able to run docker (and with QEMU) and you do not need to handle dependencies anymore (I am not kidding). It will be more easy and less painfull.
+# Cross compilation of Qt6.6.1 on Raspberry pi 4 with Docker(Base and QML packages)
+In this content, you will find a way to cross-compile Qt 6.6.1 for Raspberry Pi 4 hardware using Docker isolation.
 
-I tested on ubuntu 22 and 20, regardless of version, Qt is sucessfully compiled and build hello world application for raspberry pi.
+The primary advantage of Docker is its ability to isolate the build environment. This means you can build Qt without needing a Raspberry Pi (real hardware) and regardless of your host OS type, as long as you can run Docker (along with QEMU). Additionally, you won’t need to handle dependencies anymore (and I’m not kidding). This approach is easier and less painful.
 
-The steps will show you how to make your host environment(in this case ubuntu) ready and run the docker comamnds to build Qt6.6.1. But as I told you, you do not need to use ubuntu, as long as you run the Docker engine and QEMU then you should have same result.
+Watch the video for more details:
+
+The video will be added soon.
+
+I tested this on Ubuntu 22 and 20. Regardless of the version, Qt is successfully compiled and builds a 'Hello World' application (with QML) for the Raspberry Pi.
+
+The steps will show you how to prepare your build environment (in this case, Ubuntu) and run the Docker commands to build Qt 6.6.1. But as I mentioned, you don't need to use Ubuntu; as long as you can run the Docker engine and QEMU, you should achieve the same result on any platform.
 
 If you want to check with virtual machine you can find tutorial [Here](https://github.com/PhysicsX/QTonRaspberryPi/tree/main/QtRaspberryPi6.6.1). Steps are quite same, for this case you need raspberry pi. It is classical way that you can find in this repository. Or If you want more infromation, check old videos about it.
-If you want to understand theory in detail, you can watch this [video](https://www.youtube.com/watch?v=oWpomXg9yj0?t=0s) which shows how to compile Qt 6.3.0 for raspberry pi(only toolchain is not compiled).
+If you want to understand theory for cross complation of Qt for rasppberry pi without Docker in detail, you can watch this [video](https://www.youtube.com/watch?v=oWpomXg9yj0?t=0s) which shows how to compile Qt 6.3.0 for raspberry pi(only toolchain is not compiled).
 
 # Install Docker
 NOTE: If you see error during installation, then search on the internet how to install docker and qemu for your os. During time this steps can be different as you expect.
@@ -30,6 +35,7 @@ Distributor ID:	Ubuntu
 Description:	Ubuntu 20.04.6 LTS
 Release:	20.04
 Codename:	focal
+
 ```
 Lets install dependencies.
 
@@ -91,21 +97,22 @@ sudo systemctl restart docker
 
 # Compile Qt 6.6.1 with Docker
 
-When I started this work, I was expecting that I can create single Dockerfile with different stages where I can switch between them even if they are emulated or not. But it did not work as I expected so I created two Dockerfiles seperately.
+When I experimented with this idea, I expected to create a single Dockerfile with different stages, allowing me to switch between them even if they involved different hardware architectures. However, it didn't work as expected, so I ended up creating two separate Dockerfiles.
 
-First we will create rasbian(debian) and emulate it then we need to copy related headers/libraries for later compilation. 
+First, we will create a Raspbian (Debian-based) environment and emulate it. Then, we need to copy the relevant headers and libraries for later compilation
+
 Run the command to create rasbian(debian) image.
 ```bash
 $ docker buildx build --platform linux/arm64 -f DockerFileRasp -t raspimage .
 ```
-When it will finish, you will find in the image there is a rasp.tar.gz file under /build directory. 
-Lets copy it in the same location where Dockerfile is exist. Just copy where you pull branch.
-To copy, it is needed to create temporary container with "create" command. You can delete this temporary container later if you like.
+When it finishes, you will find a file named 'rasp.tar.gz' in the '/build' directory within the image.
+Let's copy it to the same location where the Dockerfile exists. Just copy it to where you pulled the branch.
+To copy the file, you need to create a temporary container using the 'create' command. You can delete this temporary container later if you wish
 ```bash
 $ docker create --name temp-arm raspimage
 $ docker cp temp-arm:/build/rasp.tar.gz ./rasp.tar.gz
 ```
-This rasp.tar.gz file will be copied by the another image. Location is important. You do not need to extract it. Do not touch it.
+This rasp.tar.gz file will be copied by the another image that is why location of the tar file is important. You do not need to extract it. Do not touch it.
 
 Now it is time to create ubuntu 22 image and compile the Qt 6.6.1.
 In one of the previous commands you used DockerFileRasp, this file is written for raspberry pi, now we are going to use only Dockerfile which is default name that means we do not need to specify path or name explicitly. But if  you want you can change the name, you already now how you can pass the file name (with -f)
@@ -114,12 +121,15 @@ In one of the previous commands you used DockerFileRasp, this file is written fo
 $ docker build -t qtcrossbuild .
 ```
 
-As you see there is no buildx in this command because buildx uses qemu for ubuntu22 we do not need qemu for x86 ubuntu. After some time, ( I tested with 16GB RAM and it took around couple of hours) you see that image will be created without an error. After this, you can find HelloQt6 binary which is ready to run on Raspberry pi, in the /build/project directory in the image. So lets copy it. As we did before, you need to create temporary container to copy it.
+As you see there is no buildx in this command because buildx uses qemu and we do not need qemu for x86 ubuntu. After some time, ( I tested with 16GB RAM and it took around couple of hours) you see that image will be created without an error. After this, you can find HelloQt6 binary which is ready to run on Raspberry pi, in the /build/project directory in the image. So lets copy it. As we did before, you need to create temporary container to copy it.
 
 ```bash
 $ docker create --name tmpbuild qtcrossbuild
-$ docker cp tmpbuild:/build/project/HelloQt6 ./HelloQt6
+$ docker cp tmpbuild:/build/qt-pi-binaries.tar.gz  ./qt-pi-binaries.tar.gz
+$ scp qt-pi-binaries.tar.gz ulas@192.168.16.20:/home/pi/
 ```
+Extract this tar file under /user/local or wherever you want just do not want to add ld_library_path if it is not in the common path.
+
 
 As you see, example application is compiled for arm.
 ```bash
@@ -127,7 +137,19 @@ ulas@ulas:~/QTonRaspberryPi/QtRaspberryPiWithDocker6.6.1$ file HelloQt6
 HelloQt6: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, for GNU/Linux 3.7.0, with debug_info, not stripped
 ```
 
-# Compile Qt 6.6.1 with Docker
+To test the hello world, you need to copy and send the compiled qt binaries in the image.
+```bash
+$ docker create --name tmpbuild qtcrossbuild
+$ docker cp tmpbuild:/build/qt-pi-binaries.tar.gz ./qt-pi-binaries.tar.gz
+$ scp qt-pi-binaries.tar.gz ulas@192.168.16.20:/home/ulas/
+```
+Extract it under /usr/local or wherever you want and do not forget to add the path to LD_LIBRARY_PATH in case of path is not in the list.
+
+```bash
+ulas@raspberrypi:~ $ ./HelloQt6
+Hello world
+```
+# Debugging of compilation
 Nothing is free! Okay now we find a nice way to compile or build Qt applications but there is a tradeoff. Debugging is really hard. So If you want to change Dockerfile then first you sould build or test the steps on VM to be sure. If you know what you are doing then do not worry.
 
 Each RUN commands output are printed in Build.log file that you can find in the build directory of image.
@@ -354,5 +376,7 @@ Once everything is built, you must run 'cmake --install .'
 Qt will be installed into '/build/qt6/host'
 ```
 
+# Issues
+- EGLFS is not configured as same with normal cross compilation with vm. Related dependencies should be checked maybe there are missing ones. EGLFS is not configured correctly even if it is configured ON with cmake.
 
 
