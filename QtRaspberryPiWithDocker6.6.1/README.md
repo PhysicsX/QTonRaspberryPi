@@ -125,21 +125,17 @@ As you see there is no buildx in this command because buildx uses qemu and we do
 
 ```bash
 $ docker create --name tmpbuild qtcrossbuild
-$ docker cp tmpbuild:/build/qt-pi-binaries.tar.gz  ./qt-pi-binaries.tar.gz
-$ scp qt-pi-binaries.tar.gz ulas@192.168.16.20:/home/pi/
+$ docker cp tmpbuild:/build/project/HelloQt6 ./HelloQt6
 ```
-Extract this tar file under /user/local or wherever you want just do not want to add ld_library_path if it is not in the common path.
-
 
 As you see, example application is compiled for arm.
 ```bash
-ulas@ulas:~/QTonRaspberryPi/QtRaspberryPiWithDocker6.6.1$ file HelloQt6 
+ulas@ulas:~/QTonRaspberryPi$ file HelloQt6 
 HelloQt6: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, for GNU/Linux 3.7.0, with debug_info, not stripped
 ```
 
 To test the hello world, you need to copy and send the compiled qt binaries in the image.
 ```bash
-$ docker create --name tmpbuild qtcrossbuild
 $ docker cp tmpbuild:/build/qt-pi-binaries.tar.gz ./qt-pi-binaries.tar.gz
 $ scp qt-pi-binaries.tar.gz ulas@192.168.16.20:/home/ulas/
 ```
@@ -149,6 +145,7 @@ Extract it under /usr/local or wherever you want and do not forget to add the pa
 ulas@raspberrypi:~ $ ./HelloQt6
 Hello world
 ```
+
 # Debugging of compilation
 Nothing is free! Okay now we find a nice way to compile or build Qt applications but there is a tradeoff. Debugging is really hard. So If you want to change Dockerfile then first you sould build or test the steps on VM to be sure. If you know what you are doing then do not worry.
 
