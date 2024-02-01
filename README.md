@@ -1,11 +1,11 @@
-# Cross compilation of Qt6.6.1 on Raspberry pi 4 with Docker(Base and QML packages)
+# Cross compilation of Qt6.6.1 For Raspberry pi 4 with Docker(Base and QML packages)
 In this content, you will find a way to cross-compile Qt 6.6.1 for Raspberry Pi 4 hardware using Docker isolation.
 
 The primary advantage of Docker is its ability to isolate the build environment. This means you can build Qt without needing a Raspberry Pi (real hardware) and regardless of your host OS type, as long as you can run Docker (along with QEMU). Additionally, you won’t need to handle dependencies anymore (and I’m not kidding). This approach is easier and less painful.
 
 Watch the video for more details:
 
-The video will be added soon.
+[![Youtube video link](https://img.youtube.com/vi/5XvQ_fLuBX0/0.jpg)](//www.youtube.com/watch?v=5XvQ_fLuBX0?t=0s "ulas dikme")
 
 I tested this on Ubuntu 22 and 20. Regardless of the version, Qt is successfully compiled and builds a 'Hello World' application (with QML) for the Raspberry Pi.
 
