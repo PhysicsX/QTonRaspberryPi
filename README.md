@@ -163,8 +163,26 @@ So now, you can build your application just add your files under project directo
 ```bash
 $ docker build -t qtcrossbuild .
 ```
-Docker caches the previous commands so when you run this command it will not start from scratch. Only latest command where you want to compile your applicaiton. Compilation process will start in the image then like you did before create a temp container and copy your binary. 
 
+If you do not change the dockerfile above command only compile the code. But even if you do not touch dockerfile, if there is any udpate in ubuntu
+then docker will build the image from ubuntu part. That means it will take time. To compile the app you do not need to do that.
+There is another Dockerfile, Dockerfile.app. With this dockerfile you can only compile application. If you check the content of this file, you will see:
+
+```bash
+FROM qtcrossbuild:latest
+```
+Which means, if you build a image with this dockerfile.app, it will use qtcrossbuild image. You do not need to run qtcrossbuild again. 
+If you run :
+
+```bash
+$ docker build -f Dockerfile.app -t final-app
+```
+With final-app image you can create a container for only compile purpose.
+Docker caches the previous commands so when you run this command it will not start from scratch. Only latest command where you want to compile your applicaiton. Compilation process will start in the image then like you did before create a temp container and copy your binary. 
+```bash
+$ docker create --name tmpapp final-app
+$ docker cp tmpapp:/build/project/HelloQt6 ./HelloQt6
+```
 if you do not want to cache, or start to build same image then:
 ```bash
 $ docker build -t qtcrossbuild . --no-cache
