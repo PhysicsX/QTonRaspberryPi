@@ -1,0 +1,29 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build with Docker",
+            "type": "shell",
+            "command": "./buildApp.sh build_docker_image",
+            "group": "build"
+        },
+        {
+            "label": "Copy binary from tmp container",
+            "type": "shell",
+            "command": "./buildApp.sh create_binary_and_copy",
+            "group": "build"
+        },
+        {
+            "label": "Send binary to Rasp",
+            "type": "shell",
+            "command": "./buildApp.sh send_binary_to_rasp",
+            "group": "build"
+        },
+        {
+            "label": "Run gdbserver on Rasp",
+            "type": "shell",
+            "command": "./buildApp.sh run_gdb_server_on_rasp",
+            "group": "build"
+        }    
+    ]
+}
