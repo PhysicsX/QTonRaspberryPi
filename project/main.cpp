@@ -5,6 +5,8 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    qDebug()<<"Hello world";
-    return a.exec();
+    int var = 3;
+    var = var + 1;
+    qDebug()<<"Hello world" << var;
+    return 0;
 }
