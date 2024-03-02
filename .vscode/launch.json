@@ -6,28 +6,14 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "/home/ulas/Development/QTonRaspberryPi/HelloQt6",
-            //"program": "/home/ulas/HelloQt6",
             "args": [],
             "stopAtEntry": false,
             "cwd": "/home/ulas/Development/QTonRaspberryPi",
-            "environment": [
-                {
-                    "name": "LD_LIBRARY_PATH",
-                    "value": "/usr/local/qt6/lib/",
-                },
-                {
-                  "name": "DISPLAY",
-                  "value": "10.0.2.15:0",
-                }
-            ],
             "externalConsole": false,
             "MIMode": "gdb",
             "targetArchitecture": "arm64",
             "miDebuggerPath": "/usr/bin/gdb-multiarch",
             "miDebuggerServerAddress": "192.168.178.21:2000", // Replace with your Raspberry Pi's IP and the gdbserver port
-            "sourceFileMap": {
-                "/remote/source/path": "home/ulas/" //"/home/ulas/Development/QTonRaspberryPi/project/" //Development/QTonRaspberryPi/project"
-              },
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -40,41 +26,3 @@
         }
     ]
 }
-
-// {
-//     "version": "0.2.0",
-//     "configurations": [
-//       {
-//         "name": "C++ Launch",
-//         "type": "cppdbg",
-//         "request": "launch",
-//         "program": "/home/ulas/Development/QTonRaspberryPi/HelloQt6",
-//         "miDebuggerServerAddress": "192.168.178.21:2000",
-//         "args": [],
-//         "stopAtEntry": false,
-//         "cwd": "/home/ulas/Development/QTonRaspberryPi/",
-//         "environment": [
-//             {
-//                 "name": "LD_LIBRARY_PATH",
-//                 "value": "$LD_LIBRARY_PATH:/usr/local/qt6/lib/"
-//             },
-//             // {
-//             //     "name": "DISPLAY",
-//             //     "value": ":0.0"
-//             // }
-//         ],
-//         "externalConsole": true,
-//         "linux": {
-//           "MIMode": "gdb"
-//         },
-//         "osx": {
-//           "MIMode": "gdb"
-//         },
-//         "windows": {
-//           "MIMode": "gdb"
-//         },
-//         "targetArchitecture": "arm64",
-//         "miDebuggerPath": "/usr/bin/gdb-multiarch"
-//       }
-//     ]
-//   }
