@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
+import QtQuick.Controls 2.12
 
 Window {
     visible: true
@@ -32,6 +33,8 @@ Window {
 		    onClicked: {
 		        buttonText.text = qsTr("Clicked");
 		        buttonText.color = "black";
+				myObject.onButtonClicked()
+
 		    }
 		}
 	    }
