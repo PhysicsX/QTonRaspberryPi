@@ -5,14 +5,14 @@
             "name": "Remote Debug on Raspberry Pi",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/ulas/Development/QTonRaspberryPi/HelloQt6",
+            "program": "/home/ulas/Development/QTonRaspberryPi/HelloQt6", // Be sure that this is the path where binary is exist on host
             "args": [],
             "stopAtEntry": false,
-            "cwd": "/home/ulas/Development/QTonRaspberryPi",
+            "cwd": "/home/ulas/Development/QTonRaspberryPi", // should be host path not target
             "externalConsole": false,
             "MIMode": "gdb",
             "targetArchitecture": "arm64",
-            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "miDebuggerPath": "/usr/bin/gdb-multiarch", // gdb-multiacrh should be used not gdb
             "miDebuggerServerAddress": "192.168.178.21:2000", // Replace with your Raspberry Pi's IP and the gdbserver port
             "setupCommands": [
                 {
