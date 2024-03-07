@@ -1,4 +1,4 @@
-# Cross compilation of Qt6.6.1 For Raspberry pi 4 with Docker(Base and QML packages and Remote Debug with Vscode)
+# Cross compilation of Qt6.6.1 For Raspberry pi 4 with Docker(Base and QML packages) and Remote Debugging with Vscode
 In this content, you will find a way to cross-compile Qt 6.6.1 for Raspberry Pi 4 hardware using Docker isolation.
 
 The primary advantage of Docker is its ability to isolate the build environment. This means you can build Qt without needing a Raspberry Pi (real hardware) and regardless of your host OS type, as long as you can run Docker (along with QEMU). Additionally, you won’t need to handle dependencies anymore (and I’m not kidding). This approach is easier and less painful.
@@ -158,7 +158,7 @@ Each RUN commands output are printed in Build.log file that you can find in the 
 docker cp tmpbuild:/build.log ./build.log
 ```
 
-# Cross Development and Remtoe Debugging of Application with vscode
+# Cross Development and Remote Debugging of Application with vscode
 Now, you can build your application by simply adding your files to the project directory and running the command:
 
 ```bash
@@ -190,7 +190,7 @@ $ docker build -t qtcrossbuild . --no-cache
 
 However, if you prefer not to follow these steps, I have shared the tar files that I compiled for the Raspberry Pi, along with the related sysroot and toolchain. You can download them. In this case, you will need to have the correct dependencies. It's your choice.
 
-We need some dependencies on the host for remote debugging with vscode.
+I assume you have vscode already, we need some dependencies on the host for remote debugging with vscode.
 ```bash
 $ sudo apt-get install sshpass gdb-multiarch
 ```
