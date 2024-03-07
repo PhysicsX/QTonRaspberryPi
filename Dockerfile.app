@@ -1,11 +1,13 @@
 FROM qtcrossbuild:latest
 
-RUN rm -rf /home/ulas/Development/QTonRaspberryPi/project
+ARG projectDir=project
 
-RUN mkdir -p /home/ulas/Development/QTonRaspberryPi/project
+RUN rm -rf /home/ulas/Development/QTonRaspberryPi/$projectDir
 
-COPY project /home/ulas/Development/QTonRaspberryPi/project
+RUN mkdir -p /home/ulas/Development/QTonRaspberryPi/$projectDir
 
-RUN cd /home/ulas/Development/QTonRaspberryPi/project && \
+COPY $projectDir /home/ulas/Development/QTonRaspberryPi/$projectDir
+
+RUN cd /home/ulas/Development/QTonRaspberryPi/$projectDir && \
     /build/qt6/pi/bin/qt-cmake . -DCMAKE_BUILD_TYPE=Debug && \
     cmake --build .

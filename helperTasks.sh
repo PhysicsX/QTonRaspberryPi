@@ -3,7 +3,7 @@
 # install sshpass and gdb-multiarch
 # sudo apt-get install sshpass gdb-multiarch
 
-hostPath=/home/ulas/Development/QTonRaspberryPi
+hostPath=/home/ulas/Development/QTonRaspberryPi/project
 
 piUserName=ulas
 piIpAddress=192.168.178.21
@@ -22,7 +22,7 @@ case "$1" in
     echo "Create a tmp container to copy binary"
     docker create --name tmpapp final-app
     echo "Copy the binary from tmp container"
-    docker cp tmpapp:$hostPath/project/HelloQt6 ./HelloQt6
+    docker cp tmpapp:$hostPath/HelloQt6 ./HelloQt6
     ;;
   send_binary_to_rasp)
     echo "Send binary to rasp over scp"
