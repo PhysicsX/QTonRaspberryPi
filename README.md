@@ -1,4 +1,4 @@
-# Cross compilation of Qt6.6.1 For Raspberry pi 4 with Docker(Base and QML packages)
+# Cross compilation of Qt6.6.1 For Raspberry pi 4 with Docker(Base and QML packages and Remote Debug with Vscode)
 In this content, you will find a way to cross-compile Qt 6.6.1 for Raspberry Pi 4 hardware using Docker isolation.
 
 The primary advantage of Docker is its ability to isolate the build environment. This means you can build Qt without needing a Raspberry Pi (real hardware) and regardless of your host OS type, as long as you can run Docker (along with QEMU). Additionally, you won’t need to handle dependencies anymore (and I’m not kidding). This approach is easier and less painful.
@@ -158,37 +158,70 @@ Each RUN commands output are printed in Build.log file that you can find in the 
 docker cp tmpbuild:/build.log ./build.log
 ```
 
-# What is next ?
-So now, you can build your application just add your files under project directory and run the 
+# Cross Development and Remtoe Debugging of Application with vscode
+Now, you can build your application by simply adding your files to the project directory and running the command:
+
 ```bash
 $ docker build -t qtcrossbuild .
 ```
 
-If you do not change the dockerfile above command only compile the code. But even if you do not touch dockerfile, if there is any udpate in ubuntu
-then docker will build the image from ubuntu part. That means it will take time. To compile the app you do not need to do that.
-There is another Dockerfile, Dockerfile.app. With this dockerfile you can only compile application. If you check the content of this file, you will see:
+If you do not modify the Dockerfile, the above command will only compile the code. However, even if you don't alter the Dockerfile, if there is any update to Ubuntu, Docker will rebuild the image starting from the Ubuntu layer. This means it will take more time. To compile the Qt application you wish to develop, this is not necessary. There is another Dockerfile, Dockerfile.app, which allows you to compile only the application. If you examine the contents of this file, you will find:
 
 ```bash
 FROM qtcrossbuild:latest
 ```
-Which means, if you build a image with this dockerfile.app, it will use qtcrossbuild image. You do not need to run qtcrossbuild again. 
-If you run :
+This indicates that if you build an image with Dockerfile.app, it will utilize the qtcrossbuild image. There's no need to run qtcrossbuild again. 
+
+If you run:
 
 ```bash
 $ docker build -f Dockerfile.app -t final-app
 ```
-With final-app image you can create a container for only compile purpose.
-Docker caches the previous commands so when you run this command it will not start from scratch. Only latest command where you want to compile your applicaiton. Compilation process will start in the image then like you did before create a temp container and copy your binary. 
+With the final-app image, you can create a container solely for compilation purposes. Docker caches the previous commands, so when you run this command, it will not start from scratch but only execute the latest command where you wish to compile your application. The compilation process will begin in the image, then, as before, create a temporary container and copy your binary:
+
 ```bash
 $ docker create --name tmpapp final-app
 $ docker cp tmpapp:/build/project/HelloQt6 ./HelloQt6
 ```
-if you do not want to cache, or start to build same image then:
+If you do not want to use the cache, or if you want to start building the same image anew, use:
 ```bash
 $ docker build -t qtcrossbuild . --no-cache
 ```
 
-But If you do not want to run these steps, I shared the tar files that I compiled for raspberry pi and related sysroot and toolchain. You can download it. In this case you need to have correct dependencies. It is up to you.
+However, if you prefer not to follow these steps, I have shared the tar files that I compiled for the Raspberry Pi, along with the related sysroot and toolchain. You can download them. In this case, you will need to have the correct dependencies. It's your choice.
+
+We need some dependencies on the host for remote debugging with vscode.
+```bash
+$ sudo apt-get install sshpass gdb-multiarch
+```
+sshpass is needed to start gdbserver on the target remotely, and gdb-multiarch is the debugger itself for the cross-compiled binary.
+
+In VS Code, you will need the "C/C++ IntelliSense, debugging, and code browsing" extension.
+
+![Qml Remote Debugging with vscode](https://ulasdikme.com/yedek/installedExtensions.png)
+
+On the target, install gdbserver.
+```bash
+$ sudo apt-get install gdbserver
+```
+
+To debug the cross-compiled application, which was compiled in the container, we can use VS Code. The steps are simple:
+
+1. Compile the application using Dockerfile.app.
+2. Copy the binary of the application to the target.
+3. Run gdbserver on the target before debug process.
+4. Connect to the server from the host using VS Code, then start debugging.
+
+There are multiple ways to implement these steps. I have created a bash script called helperTasks.sh. This script contains commands to compile the application, send the binary to the target, and start gdbserver. The script acts as an intermediary between VS Code and the user. When you want to call one of these functionalities, VS Code may access them through tasks.json. As mentioned, there are many ways to do this; you can directly update tasks.json as well. Tasks.json is located under .vscode in the repository. If you start VS Code directly in the root of the repository, it will automatically detect related files, and everything will be ready to go.
+
+For debugging itself, VS Code needs a launch.json configuration file. In this file, you need to specify the path of the application and other related options. However, be careful; the paths for the binary should be on the host, so a copy of the binary must also exist on the host.
+
+One trick to note is the importance of the checkout path. When you compile the application in the container (with project and projectQml as ready-to-use examples), the binary contains information about the absolute path of the project files, which were copied from the host to the container. It has the path in the container, and when you copy it to the host, it doesn't recognize that the path has changed. Therefore, you need to copy the binary to the exact same location on the host, or you need to change the path in the container. That's why I created a variable for the path in both Dockerfile.app and helperTasks.sh. Please check and update them accordingly.
+
+![Qml Remote Debugging with vscode](https://ulasdikme.com/yedek/qt6DebugVscodeScreenShot.png)
+
+For more detalied information please watch the video about debugging. (if it is not available, it will be soon.)
+
 
 Enjoy.
 
