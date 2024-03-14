@@ -3,6 +3,7 @@
 # install sshpass and gdb-multiarch
 # sudo apt-get install sshpass gdb-multiarch
 
+# Update the hostPath according to yours
 hostPath=/home/ulas/Development/QTonRaspberryPi/project
 
 piUserName=ulas
