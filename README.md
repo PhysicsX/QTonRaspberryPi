@@ -1,11 +1,14 @@
-# Cross compilation of Qt6.6.1 For Raspberry pi 4 with Docker(Base and QML packages) and Remote Debugging with Vscode
-In this content, you will find a way to cross-compile Qt 6.6.1 for Raspberry Pi 4 hardware using Docker isolation.
+# Cross compilation of Qt6.6.1 For Raspberry pi 3/4/5 with Docker(Base and QML packages) and Remote Debugging with Vscode
+In this content, you will find a way to cross-compile Qt 6.6.1 for Raspberry Pi hardware using Docker isolation.
+This is a complete tutorial that you can learn how to debug the application with vscode.
 
 The primary advantage of Docker is its ability to isolate the build environment. This means you can build Qt without needing a Raspberry Pi (real hardware) and regardless of your host OS type, as long as you can run Docker (along with QEMU). Additionally, you won’t need to handle dependencies anymore (and I’m not kidding). This approach is easier and less painful.
 
 Watch the video for more details:
 
 [![Youtube video link](https://img.youtube.com/vi/5XvQ_fLuBX0/0.jpg)](//www.youtube.com/watch?v=5XvQ_fLuBX0?t=0s "ulas dikme")
+
+For remote debugging [click](https://www.youtube.com/watch?v=RWNWAMT5UkM?t=0s).
 
 I tested this on Ubuntu 22 and 20. Regardless of the version, Qt is successfully compiled and builds a 'Hello World' application (with QML) for the Raspberry Pi.
 
@@ -159,6 +162,11 @@ docker cp tmpbuild:/build.log ./build.log
 ```
 
 # Cross Development and Remote Debugging of Application with vscode
+
+Detailed information:
+
+[![Youtube video link](https://img.youtube.com/vi/RWNWAMT5UkM/0.jpg)](//www.youtube.com/watch?v=RWNWAMT5UkM?t=0s "ulas dikme")
+
 Now, you can build your application by simply adding your files to the project directory and running the command:
 
 ```bash
@@ -220,7 +228,7 @@ One trick to note is the importance of the checkout path. When you compile the a
 
 ![Qml Remote Debugging with vscode](https://ulasdikme.com/yedek/qt6DebugVscodeScreenShot.png)
 
-For more detalied information please watch the video about debugging. (if it is not available, it will be soon.)
+For more detalied information please watch the video about debugging.
 
 
 Enjoy.
