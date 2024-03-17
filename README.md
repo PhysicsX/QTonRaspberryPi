@@ -238,13 +238,13 @@ Enjoy.
 For reference the qt is compiled with below parameters in this example 
 
 ```bash
--- Configuration summary shown below. It has also been written to /build/qt6/host-build/qtbase-everywhere-src-6.6.1/config.summary
+-- Configuration summary shown below. It has also been written to /build/qt6/pi-build/qtbase-everywhere-src-6.6.1/config.summary
 -- Configure with --log-level=STATUS or higher to increase CMake's message verbosity. The log level does not persist across reconfigurations.
  
 -- Configure summary:
 
-Building for: linux-g++ (x86_64, CPU features: )
-Compiler: gcc 11.4.0
+Building for: devices/linux-rasp-pi4-aarch64 (arm64, CPU features: cx16 neon)
+Compiler: gcc 12.2.0
 Build options:
   Mode ................................... release
   Optimize release build for size ........ no
@@ -256,16 +256,16 @@ Build options:
   Relocatable ............................ yes
   Using precompiled headers .............. yes
   Using Link Time Optimization (LTCG) .... no
-  Using Intel CET ........................ yes
+  Using Intel CET ........................ no
   Target compiler supports:
-    x86 Intrinsics ....................... Basic VAES AVX512VBMI2
+    ARM Extensions ....................... NEON
   Sanitizers:
     Addresses ............................ no
     Threads .............................. no
     Memory ............................... no
     Fuzzer (instrumentation only) ........ no
     Undefined ............................ no
-  Build parts ............................ libs tools
+  Build parts ............................ libs
   Install examples sources ............... no
 Qt modules and options:
   Qt Concurrent .......................... yes
@@ -281,13 +281,13 @@ Qt modules and options:
 Support enabled for:
   Using pkg-config ....................... yes
   Using vcpkg ............................ no
-  udev ................................... no
+  udev ................................... yes
   OpenSSL ................................ yes
     Qt directly linked to OpenSSL ........ no
   OpenSSL 1.1 ............................ no
   OpenSSL 3.0 ............................ yes
   Using system zlib ...................... yes
-  Zstandard support ...................... no
+  Zstandard support ...................... yes
   Thread support ......................... yes
 Common build options:
   Linker can resolve circular dependencies  yes
@@ -297,7 +297,7 @@ Qt Core:
     Using system DoubleConversion ........ no
   CLONE_PIDFD support in forkfd .......... yes
   GLib ................................... yes
-  ICU .................................... no
+  ICU .................................... yes
   Using system libb2 ..................... no
   Built-in copy of the MIME database ..... yes
   Application permissions ................ yes
@@ -327,7 +327,7 @@ Qt Network:
     Built-in publicsuffix database ....... yes
     System publicsuffix database ......... yes
 Core tools:
-  Android deployment tool ................ yes
+  Android deployment tool ................ no
   macOS deployment tool .................. no
   Windows deployment tool ................ no
   qmake .................................. yes
@@ -342,7 +342,7 @@ Qt Gui:
     GIF .................................. yes
     ICO .................................. yes
     JPEG ................................. yes
-      Using system libjpeg ............... no
+      Using system libjpeg ............... yes
     PNG .................................. yes
       Using system libpng ................ yes
   Text formats:
@@ -355,23 +355,23 @@ Qt Gui:
   EGL .................................... yes
   OpenVG ................................. no
   OpenGL:
-    Desktop OpenGL ....................... yes
-    OpenGL ES 2.0 ........................ no
-    OpenGL ES 3.0 ........................ no
-    OpenGL ES 3.1 ........................ no
-    OpenGL ES 3.2 ........................ no
+    Desktop OpenGL ....................... no
+    OpenGL ES 2.0 ........................ yes
+    OpenGL ES 3.0 ........................ yes
+    OpenGL ES 3.1 ........................ yes
+    OpenGL ES 3.2 ........................ yes
   Vulkan ................................. no
   Session Management ..................... yes
 Features used by QPA backends:
   evdev .................................. yes
-  libinput ............................... no
-  HiRes wheel support in libinput ........ no
+  libinput ............................... yes
+  HiRes wheel support in libinput ........ yes
   INTEGRITY HID .......................... no
-  mtdev .................................. no
-  tslib .................................. no
+  mtdev .................................. yes
+  tslib .................................. yes
   xkbcommon .............................. yes
   X11 specific:
-    XLib ................................. yes
+    xlib ................................. yes
     XCB Xlib ............................. yes
     EGL on X11 ........................... yes
     xkbcommon-x11 ........................ yes
@@ -384,8 +384,8 @@ QPA backends:
     EGLFS i.Mx6 .......................... no
     EGLFS i.Mx6 Wayland .................. no
     EGLFS RCAR ........................... no
-    EGLFS EGLDevice ...................... no
-    EGLFS GBM ............................ no
+    EGLFS EGLDevice ...................... yes
+    EGLFS GBM ............................ yes
     EGLFS VSP2 ........................... no
     EGLFS Mali ........................... no
     EGLFS Raspberry Pi ................... no
@@ -401,7 +401,7 @@ QPA backends:
     GL integrations:
       GLX Plugin ......................... no
         XCB GLX .......................... no
-      EGL-X11 Plugin ..................... no
+      EGL-X11 Plugin ..................... yes
   Windows:
     Direct 2D ............................ no
     Direct 2D 1.1 ........................ no
@@ -414,28 +414,31 @@ Qt Testlib:
   Tester for item models ................. yes
   Batch tests ............................ no
 Qt PrintSupport:
-  CUPS ................................... no
+  CUPS ................................... yes
 Qt Sql Drivers:
   DB2 (IBM) .............................. no
-  InterBase .............................. no
+  InterBase .............................. yes
   MySql .................................. no
   OCI (Oracle) ........................... no
   ODBC ................................... no
-  PostgreSQL ............................. no
+  PostgreSQL ............................. yes
   SQLite ................................. yes
     Using system provided SQLite ......... no
   Mimer .................................. no
  
+
+Note: Due to CMAKE_STAGING_PREFIX usage and an unfixed CMake bug,
+      to ensure correct build time rpaths, directory-level install
+      rules like ninja src/gui/install will not work.
+      Check QTBUG-102592 for further details.
 
 -- 
 
 Qt is now configured for building. Just run 'cmake --build . --parallel'
 
 Once everything is built, you must run 'cmake --install .'
-Qt will be installed into '/build/qt6/host'
+Qt will be installed into '/usr/local/qt6'
 ```
 
-# Issues
-- EGLFS is not configured as same with normal cross compilation with vm. Related dependencies should be checked maybe there are missing ones. EGLFS is not configured correctly even if it is configured ON with cmake.
 
 
