@@ -8,7 +8,7 @@ Watch the video for more details:
 
 [![Youtube video link](https://img.youtube.com/vi/5XvQ_fLuBX0/0.jpg)](//www.youtube.com/watch?v=5XvQ_fLuBX0?t=0s "ulas dikme")
 
-For remote debugging [click](https://www.youtube.com/watch?v=RWNWAMT5UkM?t=0s).
+For remote debugging and follow up [click](https://www.youtube.com/watch?v=RWNWAMT5UkM?t=0s).
 
 I tested this on Ubuntu 22 and 20. Regardless of the version, Qt is successfully compiled and builds a 'Hello World' application (with QML) for the Raspberry Pi.
 
@@ -183,20 +183,20 @@ This indicates that if you build an image with Dockerfile.app, it will utilize t
 If you run:
 
 ```bash
-$ docker build -f Dockerfile.app -t final-app
+$ docker build -f Dockerfile.app -t final-app .
 ```
 With the final-app image, you can create a container solely for compilation purposes. Docker caches the previous commands, so when you run this command, it will not start from scratch but only execute the latest command where you wish to compile your application. The compilation process will begin in the image, then, as before, create a temporary container and copy your binary:
 
 ```bash
 $ docker create --name tmpapp final-app
-$ docker cp tmpapp:/build/project/HelloQt6 ./HelloQt6
+$ docker cp tmpapp:/projectPath/HelloQt6 ./HelloQt6
 ```
 If you do not want to use the cache, or if you want to start building the same image anew, use:
 ```bash
 $ docker build -t qtcrossbuild . --no-cache
 ```
 
-However, if you prefer not to follow these steps, I have shared the tar files that I compiled for the Raspberry Pi, along with the related sysroot and toolchain. You can download them. In this case, you will need to have the correct dependencies. It's your choice.
+~~However, if you prefer not to follow these steps, I have shared the tar files that I compiled for the Raspberry Pi, along with the related sysroot and toolchain. You can download them. In this case, you will need to have the correct dependencies. It's your choice.~~
 
 I assume you have vscode already, we need some dependencies on the host for remote debugging with vscode.
 ```bash
