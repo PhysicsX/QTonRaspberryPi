@@ -177,7 +177,7 @@ RUN { \
     cd /qt6/nx-build/qtdeclarative-everywhere-src-6.6.3 && \
     /qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
-    cmake --install . | tee -a /build.log
+    cmake --install .; \
 } 2>&1 | tee -a /build.log
 
 # Create tarball of the compiled binaries
