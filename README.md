@@ -106,7 +106,7 @@ First, we will create a Raspbian (Debian-based) environment and emulate it. Then
 
 Run the command to create rasbian(debian) image.
 ```bash
-$ docker buildx build --platform linux/arm64 -f DockerFileRasp -t raspimage .
+$ docker buildx build --platform linux/arm64 --load -f DockerFileRasp -t raspimage .
 ```
 When it finishes, you will find a file named 'rasp.tar.gz' in the '/build' directory within the image.
 Let's copy it to the same location where the Dockerfile exists. Just copy it to where you pulled the branch.
