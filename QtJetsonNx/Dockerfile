@@ -5,7 +5,11 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Update system and install necessary libraries
-RUN apt-get update && \
+RUN { \
+    echo "deb http://archive.ubuntu.com/ubuntu/ focal main universe restricted multiverse" > /etc/apt/sources.list && \
+    echo "deb http://archive.ubuntu.com/ubuntu/ focal-updates main universe restricted multiverse" >> /etc/apt/sources.list && \
+    echo "deb http://archive.ubuntu.com/ubuntu/ focal-security main universe restricted multiverse" >> /etc/apt/sources.list && \
+    apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y software-properties-common && \
     apt-get update && \
@@ -18,6 +22,8 @@ RUN apt-get update && \
     gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu \
     libxi-dev \
     libfontconfig1-dev \
+    libxkbcommon-x11-dev && \
+    '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev && \
     libudev-dev \
     libgl1-mesa-dev \
     gcc \
@@ -64,7 +70,8 @@ RUN apt-get update && \
     gettext \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/* && \
-    apt-get clean | tee -a /build.log
+    apt-get clean; \
+ } 2>&1 | tee -a /build.log
 
 # Reset the frontend variable to avoid affecting other software
 ENV DEBIAN_FRONTEND=dialog
@@ -101,23 +108,29 @@ RUN mkdir -p /qt6/src /qt6/host-build /qt6/nx-build \
  && tar xf qtdeclarative-everywhere-src-6.6.3.tar.xz -C /qt6/host-build | tee -a /build.log
 
 # Compile Qt for the host
-RUN cd /qt6/host-build/qtbase-everywhere-src-6.6.3 && \
+RUN { \
+    cd /qt6/host-build/qtbase-everywhere-src-6.6.3 && \
     echo "Compile qtbase for host" | tee -a /build.log && \
     cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/qt6/host && \
     ninja && \
-    ninja install | tee -a /build.log
+    ninja install; \
+} 2>&1 | tee -a /build.log
 
-RUN echo "Compile qtshadertools for host" | tee -a /build.log && \
+RUN { \
+    echo "Compile qtshadertools for host" | tee -a /build.log && \
     cd /qt6/host-build/qtshadertools-everywhere-src-6.6.3 && \
     /qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
-    cmake --install . | tee -a /build.log
+    cmake --install .; \
+}  2>&1 | tee -a /build.log
 
-RUN echo "Compile qtdeclarative for host" | tee -a /build.log && \
+RUN { \
+    echo "Compile qtdeclarative for host" | tee -a /build.log && \
     cd /qt6/host-build/qtdeclarative-everywhere-src-6.6.3 && \
     /qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
-    cmake --install . | tee -a /build.log
+    cmake --install .; \
+} 2>&1 | tee -a /build.log
 
 # Copy the toolchain file into the Docker image
 COPY toolchain.cmake /opt/toolchain.cmake
@@ -133,20 +146,9 @@ RUN cd /qt6/src && \
     tar xf qtshadertools-everywhere-src-6.6.3.tar.xz -C /qt6/nx-build && \
     tar xf qtdeclarative-everywhere-src-6.6.3.tar.xz -C /qt6/nx-build
 
-RUN echo "Compile qtbase for nx" | tee -a /build.log && \
+RUN { \
+    echo "Compile qtbase for nx" | tee -a /build.log && \
     cd /qt6/nx-build/qtbase-everywhere-src-6.6.3 && \
-    # Add all standard repositories
-    echo "deb http://archive.ubuntu.com/ubuntu/ focal main universe restricted multiverse" > /etc/apt/sources.list && \
-    echo "deb http://archive.ubuntu.com/ubuntu/ focal-updates main universe restricted multiverse" >> /etc/apt/sources.list && \
-    echo "deb http://archive.ubuntu.com/ubuntu/ focal-security main universe restricted multiverse" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y software-properties-common && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-    libxkbcommon-x11-dev && \
-    apt-get install -y '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev && \
-    pkg-config --libs --cflags xkbcommon-x11 && \
     cmake -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DINPUT_opengl=es2 \
@@ -159,19 +161,34 @@ RUN echo "Compile qtbase for nx" | tee -a /build.log && \
     -DFEATURE_xcb_xlib=ON \
     -DQT_FEATURE_xlib=ON && \
     ninja && \
-    ninja install | tee -a /build.log
+    ninja install; \
+}  2>&1 | tee -a /build.log
 
-RUN echo "Compile qtshadertools for nx" | tee -a /build.log && \
+RUN { \
+    echo "Compile qtshadertools for nx" | tee -a /build.log && \
     cd /qt6/nx-build/qtshadertools-everywhere-src-6.6.3 && \
     /qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
-    cmake --install . | tee -a /build.log
+    cmake --install .; \
+}  2>&1 | tee -a /build.log
 
-RUN echo "Compile qtdeclarative for nx" | tee -a /build.log && \
+RUN { \
+    echo "Compile qtdeclarative for nx" | tee -a /build.log && \
     cd /qt6/nx-build/qtdeclarative-everywhere-src-6.6.3 && \
     /qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install . | tee -a /build.log
+} 2>&1 | tee -a /build.log
 
 # Create tarball of the compiled binaries
 RUN tar -czvf qt-nx-binaries.tar.gz -C /qt6/nx . | tee -a /build.log
+
+# RUN mkdir /project
+
+# COPY projectQml /project
+
+# RUN { \
+#     cd project && \
+#     /qt6/nx/bin/qt-cmake && \
+#     cmake --build .; \
+# }
