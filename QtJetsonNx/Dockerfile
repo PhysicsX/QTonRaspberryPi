@@ -14,16 +14,13 @@ RUN { \
     apt-get install -y software-properties-common && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-    '^libxcb.*-dev' \
-    libx11-xcb-dev \
     '.*libxcb.*' \
     libxrender-dev \
     gcc-9 g++-9 \
     gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu \
     libxi-dev \
     libfontconfig1-dev \
-    libxkbcommon-x11-dev && \
-    '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev && \
+    '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxkbcommon-dev libxkbcommon-x11-dev \
     libudev-dev \
     libgl1-mesa-dev \
     gcc \
@@ -78,6 +75,10 @@ ENV DEBIAN_FRONTEND=dialog
 
 # Copy the sysroot tarball from the previous Docker image
 COPY nxSysroot.tar.gz /tmp/nxSysroot.tar.gz
+
+RUN { \
+    apt list | grep wget; \
+}
 
 RUN { \
     echo "Cmake build" && \
@@ -167,7 +168,7 @@ RUN { \
 RUN { \
     echo "Compile qtshadertools for nx" | tee -a /build.log && \
     cd /qt6/nx-build/qtshadertools-everywhere-src-6.6.3 && \
-    /qt6/host/bin/qt-configure-module . && \
+    /qt6/nx/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install .; \
 }  2>&1 | tee -a /build.log
@@ -175,7 +176,7 @@ RUN { \
 RUN { \
     echo "Compile qtdeclarative for nx" | tee -a /build.log && \
     cd /qt6/nx-build/qtdeclarative-everywhere-src-6.6.3 && \
-    /qt6/host/bin/qt-configure-module . && \
+    /qt6/nx/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install .; \
 } 2>&1 | tee -a /build.log
