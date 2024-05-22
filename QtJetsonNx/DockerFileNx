@@ -26,14 +26,14 @@ RUN echo "deb https://repo.download.nvidia.com/jetson/common r32.7 main" > /etc/
     wget -qO - https://repo.download.nvidia.com/jetson/jetson-ota-public.asc | apt-key add -
 
 # Install NVIDIA drivers and libraries
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y \
     cuda-toolkit-11-4 \
     libcudnn8 \
     libnvinfer8 \
     nvidia-l4t-core | tee -a /build.log
 
 # Install additional dependencies for cross-compilation
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y  \
     '^libxcb.*-dev' \
     libx11-xcb-dev \
     '.*libxcb.*' \
@@ -61,7 +61,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxcb-image0 \
     libxss-dev \
     libxtst-dev \
-    libxrandr-dev | tee -a /build.log
+    libxrandr-dev \
+    libglu1-mesa-dev libxkbcommon-dev libxkbcommon-x11-dev | tee -a /build.log
 
 # Create the sysroot tarball
 RUN tar cvfz /nxSysroot.tar.gz -C / lib usr/include usr/lib | tee -a /build.log
