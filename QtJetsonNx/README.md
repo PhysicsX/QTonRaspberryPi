@@ -239,13 +239,10 @@ Enjoy.
 For reference the qt is compiled with below parameters in this example 
 
 ```bash
--- Configuration summary shown below. It has also been written to /build/qt6/pi-build/qtbase-everywhere-src-6.6.3/config.summary
--- Configure with --log-level=STATUS or higher to increase CMake's message verbosity. The log level does not persist across reconfigurations.
- 
 -- Configure summary:
 
-Building for: devices/linux-rasp-pi4-aarch64 (arm64, CPU features: cx16 neon)
-Compiler: gcc 12.2.0
+Building for: linux-g++ (arm64, CPU features: cx16 neon)
+Compiler: gcc 9.4.0
 Build options:
   Mode ................................... release
   Optimize release build for size ........ no
@@ -271,7 +268,7 @@ Build options:
 Qt modules and options:
   Qt Concurrent .......................... yes
   Qt D-Bus ............................... yes
-  Qt D-Bus directly linked to libdbus .... yes
+  Qt D-Bus directly linked to libdbus .... no
   Qt Gui ................................. yes
   Qt Network ............................. yes
   Qt PrintSupport ........................ yes
@@ -283,12 +280,12 @@ Support enabled for:
   Using pkg-config ....................... yes
   Using vcpkg ............................ no
   udev ................................... yes
-  OpenSSL ................................ yes
+  OpenSSL ................................ no
     Qt directly linked to OpenSSL ........ no
   OpenSSL 1.1 ............................ no
-  OpenSSL 3.0 ............................ yes
+  OpenSSL 3.0 ............................ no
   Using system zlib ...................... yes
-  Zstandard support ...................... yes
+  Zstandard support ...................... no
   Thread support ......................... yes
 Common build options:
   Linker can resolve circular dependencies  yes
@@ -297,8 +294,8 @@ Qt Core:
   DoubleConversion ....................... yes
     Using system DoubleConversion ........ no
   CLONE_PIDFD support in forkfd .......... yes
-  GLib ................................... yes
-  ICU .................................... yes
+  GLib ................................... no
+  ICU .................................... no
   Using system libb2 ..................... no
   Built-in copy of the MIME database ..... yes
   Application permissions ................ yes
@@ -310,7 +307,7 @@ Qt Core:
     syslog ............................... no
     slog2 ................................ no
   PCRE2 .................................. yes
-    Using system PCRE2 ................... yes
+    Using system PCRE2 ................... no
 Qt Sql:
   SQL item models ........................ yes
 Qt Network:
@@ -318,12 +315,12 @@ Qt Network:
   IPv6 ifname ............................ yes
   libproxy ............................... no
   Linux AF_NETLINK ....................... yes
-  DTLS ................................... yes
-  OCSP-stapling .......................... yes
+  DTLS ................................... no
+  OCSP-stapling .......................... no
   SCTP ................................... no
   Use system proxies ..................... yes
   GSSAPI ................................. no
-  Brotli Decompression Support ........... yes
+  Brotli Decompression Support ........... no
   qIsEffectiveTLD() ...................... yes
     Built-in publicsuffix database ....... yes
     System publicsuffix database ......... yes
@@ -343,7 +340,7 @@ Qt Gui:
     GIF .................................. yes
     ICO .................................. yes
     JPEG ................................. yes
-      Using system libjpeg ............... yes
+      Using system libjpeg ............... no
     PNG .................................. yes
       Using system libpng ................ yes
   Text formats:
@@ -365,11 +362,11 @@ Qt Gui:
   Session Management ..................... yes
 Features used by QPA backends:
   evdev .................................. yes
-  libinput ............................... yes
-  HiRes wheel support in libinput ........ yes
+  libinput ............................... no
+  HiRes wheel support in libinput ........ no
   INTEGRITY HID .......................... no
-  mtdev .................................. yes
-  tslib .................................. yes
+  mtdev .................................. no
+  tslib .................................. no
   xkbcommon .............................. yes
   X11 specific:
     xlib ................................. yes
@@ -415,19 +412,20 @@ Qt Testlib:
   Tester for item models ................. yes
   Batch tests ............................ no
 Qt PrintSupport:
-  CUPS ................................... yes
+  CUPS ................................... no
 Qt Sql Drivers:
   DB2 (IBM) .............................. no
-  InterBase .............................. yes
+  InterBase .............................. no
   MySql .................................. no
   OCI (Oracle) ........................... no
   ODBC ................................... no
-  PostgreSQL ............................. yes
+  PostgreSQL ............................. no
   SQLite ................................. yes
     Using system provided SQLite ......... no
   Mimer .................................. no
  
 
+Note: Disabling X11 Accessibility Bridge: D-Bus or AT-SPI is missing.
 Note: Due to CMAKE_STAGING_PREFIX usage and an unfixed CMake bug,
       to ensure correct build time rpaths, directory-level install
       rules like ninja src/gui/install will not work.
@@ -439,7 +437,5 @@ Qt is now configured for building. Just run 'cmake --build . --parallel'
 
 Once everything is built, you must run 'cmake --install .'
 Qt will be installed into '/usr/local/qt6'
-```
-
 
 

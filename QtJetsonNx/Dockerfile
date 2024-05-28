@@ -184,12 +184,12 @@ RUN { \
 # Create tarball of the compiled binaries
 RUN tar -czvf qt-nx-binaries.tar.gz -C /qt6/nx . | tee -a /build.log
 
-# RUN mkdir /project
+RUN mkdir /project
 
-# COPY projectQml /project
+COPY projectQml /project
 
-# RUN { \
-#     cd project && \
-#     /qt6/nx/bin/qt-cmake && \
-#     cmake --build .; \
-# }
+RUN { \
+    cd project && \
+    /qt6/nx/bin/qt-cmake && \
+    cmake --build .; \
+}
