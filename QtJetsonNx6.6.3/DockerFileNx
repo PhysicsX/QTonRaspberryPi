@@ -1,0 +1,68 @@
+# Use an ARM64 Ubuntu base image
+FROM arm64v8/ubuntu:20.04
+
+# Create and initialize the log file
+RUN touch /build.log
+
+# Set up the NVIDIA repository and keyring
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    software-properties-common | tee -a /build.log
+
+# Set up the NVIDIA CUDA repository
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin && \
+    mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600 | tee -a /build.log
+
+# Add the new NVIDIA public key for CUDA repository
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub | tee -a /build.log
+
+# Add the CUDA repository to the sources list
+RUN add-apt-repository "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /" | tee -a /build.log
+
+# Add NVIDIA repositories and keyring
+RUN echo "deb https://repo.download.nvidia.com/jetson/common r32.7 main" > /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
+    echo "deb https://repo.download.nvidia.com/jetson/t194 r32.7 main" >> /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
+    wget -qO - https://repo.download.nvidia.com/jetson/jetson-ota-public.asc | apt-key add -
+
+# Install NVIDIA drivers and libraries
+RUN apt-get update && apt-get install -y \
+    cuda-toolkit-11-4 \
+    libcudnn8 \
+    libnvinfer8 \
+    nvidia-l4t-core | tee -a /build.log
+
+# Install additional dependencies for cross-compilation
+RUN apt-get update && apt-get install -y  \
+    '^libxcb.*-dev' \
+    libx11-xcb-dev \
+    '.*libxcb.*' \
+    libxrender-dev \
+    libxi-dev \
+    libfontconfig1-dev \
+    libudev-dev \
+    libgles2-mesa-dev \
+    libgl1-mesa-dev \
+    gcc \
+    git \
+    bison \
+    python3 \
+    gperf \
+    pkg-config \
+    make \
+    libclang-dev \
+    build-essential \
+    libegl1-mesa-dev \
+    libgbm-dev \
+    mesa-common-dev \
+    libxcomposite1 \
+    libxcb-keysyms1 \
+    libxcb-keysyms1-dev \
+    libxcb-image0 \
+    libxss-dev \
+    libxtst-dev \
+    libxrandr-dev \
+    libglu1-mesa-dev libxkbcommon-dev libxkbcommon-x11-dev | tee -a /build.log
+
+# Create the sysroot tarball
+RUN tar cvfz /nxSysroot.tar.gz -C / lib usr/include usr/lib | tee -a /build.log
