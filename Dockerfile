@@ -87,6 +87,10 @@ RUN mkdir crossTools && cd crossTools 2>&1 | tee -a /build.log
 
 
 # Download the necessary tar files
+# check version on raspberry pi - according to version build process can vary
+# gcc --version gcc version
+# gcc --version binutils version
+# ldd --version glibc version
 RUN cd crossTools && \
     wget https://mirror.lyrahosting.com/gnu/binutils/binutils-2.40.tar.gz && \
     wget https://ftp.nluug.nl/pub/gnu/glibc/glibc-2.36.tar.gz && \
