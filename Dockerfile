@@ -89,7 +89,7 @@ RUN mkdir crossTools && cd crossTools 2>&1 | tee -a /build.log
 # Download the necessary tar files
 # check version on raspberry pi - according to version build process can vary
 # gcc --version gcc version
-# gcc --version binutils version
+# ld --version binutils version
 # ldd --version glibc version
 RUN cd crossTools && \
     wget https://mirror.lyrahosting.com/gnu/binutils/binutils-2.40.tar.gz && \
@@ -130,7 +130,14 @@ RUN { \
     echo "Compile glibc partly" && \
     cd ../ && \
     mkdir build-glibc && cd build-glibc && \
-    ../glibc-2.36/configure --prefix=/opt/cross-pi-gcc/aarch64-linux-gnu --build=$MACHTYPE --host=aarch64-linux-gnu --target=aarch64-linux-gnu --with-headers=/opt/cross-pi-gcc/aarch64-linux-gnu/include --disable-multilib libc_cv_forced_unwind=yes && \
+    ../glibc-2.36/configure \
+        --prefix=/opt/cross-pi-gcc/aarch64-linux-gnu \
+        --build=$MACHTYPE \
+        --host=aarch64-linux-gnu \
+        --target=aarch64-linux-gnu \
+        --with-headers=/opt/cross-pi-gcc/aarch64-linux-gnu/include \
+        --disable-multilib \
+        libc_cv_forced_unwind=yes && \
     make install-bootstrap-headers=yes install-headers && \
     make -j4 csu/subdir_lib && \
     install csu/crt1.o csu/crti.o csu/crtn.o /opt/cross-pi-gcc/aarch64-linux-gnu/lib && \
@@ -192,7 +199,10 @@ RUN { \
     tar xf ../src/qtdeclarative-everywhere-src-6.6.3.tar.xz && \
     echo "Compile qtbase for host" && \
     cd qtbase-everywhere-src-6.6.3 && \
-    cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/build/qt6/host && \
+    cmake -GNinja -DCMAKE_BUILD_TYPE=Release \
+        -DQT_BUILD_EXAMPLES=OFF \
+        -DQT_BUILD_TESTS=OFF \
+        -DCMAKE_INSTALL_PREFIX=/build/qt6/host && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     echo "Compile shader for host" && \
@@ -211,7 +221,14 @@ RUN { \
     tar xf ../src/qtdeclarative-everywhere-src-6.6.3.tar.xz && \
     echo "Compile qtbase for rasp" && \
     cd qtbase-everywhere-src-6.6.3 && \
-    cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DINPUT_opengl=es2 -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF -DQT_HOST_PATH=/build/qt6/host -DCMAKE_STAGING_PREFIX=/build/qt6/pi -DCMAKE_INSTALL_PREFIX=/usr/local/qt6 -DCMAKE_TOOLCHAIN_FILE=/build/toolchain.cmake -DQT_FEATURE_xcb=ON -DFEATURE_xcb_xlib=ON -DQT_FEATURE_xlib=ON && \
+    cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DINPUT_opengl=es2 \
+        -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF \
+        -DQT_HOST_PATH=/build/qt6/host \
+        -DCMAKE_STAGING_PREFIX=/build/qt6/pi \
+        -DCMAKE_INSTALL_PREFIX=/usr/local/qt6 \
+        -DCMAKE_TOOLCHAIN_FILE=/build/toolchain.cmake \
+        -DQT_FEATURE_xcb=ON -DFEATURE_xcb_xlib=ON \
+        -DQT_FEATURE_xlib=ON && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     echo "Compile shader for rasp" && \
