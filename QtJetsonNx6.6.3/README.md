@@ -143,8 +143,8 @@ To test the hello world, you need to copy and send the compiled qt binaries in t
 $ docker cp tmpbuild:/qt-nx-binaries.tar.gz ./qt-nx-binaries.tar.gz
 $ scp qt-nx-binaries.tar.gz ulas@192.168.16.20:/home/ulas/
 $ ssh ulas@192.168.16.25
-$ ulas@jetson:~ mkdir /usr/local/qt6
-$ ulas@jetson:~ tar -xvf qt-nx-binaries.tar.gz -C /usr/local/qt6
+$ ulas@jetson:~ sudo mkdir /usr/local/qt6
+$ ulas@jetson:~ sudo tar -xvf qt-nx-binaries.tar.gz -C /usr/local/qt6
 $ ulas@jetson:~ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/qt6/lib/
 ```
 Extract it under /usr/local or wherever you want and do not forget to add the path to LD_LIBRARY_PATH in case of path is not in the list.
