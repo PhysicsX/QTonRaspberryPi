@@ -20,47 +20,39 @@ If you want to understand theory for cross complation of Qt for rasppberry pi wi
 # Install Docker
 NOTE: If you see error during installation, then search on the internet how to install docker and qemu for your os. During time this steps can be different as you expect.
 
-I have ubuntu 22
+I have ubuntu 24 (according to ubuntu version steps can vary)
 ```bash
 ulas@ulas:~$ lsb_release -a
 No LSB modules are available.
 Distributor ID:	Ubuntu
-Description:	Ubuntu 22.04.3 LTS
-Release:	22.04
-Codename:	jammy
-
+Description:	Ubuntu 24.04 LTS
+Release:	24.04
+Codename:	noble
 ```
-But I tested also with ubuntu 20
-```bash
-ulas@ulas:~$ lsb_release -a
-No LSB modules are available.
-Distributor ID:	Ubuntu
-Description:	Ubuntu 20.04.6 LTS
-Release:	20.04
-Codename:	focal
 
-```
 Lets install dependencies.
 
 ```bash
-$ sudo apt update
-$ sudo apt install apt-transport-https ca-certificates curl software-properties-common
-
-$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-
+# Add Docker's official GPG key:
+$ sudo apt-get update
+$ sudo apt-get install ca-certificates curl
+$ sudo install -m 0755 -d /etc/apt/keyrings
+$ sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+$ sudo chmod a+r /etc/apt/keyrings/docker.asc
 ```
+
 Set up stable repository for docker
 ```bash
-$ echo \
-  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-$ sudo apt update  
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+$ sudo apt-get update
 ```
 Install related packages for Docker
 
 ```bash
-sudo apt install docker-ce docker-ce-cli containerd.io
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 Verify installation with hello-world image
 
@@ -78,24 +70,43 @@ $ sudo systemctl enable docker
 We also need to install QEMU, with it, it is possible to emulate/run raspbian os like it is on real raspberry pi 4 hardware
 
 ```bash
-$ sudo apt-get install qemu qemu-user-static qemu-user binfmt-support
+$ sudo apt install qemu-system-x86 qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
+```
+
+Enable and Start Libvirt:
+```bash
+$ sudo systemctl enable libvirtd
+$ sudo systemctl start libvirtd
+```
+
+Add Your User to the Libvirt and KVM Groups:
+
+```bash
+$ sudo usermod -aG libvirt $(whoami)
+$ sudo usermod -aG kvm $(whoami)
+```
+
+Verify Installation:
+```bash
+$ virsh list --all
+```
+
+You should see an empty list.
+
+Set up QEMU for multi-architecture support
+```bash
 $ docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 ```
-Update the config.json file to enable experimental feature.
 
+Create and use a new Buildx builder instance
 ```bash
-nano ~/.docker/config.json
+$ docker buildx create --use --name mybuilder
+$ docker buildx inspect mybuilder --bootstrap
 ```
 
+Verify Buildx installation
 ```bash
-{
-  "experimental": "enabled"
-}
-```
-
-It is a good idea to restart Docker
-```bash
-sudo systemctl restart docker
+$ docker buildx ls
 ```
 
 # Compile Qt 6.6.3 with Docker
