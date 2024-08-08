@@ -1,6 +1,7 @@
-# Cross compilation of Qt6.6.3 For Raspberry pi 3/4/5 with Docker(Base and QML packages) and Remote Debugging with Vscode
+# Cross Compilation of Qt 6.6.3 For Raspberry Pi 3/4/5 with Docker (Base and QML packages) and Remote Debugging with VS Code
+
 In this content, you will find a way to cross-compile Qt 6.6.3 for Raspberry Pi hardware using Docker isolation.
-This is a complete tutorial that you can learn how to debug the application with vscode.
+This is a complete tutorial that you can learn how to debug the application with Visual Studio Code.
 
 The primary advantage of Docker is its ability to isolate the build environment. This means you can build Qt without needing a Raspberry Pi (real hardware) and regardless of your host OS type, as long as you can run Docker (along with QEMU). Additionally, you won’t need to handle dependencies anymore (and I’m not kidding). This approach is easier and less painful.
 
@@ -20,7 +21,8 @@ If you want to understand theory for cross complation of Qt for rasppberry pi wi
 # Install Docker
 NOTE: If you see error during installation, then search on the internet how to install docker and qemu for your os. During time this steps can be different as you expect.
 
-I have ubuntu 22
+I have Ubuntu 22.04:
+
 ```bash
 ulas@ulas:~/QTonRaspberryPi/$ lsb_release -a
 No LSB modules are available.
@@ -30,7 +32,8 @@ Release:	22.04
 Codename:	jammy
 
 ```
-But I tested also with ubuntu 20
+But I tested it with Ubuntu 20.04 as well:
+
 ```bash
 ulas@ulas:~/QTonRaspberryPi/$ lsb_release -a
 No LSB modules are available.
@@ -40,7 +43,7 @@ Release:	20.04
 Codename:	focal
 
 ```
-Lets install dependencies.
+Lets install the dependencies.
 
 ```bash
 $ sudo apt update
@@ -49,7 +52,7 @@ $ sudo apt install apt-transport-https ca-certificates curl software-properties-
 $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
 ```
-Set up stable repository for docker
+Set up stable repository for Docker
 ```bash
 $ echo \
   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
@@ -62,7 +65,7 @@ Install related packages for Docker
 ```bash
 sudo apt install docker-ce docker-ce-cli containerd.io
 ```
-Verify installation with hello-world image
+Verify installation by pulling and running the `hello-world` image
 
 ```bash
 $ sudo docker run hello-world
@@ -75,7 +78,7 @@ $ su - ${USER}
 $ sudo systemctl enable docker
 ```
 
-We also need to install QEMU, with it, it is possible to emulate/run raspbian os like it is on real raspberry pi 4 hardware
+We also need to install QEMU, with it, it is possible to emulate and run Raspberry Pi OS like it is on a real Raspberry Pi 4 Hardware
 
 ```bash
 $ sudo apt-get install qemu qemu-user-static qemu-user binfmt-support
@@ -93,7 +96,8 @@ nano ~/.docker/config.json
 }
 ```
 
-It is a good idea to restart Docker
+It is a good idea to restart Docker:
+
 ```bash
 sudo systemctl restart docker
 ```
