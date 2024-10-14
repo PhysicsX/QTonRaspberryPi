@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 as ubuntuenv
+FROM ubuntu:24.04 as ubuntuenv
 
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -190,15 +190,15 @@ RUN { \
     python3 sysroot-relativelinks.py /build/sysroot && \
     mkdir -p qt6 qt6/host qt6/pi qt6/host-build qt6/pi-build qt6/src && \
     cd qt6/src && \
-    wget https://download.qt.io/official_releases/qt/6.6/6.6.3/submodules/qtbase-everywhere-src-6.6.3.tar.xz && \
-    wget https://download.qt.io/official_releases/qt/6.6/6.6.3/submodules/qtshadertools-everywhere-src-6.6.3.tar.xz && \
-    wget https://download.qt.io/official_releases/qt/6.6/6.6.3/submodules/qtdeclarative-everywhere-src-6.6.3.tar.xz && \
+    wget https://download.qt.io/official_releases/qt/6.8/6.8.0/submodules/qtbase-everywhere-src-6.8.0.tar.xz && \
+    wget https://download.qt.io/official_releases/qt/6.8/6.8.0/submodules/qtshadertools-everywhere-src-6.8.0.tar.xz && \
+    wget https://download.qt.io/official_releases/qt/6.8/6.8.0/submodules/qtdeclarative-everywhere-src-6.8.0.tar.xz && \
     cd ../host-build && \
-    tar xf ../src/qtbase-everywhere-src-6.6.3.tar.xz && \
-    tar xf ../src/qtshadertools-everywhere-src-6.6.3.tar.xz && \
-    tar xf ../src/qtdeclarative-everywhere-src-6.6.3.tar.xz && \
+    tar xf ../src/qtbase-everywhere-src-6.8.0.tar.xz && \
+    tar xf ../src/qtshadertools-everywhere-src-6.8.0.tar.xz && \
+    tar xf ../src/qtdeclarative-everywhere-src-6.8.0.tar.xz && \
     echo "Compile qtbase for host" && \
-    cd qtbase-everywhere-src-6.6.3 && \
+    cd qtbase-everywhere-src-6.8.0 && \
     cmake -GNinja -DCMAKE_BUILD_TYPE=Release \
         -DQT_BUILD_EXAMPLES=OFF \
         -DQT_BUILD_TESTS=OFF \
@@ -206,21 +206,21 @@ RUN { \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     echo "Compile shader for host" && \
-    cd ../qtshadertools-everywhere-src-6.6.3 && \
+    cd ../qtshadertools-everywhere-src-6.8.0 && \
     /build/qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     echo "Compile declerative for host" && \
-    cd ../qtdeclarative-everywhere-src-6.6.3 && \
+    cd ../qtdeclarative-everywhere-src-6.8.0 && \
     /build/qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     cd ../../pi-build && \
-    tar xf ../src/qtbase-everywhere-src-6.6.3.tar.xz && \
-    tar xf ../src/qtshadertools-everywhere-src-6.6.3.tar.xz && \
-    tar xf ../src/qtdeclarative-everywhere-src-6.6.3.tar.xz && \
+    tar xf ../src/qtbase-everywhere-src-6.8.0.tar.xz && \
+    tar xf ../src/qtshadertools-everywhere-src-6.8.0.tar.xz && \
+    tar xf ../src/qtdeclarative-everywhere-src-6.8.0.tar.xz && \
     echo "Compile qtbase for rasp" && \
-    cd qtbase-everywhere-src-6.6.3 && \
+    cd qtbase-everywhere-src-6.8.0 && \
     cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DINPUT_opengl=es2 \
         -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF \
         -DQT_HOST_PATH=/build/qt6/host \
@@ -232,12 +232,12 @@ RUN { \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     echo "Compile shader for rasp" && \
-    cd ../qtshadertools-everywhere-src-6.6.3 && \
+    cd ../qtshadertools-everywhere-src-6.8.0 && \
     /build/qt6/pi/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     echo "Compile declerative for rasp" && \
-    cd ../qtdeclarative-everywhere-src-6.6.3 && \
+    cd ../qtdeclarative-everywhere-src-6.8.0 && \
     /build/qt6/pi/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
