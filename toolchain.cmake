@@ -9,13 +9,13 @@ set(CMAKE_SYSTEM_PROCESSOR aarch64)
 set(CMAKE_SYSROOT /build/sysroot)
 set(TARGET_ARCHITECTURE aarch64-linux-gnu)
 
-# Set the C and C++ compilers (assuming cross-compilers are system-installed)
-set(CMAKE_C_COMPILER aarch64-linux-gnu-gcc)
-set(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)
+# Set the C and C++ compilers
+set(CMAKE_C_COMPILER ${CMAKE_SYSROOT}/usr/bin/${TARGET_ARCHITECTURE}-gcc)
+set(CMAKE_CXX_COMPILER ${CMAKE_SYSROOT}/usr/bin/${TARGET_ARCHITECTURE}-g++)
 
 # Configure pkg-config environment variables
-set(ENV{PKG_CONFIG_PATH} "${CMAKE_SYSROOT}/lib/${TARGET_ARCHITECTURE}/pkgconfig:${CMAKE_SYSROOT}/usr/share/pkgconfig")
-set(ENV{PKG_CONFIG_LIBDIR} "${CMAKE_SYSROOT}/lib/${TARGET_ARCHITECTURE}/pkgconfig:${CMAKE_SYSROOT}/usr/lib/pkgconfig:${CMAKE_SYSROOT}/usr/share/pkgconfig")
+set(ENV{PKG_CONFIG_PATH} "${CMAKE_SYSROOT}/usr/lib/${TARGET_ARCHITECTURE}/pkgconfig:${CMAKE_SYSROOT}/usr/share/pkgconfig")
+set(ENV{PKG_CONFIG_LIBDIR} "${CMAKE_SYSROOT}/usr/lib/${TARGET_ARCHITECTURE}/pkgconfig:${CMAKE_SYSROOT}/usr/lib/pkgconfig:${CMAKE_SYSROOT}/usr/share/pkgconfig")
 set(ENV{PKG_CONFIG_SYSROOT_DIR} "${CMAKE_SYSROOT}")
 
 # Compiler and linker flags for Qt and general builds
@@ -31,7 +31,7 @@ set(CMAKE_SHARED_LINKER_FLAGS_INIT "${QT_LINKER_FLAGS}")
 set(CMAKE_MODULE_LINKER_FLAGS_INIT "${QT_LINKER_FLAGS}")
 
 # Configure CMake find root path modes
-set(CMAKE_FIND_ROOT_PATH /build/sysroot)
+set(CMAKE_FIND_ROOT_PATH ${CMAKE_SYSROOT})
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
