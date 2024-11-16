@@ -14,14 +14,14 @@ set(CMAKE_C_COMPILER aarch64-linux-gnu-gcc)
 set(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)
 
 # Configure pkg-config environment variables
-set(ENV{PKG_CONFIG_PATH} "${CMAKE_SYSROOT}/usr/lib/${TARGET_ARCHITECTURE}/pkgconfig:${CMAKE_SYSROOT}/usr/share/pkgconfig")
-set(ENV{PKG_CONFIG_LIBDIR} "${CMAKE_SYSROOT}/usr/lib/${TARGET_ARCHITECTURE}/pkgconfig:${CMAKE_SYSROOT}/usr/lib/pkgconfig:${CMAKE_SYSROOT}/usr/share/pkgconfig")
+set(ENV{PKG_CONFIG_PATH} "${CMAKE_SYSROOT}/lib/${TARGET_ARCHITECTURE}/pkgconfig:${CMAKE_SYSROOT}/usr/share/pkgconfig")
+set(ENV{PKG_CONFIG_LIBDIR} "${CMAKE_SYSROOT}/lib/${TARGET_ARCHITECTURE}/pkgconfig:${CMAKE_SYSROOT}/usr/lib/pkgconfig:${CMAKE_SYSROOT}/usr/share/pkgconfig")
 set(ENV{PKG_CONFIG_SYSROOT_DIR} "${CMAKE_SYSROOT}")
 
 # Compiler and linker flags for Qt and general builds
 set(QT_COMPILER_FLAGS "-march=armv8-a -mtune=cortex-a72 -mfloat-abi=hard")
 set(QT_COMPILER_FLAGS_RELEASE "-O2 -pipe")
-set(QT_LINKER_FLAGS "-Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -Wl,-rpath-link=${CMAKE_SYSROOT}/usr/lib/${TARGET_ARCHITECTURE}")
+set(QT_LINKER_FLAGS "-Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -Wl,-rpath-link=${CMAKE_SYSROOT}/lib/${TARGET_ARCHITECTURE}")
 
 # Initialize CMake configuration variables with the specified flags
 set(CMAKE_C_FLAGS_INIT "${QT_COMPILER_FLAGS} -isystem=${CMAKE_SYSROOT}/usr/include")
@@ -39,7 +39,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
 # OpenGL and XCB libraries
 set(GL_INC_DIR ${CMAKE_SYSROOT}/usr/include)
-set(GL_LIB_DIR ${CMAKE_SYSROOT}/usr/lib/${TARGET_ARCHITECTURE})
+set(GL_LIB_DIR ${CMAKE_SYSROOT}/lib/${TARGET_ARCHITECTURE})
 set(EGL_INCLUDE_DIR ${GL_INC_DIR})
 set(EGL_LIBRARY ${GL_LIB_DIR}/libEGL.so)
 set(OPENGL_INCLUDE_DIR ${GL_INC_DIR})
