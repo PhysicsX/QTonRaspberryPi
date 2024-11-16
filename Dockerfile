@@ -83,8 +83,6 @@ RUN { \
 # Set the working directory to /build
 WORKDIR /build
 
-} 2>&1 | tee -a /build.log
-
 COPY toolchain.cmake /build/
 
 # Build Cmake from source
