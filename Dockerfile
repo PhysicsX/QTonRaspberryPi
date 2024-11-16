@@ -3,7 +3,7 @@ FROM ubuntu:24.04
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update and install some necessary packages
+# Update and install necessary packages
 RUN { \
     set -e && \
     apt-get update && apt-get install -y \
@@ -74,7 +74,8 @@ RUN { \
     patch \
     m4 \
     libncurses5-dev \
-    gettext && \
+    gettext \
+    gdbserver && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*; \
 } 2>&1 | tee -a /build.log
@@ -82,96 +83,11 @@ RUN { \
 # Set the working directory to /build
 WORKDIR /build
 
-# Create a directory for the tools and change into it
-RUN mkdir crossTools && cd crossTools 2>&1 | tee -a /build.log
-
-
-# Download the necessary tar files
-# check version on raspberry pi - according to version build process can vary
-# gcc --version gcc version
-# ld --version binutils version
-# ldd --version glibc version
-RUN cd crossTools && \
-    wget https://mirror.lyrahosting.com/gnu/binutils/binutils-2.40.tar.gz && \
-    wget https://ftp.nluug.nl/pub/gnu/glibc/glibc-2.36.tar.gz && \
-    wget https://ftp.nluug.nl/pub/gnu/gcc/gcc-12.2.0/gcc-12.2.0.tar.gz && \
-    git clone --depth=1 https://github.com/raspberrypi/linux 2>&1 | tee -a /build.log
-
-
-# Extract the tar files
-RUN cd crossTools && \
-    tar xf binutils-2.40.tar.gz && \
-    tar xf glibc-2.36.tar.gz && \
-    tar xf gcc-12.2.0.tar.gz 2>&1 | tee -a /build.log
-
-RUN mkdir -p /opt/cross-pi-gcc 2>&1 | tee -a /build.log
-
-# Set the PATH environment variable
-ENV PATH=/opt/cross-pi-gcc/bin:$PATH
-
-# Compile toolchain - Reference https://docs.slackware.com/howtos:hardware:arm:gcc-10.x_aarch64_cross-compiler
-RUN { \
-    set -e && \
-    cd /build/crossTools/linux/ && \
-    KERNEL=kernel8 && \
-    make ARCH=arm64 INSTALL_HDR_PATH=/opt/cross-pi-gcc/aarch64-linux-gnu headers_install && \
-    cd ../ && \
-    mkdir build-binutils && cd build-binutils && \
-    ../binutils-2.40/configure --prefix=/opt/cross-pi-gcc --target=aarch64-linux-gnu --with-arch=armv8 --disable-multilib && \
-    make -j4 && \
-    make install && \
-    echo "Binutils done" && \
-    cd ../ && \
-    sed -i '66a #ifndef PATH_MAX\n#define PATH_MAX 4096\n#endif' /build/crossTools/gcc-12.2.0/libsanitizer/asan/asan_linux.cpp && \
-    mkdir build-gcc && cd build-gcc && \
-    ../gcc-12.2.0/configure --prefix=/opt/cross-pi-gcc --target=aarch64-linux-gnu --enable-languages=c,c++ --disable-multilib && \
-    make -j4 all-gcc && \
-    make install-gcc && \
-    echo "Compile glibc partly" && \
-    cd ../ && \
-    mkdir build-glibc && cd build-glibc && \
-    ../glibc-2.36/configure \
-        --prefix=/opt/cross-pi-gcc/aarch64-linux-gnu \
-        --build=$MACHTYPE \
-        --host=aarch64-linux-gnu \
-        --target=aarch64-linux-gnu \
-        --with-headers=/opt/cross-pi-gcc/aarch64-linux-gnu/include \
-        --disable-multilib \
-        libc_cv_forced_unwind=yes && \
-    make install-bootstrap-headers=yes install-headers && \
-    make -j4 csu/subdir_lib && \
-    install csu/crt1.o csu/crti.o csu/crtn.o /opt/cross-pi-gcc/aarch64-linux-gnu/lib && \
-    aarch64-linux-gnu-gcc -nostdlib -nostartfiles -shared -x c /dev/null -o /opt/cross-pi-gcc/aarch64-linux-gnu/lib/libc.so && \
-    touch /opt/cross-pi-gcc/aarch64-linux-gnu/include/gnu/stubs.h && \
-    echo "Build gcc partly" && \
-    cd ../build-gcc/ && \
-    make -j4 all-target-libgcc && \
-    make install-target-libgcc && \
-    echo "build complete glibc" && \
-    cd ../build-glibc/ && \
-    make -j4 && \
-    make install && \
-    echo "build complete gcc" && \
-    cd ../build-gcc/ && \
-    make -j4 && \
-    make install && \
-    echo "Is finished"; \
 } 2>&1 | tee -a /build.log
-
-
-RUN mkdir sysroot sysroot/usr sysroot/opt
-
-COPY rasp.tar.gz /build/rasp.tar.gz
-RUN tar xvfz /build/rasp.tar.gz -C /build/sysroot
-
-# Clone the Raspberry Pi firmware repository
-RUN git clone --depth=1 https://github.com/raspberrypi/firmware firmware 2>&1 | tee -a /build.log
-
-# Copy the opt directory from the cloned repository to sysroot/opt
-RUN cp -r firmware/opt sysroot/opt 2>&1 | tee -a /build.log
 
 COPY toolchain.cmake /build/
 
+# Build Cmake from source
 RUN { \
     echo "Cmake build" && \
     mkdir cmakeBuild && \
@@ -257,4 +173,3 @@ RUN { \
     /build/qt6/pi/bin/qt-cmake && \
     cmake --build .; \
 }
-
