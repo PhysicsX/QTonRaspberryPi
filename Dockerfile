@@ -85,6 +85,11 @@ WORKDIR /build
 
 COPY toolchain.cmake /build/
 
+RUN mkdir sysroot sysroot/usr sysroot/opt
+
+COPY rasp.tar.gz /build/rasp.tar.gz
+RUN tar xvfz /build/rasp.tar.gz -C /build/sysroot
+
 # Build Cmake from source
 RUN { \
     echo "Cmake build" && \
