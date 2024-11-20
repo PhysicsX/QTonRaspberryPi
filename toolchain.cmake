@@ -16,8 +16,8 @@ set(ENV{PKG_CONFIG_LIBDIR} "/usr/lib/pkgconfig:/usr/share/pkgconfig:${CMAKE_SYSR
 set(ENV{PKG_CONFIG_SYSROOT_DIR} "${CMAKE_SYSROOT}")
 
 # Set the C and C++ compilers
-set(CMAKE_C_COMPILER /opt/cross-pi-gcc/bin/${TARGET_ARCHITECTURE}-gcc)
-set(CMAKE_CXX_COMPILER /opt/cross-pi-gcc/bin/${TARGET_ARCHITECTURE}-g++)
+set(CMAKE_C_COMPILER ${TARGET_SYSROOT}/usr/bin/${TARGET_ARCHITECTURE}-gcc)
+set(CMAKE_CXX_COMPILER ${TARGET_SYSROOT}/usr/bin/${TARGET_ARCHITECTURE}-g++)
 
 # Define additional compiler flags
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -isystem=/usr/include -isystem=/usr/local/include -isystem=/usr/include/${TARGET_ARCHITECTURE}")
