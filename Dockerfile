@@ -1,9 +1,10 @@
-FROM ubuntu:24.04
+# Use Debian 12 (Bookworm) as the base image
+FROM debian:bookworm
 
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update and install some necessary packages
+# Update and install necessary packages
 RUN { \
     set -e && \
     apt-get update && apt-get install -y \
@@ -74,7 +75,13 @@ RUN { \
     patch \
     m4 \
     libncurses5-dev \
-    gettext && \
+    gettext  \
+    gcc-12-aarch64-linux-gnu \
+    g++-12-aarch64-linux-gnu \
+    binutils-aarch64-linux-gnu \
+    libc6-arm64-cross \
+    libc6-dev-arm64-cross \
+    glibc-source; \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*; \
 } 2>&1 | tee -a /build.log
@@ -82,21 +89,24 @@ RUN { \
 # Set the working directory to /build
 WORKDIR /build
 
+# Create sysroot directory
 RUN mkdir sysroot sysroot/usr sysroot/opt
 
+# Copy Raspberry Pi sysroot tarball (if available)
 COPY rasp.tar.gz /build/rasp.tar.gz
 RUN tar xvfz /build/rasp.tar.gz -C /build/sysroot
 
+# Copy the toolchain file
 COPY toolchain.cmake /build/
 
+# Build and install CMake from source
 RUN { \
-    echo "Cmake build" && \
-    mkdir cmakeBuild && \
-    cd cmakeBuild && \
+    echo "Building CMake from source" && \
+    mkdir cmakeBuild && cd cmakeBuild && \
     git clone https://github.com/Kitware/CMake.git && \
     cd CMake && \
-    ./bootstrap && make -j8 && make install && \
-    echo "Cmake build is finished"; \
+    ./bootstrap && make -j$(nproc) && make install && \
+    echo "CMake build completed"; \
 } 2>&1 | tee -a /build.log
 
 RUN { \
@@ -164,12 +174,13 @@ RUN { \
 RUN tar -czvf qt-host-binaries.tar.gz -C /build/qt6/host .
 RUN tar -czvf qt-pi-binaries.tar.gz -C /build/qt6/pi .
 
+# Set up project directory
 RUN mkdir /build/project
-
 COPY project /build/project
 
+# Build the project using Qt for Raspberry Pi
 RUN { \
-    cd project && \
-    /build/qt6/pi/bin/qt-cmake && \
+    cd /build/project && \
+    /build/qt6/pi/bin/qt-cmake . && \
     cmake --build .; \
-}
+} 2>&1 | tee -a /build.log
