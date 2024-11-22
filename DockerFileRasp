@@ -41,5 +41,5 @@ RUN { \
 
 WORKDIR /build
 
-RUN tar cvfz rasp.tar.gz -C / lib usr/include usr/lib usr/bin usr/aarch64-linux-gnu
+RUN tar cvfz rasp.tar.gz -C / lib usr/include usr/lib usr/bin
 
