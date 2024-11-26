@@ -1,5 +1,15 @@
-# Use an ARM64 Ubuntu base image
-FROM arm64v8/ubuntu:20.04
+# Define build arguments for Ubuntu, CUDA, and GCC versions
+ARG UBUNTU_VERSION=20.04
+ARG CUDA_VERSION=11-4
+ARG GCC_VERSION=11
+
+# Use an ARM64 Ubuntu base image with the specified version
+FROM arm64v8/ubuntu:${UBUNTU_VERSION}
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV CUDA_VERSION=${CUDA_VERSION}
+ENV GCC_VERSION=${GCC_VERSION}
 
 # Create and initialize the log file
 RUN touch /build.log
@@ -11,23 +21,23 @@ RUN apt-get update && apt-get install -y \
     software-properties-common | tee -a /build.log
 
 # Set up the NVIDIA CUDA repository
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin && \
-    mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600 | tee -a /build.log
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION//./}/x86_64/cuda-ubuntu${UBUNTU_VERSION//./}.pin && \
+    mv cuda-ubuntu${UBUNTU_VERSION//./}.pin /etc/apt/preferences.d/cuda-repository-pin-600 | tee -a /build.log
 
 # Add the new NVIDIA public key for CUDA repository
-RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub | tee -a /build.log
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION//./}/x86_64/3bf863cc.pub | tee -a /build.log
 
 # Add the CUDA repository to the sources list
-RUN add-apt-repository "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /" | tee -a /build.log
+RUN add-apt-repository "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION//./}/x86_64/ /" | tee -a /build.log
 
-# Add NVIDIA repositories and keyring
+# Add NVIDIA repositories and keyring for Jetson
 RUN echo "deb https://repo.download.nvidia.com/jetson/common r32.7 main" > /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
     echo "deb https://repo.download.nvidia.com/jetson/t194 r32.7 main" >> /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
     wget -qO - https://repo.download.nvidia.com/jetson/jetson-ota-public.asc | apt-key add -
 
 # Install NVIDIA drivers and libraries
 RUN apt-get update && apt-get install -y \
-    cuda-toolkit-11-4 \
+    cuda-toolkit-${CUDA_VERSION} \
     libcudnn8 \
     libnvinfer8 \
     nvidia-l4t-core | tee -a /build.log
@@ -43,7 +53,10 @@ RUN apt-get update && apt-get install -y  \
     libudev-dev \
     libgles2-mesa-dev \
     libgl1-mesa-dev \
-    gcc \
+    gcc-${GCC_VERSION} \
+    g++-${GCC_VERSION} \
+    gcc-${GCC_VERSION}-aarch64-linux-gnu \
+    g++-${GCC_VERSION}-aarch64-linux-gnu \
     git \
     bison \
     python3 \
@@ -62,7 +75,9 @@ RUN apt-get update && apt-get install -y  \
     libxss-dev \
     libxtst-dev \
     libxrandr-dev \
-    libglu1-mesa-dev libxkbcommon-dev libxkbcommon-x11-dev | tee -a /build.log
+    libglu1-mesa-dev \
+    libxkbcommon-dev \
+    libxkbcommon-x11-dev | tee -a /build.log
 
 # Create the sysroot tarball
 RUN tar cvfz /nxSysroot.tar.gz -C / lib usr/include usr/lib | tee -a /build.log
