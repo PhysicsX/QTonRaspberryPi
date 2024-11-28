@@ -2,6 +2,8 @@
 ARG UBUNTU_VERSION=20.04
 ARG CUDA_VERSION=11-4
 ARG GCC_VERSION=11
+# Use the correct Ubuntu version as an ARG
+ARG UBUNTU_VERSION_SHORT=2004
 
 # Use an ARM64 Ubuntu base image with the specified version
 FROM arm64v8/ubuntu:${UBUNTU_VERSION}
@@ -10,6 +12,8 @@ FROM arm64v8/ubuntu:${UBUNTU_VERSION}
 ENV DEBIAN_FRONTEND=noninteractive
 ENV CUDA_VERSION=${CUDA_VERSION}
 ENV GCC_VERSION=${GCC_VERSION}
+ENV UBUNTU_VERSION=${UBUNTU_VERSION}
+ENV UBUNTU_VERSION_SHORT=${UBUNTU_VERSION_SHORT}
 
 # Create and initialize the log file
 RUN touch /build.log
@@ -20,15 +24,19 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     software-properties-common | tee -a /build.log
 
-# Set up the NVIDIA CUDA repository
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION//./}/x86_64/cuda-ubuntu${UBUNTU_VERSION//./}.pin && \
-    mv cuda-ubuntu${UBUNTU_VERSION//./}.pin /etc/apt/preferences.d/cuda-repository-pin-600 | tee -a /build.log
+# ARG UBUNTU_VERSION_SHORT
+
+# Use the manually defined short version to download the CUDA repository pin file
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION_SHORT}/x86_64/cuda-ubuntu${UBUNTU_VERSION_SHORT}.pin && \
+    mv cuda-ubuntu${UBUNTU_VERSION_SHORT}.pin /etc/apt/preferences.d/cuda-repository-pin-600
+
+# ARG UBUNTU_VERSION_SHORT
 
 # Add the new NVIDIA public key for CUDA repository
-RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION//./}/x86_64/3bf863cc.pub | tee -a /build.log
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION_SHORT}/x86_64/3bf863cc.pub | tee -a /build.log
 
 # Add the CUDA repository to the sources list
-RUN add-apt-repository "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION//./}/x86_64/ /" | tee -a /build.log
+RUN add-apt-repository "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION_SHORT}/x86_64/ /" | tee -a /build.log
 
 # Add NVIDIA repositories and keyring for Jetson
 RUN echo "deb https://repo.download.nvidia.com/jetson/common r32.7 main" > /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
