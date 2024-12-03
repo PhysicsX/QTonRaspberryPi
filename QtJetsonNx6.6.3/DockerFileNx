@@ -24,24 +24,25 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     software-properties-common | tee -a /build.log
 
-# ARG UBUNTU_VERSION_SHORT
+ARG UBUNTU_VERSION_SHORT
 
-# Use the manually defined short version to download the CUDA repository pin file
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION_SHORT}/x86_64/cuda-ubuntu${UBUNTU_VERSION_SHORT}.pin && \
-    mv cuda-ubuntu${UBUNTU_VERSION_SHORT}.pin /etc/apt/preferences.d/cuda-repository-pin-600
-
-# ARG UBUNTU_VERSION_SHORT
-
-# Add the new NVIDIA public key for CUDA repository
-RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION_SHORT}/x86_64/3bf863cc.pub | tee -a /build.log
-
-# Add the CUDA repository to the sources list
-RUN add-apt-repository "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION_SHORT}/x86_64/ /" | tee -a /build.log
-
-# Add NVIDIA repositories and keyring for Jetson
-RUN echo "deb https://repo.download.nvidia.com/jetson/common r32.7 main" > /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
+RUN \
+    # Use the manually defined short version to download the CUDA repository pin file \
+    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION_SHORT}/x86_64/cuda-ubuntu${UBUNTU_VERSION_SHORT}.pin && \
+    mv cuda-ubuntu${UBUNTU_VERSION_SHORT}.pin /etc/apt/preferences.d/cuda-repository-pin-600 && \
+    \
+    # Add the new NVIDIA public key for CUDA repository \
+    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION_SHORT}/x86_64/3bf863cc.pub | tee -a /build.log && \
+    \
+    # Add the CUDA repository to the sources list \
+    add-apt-repository "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION_SHORT}/x86_64/ /" | tee -a /build.log && \
+    \
+    # Add NVIDIA repositories and keyring for Jetson \
+    echo "deb https://repo.download.nvidia.com/jetson/common r32.7 main" > /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
     echo "deb https://repo.download.nvidia.com/jetson/t194 r32.7 main" >> /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
     wget -qO - https://repo.download.nvidia.com/jetson/jetson-ota-public.asc | apt-key add -
+
+ARG CUDA_VERSION
 
 # Install NVIDIA drivers and libraries
 RUN apt-get update && apt-get install -y \
@@ -49,6 +50,8 @@ RUN apt-get update && apt-get install -y \
     libcudnn8 \
     libnvinfer8 \
     nvidia-l4t-core | tee -a /build.log
+
+ARG GCC_VERSION
 
 # Install additional dependencies for cross-compilation
 RUN apt-get update && apt-get install -y  \
