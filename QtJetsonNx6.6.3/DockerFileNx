@@ -1,19 +1,12 @@
 # Define build arguments for Ubuntu, CUDA, and GCC versions
 ARG UBUNTU_VERSION=20.04
 ARG CUDA_VERSION=11-4
-ARG GCC_VERSION=11
-# Use the correct Ubuntu version as an ARG
 ARG UBUNTU_VERSION_SHORT=2004
+ARG JETPACK_VERSION=r35.2
+ARG BOARD_TYPE=t194
 
 # Use an ARM64 Ubuntu base image with the specified version
 FROM arm64v8/ubuntu:${UBUNTU_VERSION}
-
-# Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive
-ENV CUDA_VERSION=${CUDA_VERSION}
-ENV GCC_VERSION=${GCC_VERSION}
-ENV UBUNTU_VERSION=${UBUNTU_VERSION}
-ENV UBUNTU_VERSION_SHORT=${UBUNTU_VERSION_SHORT}
 
 # Create and initialize the log file
 RUN touch /build.log
@@ -25,7 +18,8 @@ RUN apt-get update && apt-get install -y \
     software-properties-common | tee -a /build.log
 
 ARG UBUNTU_VERSION_SHORT
-
+ARG JETPACK_VERSION
+ARG BOARD_TYPE
 RUN \
     # Use the manually defined short version to download the CUDA repository pin file \
     wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION_SHORT}/x86_64/cuda-ubuntu${UBUNTU_VERSION_SHORT}.pin && \
@@ -38,8 +32,8 @@ RUN \
     add-apt-repository "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION_SHORT}/x86_64/ /" | tee -a /build.log && \
     \
     # Add NVIDIA repositories and keyring for Jetson \
-    echo "deb https://repo.download.nvidia.com/jetson/common r32.7 main" > /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
-    echo "deb https://repo.download.nvidia.com/jetson/t194 r32.7 main" >> /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
+    echo "deb https://repo.download.nvidia.com/jetson/common ${JETPACK_VERSION} main" > /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
+    echo "deb https://repo.download.nvidia.com/jetson/${BOARD_TYPE} ${JETPACK_VERSION} main" >> /etc/apt/sources.list.d/nvidia-l4t-apt-source.list && \
     wget -qO - https://repo.download.nvidia.com/jetson/jetson-ota-public.asc | apt-key add -
 
 ARG CUDA_VERSION
@@ -50,8 +44,6 @@ RUN apt-get update && apt-get install -y \
     libcudnn8 \
     libnvinfer8 \
     nvidia-l4t-core | tee -a /build.log
-
-ARG GCC_VERSION
 
 # Install additional dependencies for cross-compilation
 RUN apt-get update && apt-get install -y  \
@@ -64,10 +56,6 @@ RUN apt-get update && apt-get install -y  \
     libudev-dev \
     libgles2-mesa-dev \
     libgl1-mesa-dev \
-    gcc-${GCC_VERSION} \
-    g++-${GCC_VERSION} \
-    gcc-${GCC_VERSION}-aarch64-linux-gnu \
-    g++-${GCC_VERSION}-aarch64-linux-gnu \
     git \
     bison \
     python3 \
