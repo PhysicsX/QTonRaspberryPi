@@ -15,9 +15,14 @@ set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${CMAKE_SYSROOT}/usr/lib/${TARGE
 set(ENV{PKG_CONFIG_LIBDIR} "/usr/lib/pkgconfig:/usr/share/pkgconfig:${CMAKE_SYSROOT}/usr/lib/${TARGET_ARCHITECTURE}/pkgconfig:${CMAKE_SYSROOT}/usr/lib/pkgconfig")
 set(ENV{PKG_CONFIG_SYSROOT_DIR} "${CMAKE_SYSROOT}")
 
+# Define a configurable GCC version, defaulting to 11 if not set
+if(NOT GCC_VERSION)
+    set(GCC_VERSION 9)
+endif()
+
 # Set the C and C++ compilers
-set(CMAKE_C_COMPILER ${TARGET_ARCHITECTURE}-gcc-9)
-set(CMAKE_CXX_COMPILER ${TARGET_ARCHITECTURE}-g++-9)
+set(CMAKE_C_COMPILER ${TARGET_ARCHITECTURE}-gcc-${GCC_VERSION})
+set(CMAKE_CXX_COMPILER ${TARGET_ARCHITECTURE}-g++-${GCC_VERSION})
 
 # Define additional compiler flags
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -isystem=/usr/include -isystem=/usr/local/include -isystem=/usr/include/${TARGET_ARCHITECTURE}")

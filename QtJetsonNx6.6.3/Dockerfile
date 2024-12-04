@@ -1,14 +1,18 @@
-# Use an x86 Ubuntu base image
-FROM ubuntu:20.04
+# Use an x86 Ubuntu base image with a specified version
+ARG UBUNTU_VERSION=20.04
+FROM ubuntu:${UBUNTU_VERSION}
 
 # Avoid interactive prompts by setting the environment variable
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Define build arguments for GCC version and other configurable packages
+ARG GCC_VERSION=9
+
 # Update system and install necessary libraries
 RUN { \
-    echo "deb http://archive.ubuntu.com/ubuntu/ focal main universe restricted multiverse" > /etc/apt/sources.list && \
-    echo "deb http://archive.ubuntu.com/ubuntu/ focal-updates main universe restricted multiverse" >> /etc/apt/sources.list && \
-    echo "deb http://archive.ubuntu.com/ubuntu/ focal-security main universe restricted multiverse" >> /etc/apt/sources.list && \
+    echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -sc) main universe restricted multiverse" > /etc/apt/sources.list && \
+    echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -sc)-updates main universe restricted multiverse" >> /etc/apt/sources.list && \
+    echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -sc)-security main universe restricted multiverse" >> /etc/apt/sources.list && \
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y software-properties-common && \
@@ -16,8 +20,8 @@ RUN { \
     apt-get install -y --no-install-recommends \
     '.*libxcb.*' \
     libxrender-dev \
-    gcc-9 g++-9 \
-    gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu \
+    gcc-${GCC_VERSION} g++-${GCC_VERSION} \
+    gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
     libxi-dev \
     libfontconfig1-dev \
     '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxkbcommon-dev libxkbcommon-x11-dev \
@@ -147,6 +151,9 @@ RUN cd /qt6/src && \
     tar xf qtshadertools-everywhere-src-6.8.0.tar.xz -C /qt6/nx-build && \
     tar xf qtdeclarative-everywhere-src-6.8.0.tar.xz -C /qt6/nx-build
 
+ARG GCC_VERSION
+
+# Build Qt for the target using the toolchain file
 RUN { \
     echo "Compile qtbase for nx" | tee -a /build.log && \
     cd /qt6/nx-build/qtbase-everywhere-src-6.8.0 && \
@@ -159,11 +166,12 @@ RUN { \
     -DCMAKE_STAGING_PREFIX=/qt6/nx \
     -DCMAKE_INSTALL_PREFIX=/usr/local/qt6 \
     -DCMAKE_TOOLCHAIN_FILE=/opt/toolchain.cmake \
+    -DGCC_VERSION=${GCC_VERSION} \ # Pass GCC version to the toolchain
     -DFEATURE_xcb_xlib=ON \
     -DQT_FEATURE_xlib=ON && \
     ninja && \
     ninja install; \
-}  2>&1 | tee -a /build.log
+} 2>&1 | tee -a /build.log
 
 RUN { \
     echo "Compile qtshadertools for nx" | tee -a /build.log && \
