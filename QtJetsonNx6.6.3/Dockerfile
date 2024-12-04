@@ -7,72 +7,98 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Define build arguments for GCC version and other configurable packages
 ARG GCC_VERSION=9
+ARG UBUNTU_VERSION
+# Debug to confirm the build arguments
+RUN echo "DEBUG: UBUNTU_VERSION=${UBUNTU_VERSION}" && echo "DEBUG: GCC_VERSION=${GCC_VERSION}"
+
+
+# Set the argument as an environment variable
+ENV UBUNTU_VERSION=${UBUNTU_VERSION}
+
+# Set up sources.list
+RUN echo "DEBUG: UBUNTU_VERSION=${UBUNTU_VERSION}" && \
+    if [ "${UBUNTU_VERSION}" = "20.04" ]; then \
+        echo "deb http://archive.ubuntu.com/ubuntu/ focal main universe restricted multiverse" > /etc/apt/sources.list && \
+        echo "deb http://archive.ubuntu.com/ubuntu/ focal-updates main universe restricted multiverse" >> /etc/apt/sources.list && \
+        echo "deb http://archive.ubuntu.com/ubuntu/ focal-security main universe restricted multiverse" >> /etc/apt/sources.list; \
+    elif [ "${UBUNTU_VERSION}" = "18.04" ]; then \
+        echo "deb http://archive.ubuntu.com/ubuntu/ bionic main universe restricted multiverse" > /etc/apt/sources.list && \
+        echo "deb http://archive.ubuntu.com/ubuntu/ bionic-updates main universe restricted multiverse" >> /etc/apt/sources.list && \
+        echo "deb http://archive.ubuntu.com/ubuntu/ bionic-security main universe restricted multiverse" >> /etc/apt/sources.list; \
+    elif [ "${UBUNTU_VERSION}" = "22.04" ]; then \
+        echo "deb http://archive.ubuntu.com/ubuntu/ jammy main universe restricted multiverse" > /etc/apt/sources.list && \
+        echo "deb http://archive.ubuntu.com/ubuntu/ jammy-updates main universe restricted multiverse" >> /etc/apt/sources.list && \
+        echo "deb http://archive.ubuntu.com/ubuntu/ jammy-security main universe restricted multiverse" >> /etc/apt/sources.list; \
+    else \
+        echo "Unsupported Ubuntu version: ${UBUNTU_VERSION}" && exit 1; \
+    fi
+
+ARG GCC_VERSION
 
 # Update system and install necessary libraries
-RUN { \
-    echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -sc) main universe restricted multiverse" > /etc/apt/sources.list && \
-    echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -sc)-updates main universe restricted multiverse" >> /etc/apt/sources.list && \
-    echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -sc)-security main universe restricted multiverse" >> /etc/apt/sources.list && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y software-properties-common && \
+    apt-get install -y --no-install-recommends software-properties-common && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-    '.*libxcb.*' \
-    libxrender-dev \
-    gcc-${GCC_VERSION} g++-${GCC_VERSION} \
-    gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
-    libxi-dev \
-    libfontconfig1-dev \
-    '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxkbcommon-dev libxkbcommon-x11-dev \
-    libudev-dev \
-    libgl1-mesa-dev \
-    gcc \
-    git \
-    bison \
-    python3 \
-    gperf \
-    pkg-config \
-    make \
-    libclang-dev \
-    build-essential \
-    libegl1-mesa-dev \
-    libgbm-dev \
-    libgles-dev \
-    wget \
-    ninja-build \
-    rsync \
-    sed \
-    libssl-dev \
-    libgmp-dev \
-    libmpfr-dev \
-    libmpc-dev \
-    flex \
-    gawk \
-    texinfo \
-    libisl-dev \
-    zlib1g-dev \
-    libtool \
-    autoconf \
-    automake \
-    libgdbm-dev \
-    libdb-dev \
-    libbz2-dev \
-    libreadline-dev \
-    libexpat1-dev \
-    liblzma-dev \
-    libffi-dev \
-    libsqlite3-dev \
-    libbsd-dev \
-    perl \
-    patch \
-    m4 \
-    libncurses5-dev \
-    gettext \
-    --no-install-recommends && \
+        '.*libxcb.*' \
+        libxrender-dev \
+        gcc-${GCC_VERSION} g++-${GCC_VERSION} \
+        gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
+        libxi-dev \
+        libfontconfig1-dev \
+        '^libxcb.*-dev' \
+        libx11-xcb-dev \
+        libglu1-mesa-dev \
+        libxkbcommon-dev \
+        libxkbcommon-x11-dev \
+        libudev-dev \
+        libgl1-mesa-dev \
+        gcc \
+        git \
+        bison \
+        python3 \
+        gperf \
+        pkg-config \
+        make \
+        libclang-dev \
+        build-essential \
+        libegl1-mesa-dev \
+        libgbm-dev \
+        libgles-dev \
+        wget \
+        ninja-build \
+        rsync \
+        sed \
+        libssl-dev \
+        libgmp-dev \
+        libmpfr-dev \
+        libmpc-dev \
+        flex \
+        gawk \
+        texinfo \
+        libisl-dev \
+        zlib1g-dev \
+        libtool \
+        autoconf \
+        automake \
+        libgdbm-dev \
+        libdb-dev \
+        libbz2-dev \
+        libreadline-dev \
+        libexpat1-dev \
+        liblzma-dev \
+        libffi-dev \
+        libsqlite3-dev \
+        libbsd-dev \
+        perl \
+        patch \
+        m4 \
+        libncurses5-dev \
+        gettext && \
     rm -rf /var/lib/apt/lists/* && \
-    apt-get clean; \
- } 2>&1 | tee -a /build.log
+    apt-get clean && \
+    echo "Installation completed successfully!" | tee -a /build.log
 
 # Reset the frontend variable to avoid affecting other software
 ENV DEBIAN_FRONTEND=dialog
@@ -80,9 +106,6 @@ ENV DEBIAN_FRONTEND=dialog
 # Copy the sysroot tarball from the previous Docker image
 COPY nxSysroot.tar.gz /tmp/nxSysroot.tar.gz
 
-RUN { \
-    apt list | grep wget; \
-}
 
 RUN { \
     echo "Cmake build" && \
@@ -166,7 +189,7 @@ RUN { \
     -DCMAKE_STAGING_PREFIX=/qt6/nx \
     -DCMAKE_INSTALL_PREFIX=/usr/local/qt6 \
     -DCMAKE_TOOLCHAIN_FILE=/opt/toolchain.cmake \
-    -DGCC_VERSION=${GCC_VERSION} \ # Pass GCC version to the toolchain
+    -DGCC_VERSION=${GCC_VERSION} \ 
     -DFEATURE_xcb_xlib=ON \
     -DQT_FEATURE_xlib=ON && \
     ninja && \
