@@ -34,71 +34,78 @@ RUN echo "DEBUG: UBUNTU_VERSION=${UBUNTU_VERSION}" && \
     fi
 
 ARG GCC_VERSION
+ARG UBUNTU_VERSION
 
-# Update system and install necessary libraries
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends software-properties-common && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-        '.*libxcb.*' \
-        libxrender-dev \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    gnupg \
+    software-properties-common && \
+    if [ "${UBUNTU_VERSION}" = "18.04" ]; then \
+        apt-get install -y --no-install-recommends \
+        libgles2-mesa-dev \
         gcc-${GCC_VERSION} g++-${GCC_VERSION} \
-        gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu \
-        libxi-dev \
-        libfontconfig1-dev \
-        '^libxcb.*-dev' \
-        libx11-xcb-dev \
-        libglu1-mesa-dev \
-        libxkbcommon-dev \
-        libxkbcommon-x11-dev \
-        libudev-dev \
-        libgl1-mesa-dev \
-        gcc \
-        git \
-        bison \
-        python3 \
-        gperf \
-        pkg-config \
-        make \
-        libclang-dev \
-        build-essential \
-        libegl1-mesa-dev \
-        libgbm-dev \
+        gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu; \
+    elif [ "${UBUNTU_VERSION}" = "20.04" ]; then \
+        apt-get install -y --no-install-recommends \
         libgles-dev \
-        wget \
-        ninja-build \
-        rsync \
-        sed \
-        libssl-dev \
-        libgmp-dev \
-        libmpfr-dev \
-        libmpc-dev \
-        flex \
-        gawk \
-        texinfo \
-        libisl-dev \
-        zlib1g-dev \
-        libtool \
-        autoconf \
-        automake \
-        libgdbm-dev \
-        libdb-dev \
-        libbz2-dev \
-        libreadline-dev \
-        libexpat1-dev \
-        liblzma-dev \
-        libffi-dev \
-        libsqlite3-dev \
-        libbsd-dev \
-        perl \
-        patch \
-        m4 \
-        libncurses5-dev \
-        gettext && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get clean && \
-    echo "Installation completed successfully!" | tee -a /build.log
+        gcc-${GCC_VERSION} g++-${GCC_VERSION} \
+        gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu; \
+    elif [ "${UBUNTU_VERSION}" = "22.04" ]; then \
+        apt-get install -y --no-install-recommends \
+        libgles-dev \
+        gcc-${GCC_VERSION} g++-${GCC_VERSION} \
+        gcc-${GCC_VERSION}-aarch64-linux-gnu g++-${GCC_VERSION}-aarch64-linux-gnu; \
+    else \
+        echo "Unsupported Ubuntu version: ${UBUNTU_VERSION}" && exit 1; \
+    fi && \
+    apt-get install -y --no-install-recommends \
+    libxrender-dev \
+    libxkbcommon-dev \
+    libxkbcommon-x11-dev \
+    libfontconfig1-dev \
+    libx11-xcb-dev \
+    libudev-dev \
+    libgl1-mesa-dev \
+    libegl1-mesa-dev \
+    libgbm-dev \
+    git \
+    bison \
+    python3 \
+    gperf \
+    pkg-config \
+    make \
+    libclang-dev \
+    build-essential \
+    ninja-build \
+    rsync \
+    sed \
+    libssl-dev \
+    libgmp-dev \
+    libmpfr-dev \
+    libmpc-dev \
+    flex \
+    gawk \
+    texinfo \
+    libisl-dev \
+    zlib1g-dev \
+    libtool \
+    autoconf \
+    automake \
+    libgdbm-dev \
+    libdb-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libexpat1-dev \
+    liblzma-dev \
+    libffi-dev \
+    libsqlite3-dev \
+    libbsd-dev \
+    perl \
+    patch \
+    m4 \
+    libncurses5-dev \
+    gettext && \
+    rm -rf /var/lib/apt/lists/* && apt-get clean
 
 # Reset the frontend variable to avoid affecting other software
 ENV DEBIAN_FRONTEND=dialog

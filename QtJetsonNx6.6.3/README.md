@@ -113,11 +113,40 @@ $ docker buildx ls
 
 When I experimented with this idea, I expected to create a single Dockerfile with different stages, allowing me to switch between them even if they involved different hardware architectures. However, it didn't work as expected, so I ended up creating two separate Dockerfiles.
 
-First, we will create a ubuntu  20 environment and emulate it. Then, we need to copy the relevant headers and libraries for later compilation
+The tricky part for jetson boards, there can be multiple versions for gcc, jetpack, cuda.. These versions should be handled correctly.
+You can find a table which shows the paremeters to be passed to dockerfile according to board which Qt is build for.
 
-Run the command to create ubuntu image.
+## Compatibility Table
+
+The table below provides details on the compatibility of GCC, Ubuntu, JetPack, CUDA, and Jetson board types:
+
+| **GCC Version** | **Ubuntu Version** | **JetPack Version**      | **CUDA Version** | **BOARD_TYPE**  | **Use Case / Notes**                                                                                         |
+|------------------|--------------------|---------------------------|-------------------|------------------|-------------------------------------------------------------------------------------------------------------|
+| 7                | 18.04             | r32.x (e.g., r32.7.3)     | 10-2             | t210, t186       | Used for JetPack 4.x on Nano (t210) and TX2 (t186). Works with CUDA 10.2 and older.                         |
+| 9                | 20.04             | r35.1, r35.2              | 11-4             | t194, t210       | Default for JetPack 5.x with Xavier NX (t194) or Nano (JetPack 5.x experimental).                           |
+| 10               | 20.04             | r35.2                     | 11-6             | t194             | Optional for advanced builds on JetPack 5.x when GCC 10-specific features are required.                    |
+| 11               | 22.04             | r35.3+                    | 11-8             | t234             | Default for JetPack 5.x on Orin (t234) or future boards. Required for CUDA 11.8.                            |
+
+---
+* note: Old gcc versions can cause conflicts with Qt6.x.x
+ 
+### Notes on JetPack Versions
+
+- **JetPack 4.x**: Use `r32.x` (latest: `r32.7.3`) for legacy systems based on **Ubuntu 18.04** with GCC 7.
+  - `r32.7.x` is the final release for JetPack 4.x and supports Nano (t210) and TX2 (t186).
+- **JetPack 5.x**: Use `r35.x` (e.g., `r35.1`, `r35.2`, or later) for modern systems based on **Ubuntu 20.04+** with GCC 9 or higher.
+  - Recommended for Xavier NX (t194) and Orin (t234).
+- **CUDA Compatibility**:
+  - **r32.x**: CUDA 10.x.
+  - **r35.x**: CUDA 11.x.
+
+
+First, we will create a ubuntu  20/22 environment and emulate it. Then, we need to copy the relevant headers and libraries for later compilation
+
+Run the command to create ubuntu image. This command is for Nx. But if you change the version numbers according to table then you 
+can build the qt for other boards.
 ```bash
-$ docker buildx build --platform linux/arm64 --load -f DockerFileNx -t nximage .
+$ docker buildx build --platform linux/arm64 --load -f DockerFileNx --build-arg UBUNTU_VERSION=20.04 --build-arg CUDA_VERSION=11-4 --build-arg UVUNTU_VERSION_SHORT=2004 --build-arg JETPACK_VERSION=r35.2 --build-arg BOARD_TYPE=t194 -t nximage .
 ```
 When it finishes, you will find a file named 'nxSysroot.tar.gz' in the '/' directory within the image.
 Let's copy it to the same location where the Dockerfile exists. 
@@ -133,7 +162,7 @@ Now it is time to create ubuntu 22 image and compile the Qt 6.8.0.
 In one of the previous commands you used DockerFileNx, this file is written for Jetson boards, now we are going to use only Dockerfile which is default name that means we do not need to specify path or name explicitly. But if  you want you can change the name, you already now how you can pass the file name (with -f)
 
 ```bash
-$ docker build -t qtcrossbuild .
+$ docker build --build-arg UBUNTU_VERSION=20.04 --build-arg GCC_VERSION=9 -t qtcrossbuild .
 ```
 
 As you see there is no buildx in this command because buildx uses qemu and we do not need qemu for x86 ubuntu. After some time, (I tested with 16GB RAM and it took around couple of hours) you see that image will be created without an error. After this, you can find HelloQt6 binary which is ready to run on Jetson board, in the /project directory in the image. So lets copy it. As we did before, you need to create temporary container to copy it.
