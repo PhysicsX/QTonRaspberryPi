@@ -111,7 +111,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV DEBIAN_FRONTEND=dialog
 
 # Copy the sysroot tarball from the previous Docker image
-COPY nxSysroot.tar.gz /tmp/nxSysroot.tar.gz
+COPY jetsonSysroot.tar.gz /tmp/jetsonSysroot.tar.gz
 
 
 RUN { \
@@ -125,7 +125,7 @@ RUN { \
 } 2>&1 | tee -a /build.log
 
 # Extract the sysroot
-RUN mkdir -p /opt/sysroot && tar -xzf /tmp/nxSysroot.tar.gz -C /opt/sysroot | tee -a /build.log
+RUN mkdir -p /opt/sysroot && tar -xzf /tmp/jetsonSysroot.tar.gz -C /opt/sysroot | tee -a /build.log
 
 # Download and prepare the sysroot-relativelinks.py script
 RUN wget --no-check-certificate 'https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py' -O /usr/local/bin/sysroot-relativelinks.py \
@@ -220,7 +220,7 @@ RUN { \
 } 2>&1 | tee -a /build.log
 
 # Create tarball of the compiled binaries
-RUN tar -czvf qt-nx-binaries.tar.gz -C /qt6/nx . | tee -a /build.log
+RUN tar -czvf qt-jetson-binaries.tar.gz -C /qt6/nx . | tee -a /build.log
 
 RUN mkdir /project
 

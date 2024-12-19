@@ -79,4 +79,4 @@ RUN apt-get update && apt-get install -y  \
     libxkbcommon-x11-dev | tee -a /build.log
 
 # Create the sysroot tarball
-RUN tar cvfz /nxSysroot.tar.gz -C / lib usr/include usr/lib | tee -a /build.log
+RUN tar cvfz /jetsonSysroot.tar.gz -C / lib usr/include usr/lib | tee -a /build.log

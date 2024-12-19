@@ -146,29 +146,29 @@ First, we will create a ubuntu  20/22 environment and emulate it. Then, we need 
 Run the command to create ubuntu image. This command is for Nx. But if you change the version numbers according to table then you 
 can build the qt for other boards.
 ```bash
-$ docker buildx build --platform linux/arm64 --load -f dockerFileJetson--build-arg UBUNTU_VERSION=20.04 --build-arg CUDA_VERSION=11-4 --build-arg UVUNTU_VERSION_SHORT=2004 --build-arg JETPACK_VERSION=r35.2 --build-arg BOARD_TYPE=t194 -t nximage .
+$ docker buildx build --platform linux/arm64 --load -f dockerFileJetson --build-arg UBUNTU_VERSION=20.04 --build-arg CUDA_VERSION=11-4 --build-arg UVUNTU_VERSION_SHORT=2004 --build-arg JETPACK_VERSION=r35.2 --build-arg BOARD_TYPE=t194 -t jetsonimage .
 ```
-When it finishes, you will find a file named 'nxSysroot.tar.gz' in the '/' directory within the image.
+When it finishes, you will find a file named 'jetsonSysroot.tar.gz' in the '/' directory within the image.
 Let's copy it to the same location where the Dockerfile exists. 
 
 To copy the file, you need to create a temporary container using the 'create' command. You can delete this temporary container later if you wish
 ```bash
-$ docker create --name temp-arm nximage
-$ docker cp temp-arm:/nxSysroot.tar.gz ./nxSysroot.tar.gz
+$ docker create --name temp-arm jetsonimage
+$ docker cp temp-arm:/jetsonSysroot.tar.gz ./jetsonSysroot.tar.gz
 ```
-This nxSysroot.tar.gz file will be copied by the another image that is why location of the tar file is important. You do not need to extract it. Do not touch it.
+This jetsonSysroot.tar.gz file will be copied by the another image that is why location of the tar file is important. You do not need to extract it. Do not touch it.
 
 Now it is time to create ubuntu 22 image and compile the Qt 6.8.0.
 In one of the previous commands you used DockerFileNx, this file is written for Jetson boards, now we are going to use only Dockerfile which is default name that means we do not need to specify path or name explicitly. But if  you want you can change the name, you already now how you can pass the file name (with -f)
 
 ```bash
-$ docker build --build-arg UBUNTU_VERSION=20.04 --build-arg GCC_VERSION=9 -t qtcrossbuild .
+$ docker build --build-arg UBUNTU_VERSION=20.04 --build-arg GCC_VERSION=9 -t qtcrossjet .
 ```
 
 As you see there is no buildx in this command because buildx uses qemu and we do not need qemu for x86 ubuntu. After some time, (I tested with 16GB RAM and it took around couple of hours) you see that image will be created without an error. After this, you can find HelloQt6 binary which is ready to run on Jetson board, in the /project directory in the image. So lets copy it. As we did before, you need to create temporary container to copy it.
 
 ```bash
-$ docker create --name tmpbuild qtcrossbuild
+$ docker create --name tmpbuild qtcrossjet
 $ docker cp tmpbuild:/project/HelloQt6 ./HelloQt6
 ```
 
@@ -180,11 +180,11 @@ HelloQt6: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically 
 
 To test the hello world, you need to copy and send the compiled qt binaries in the image.
 ```bash
-$ docker cp tmpbuild:/qt-nx-binaries.tar.gz ./qt-nx-binaries.tar.gz
-$ scp qt-nx-binaries.tar.gz ulas@192.168.16.20:/home/ulas/
+$ docker cp tmpbuild:/qt-jetson-binaries.tar.gz ./qt-jetson-binaries.tar.gz
+$ scp qt-jetson-binaries.tar.gz ulas@192.168.16.20:/home/ulas/
 $ ssh ulas@192.168.16.25
 $ ulas@jetson:~ sudo mkdir /usr/local/qt6
-$ ulas@jetson:~ sudo tar -xvf qt-nx-binaries.tar.gz -C /usr/local/qt6
+$ ulas@jetson:~ sudo tar -xvf qt-jetson-binaries.tar.gz -C /usr/local/qt6
 $ ulas@jetson:~ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/qt6/lib/
 ```
 Extract it under /usr/local or wherever you want and do not forget to add the path to LD_LIBRARY_PATH in case of path is not in the list.
@@ -212,15 +212,15 @@ Detailed information:
 Now, you can build your application by simply adding your files to the project directory and running the command:
 
 ```bash
-$ docker build -t qtcrossbuild .
+$ docker build -t qtcrossjet .
 ```
 
 If you do not modify the Dockerfile, the above command will only compile the code. However, even if you don't alter the Dockerfile, if there is any update to Ubuntu, Docker will rebuild the image starting from the Ubuntu layer. This means it will take more time. To compile the Qt application you wish to develop, this is not necessary. There is another Dockerfile, Dockerfile.app, which allows you to compile only the application. If you examine the contents of this file, you will find:
 
 ```bash
-FROM qtcrossbuild:latest
+FROM qtcrossjet:latest
 ```
-This indicates that if you build an image with Dockerfile.app, it will utilize the qtcrossbuild image. There's no need to run qtcrossbuild again. 
+This indicates that if you build an image with Dockerfile.app, it will utilize the qtcrossjet image. There's no need to run qtcrossjet again. 
 
 If you run:
 
@@ -235,7 +235,7 @@ $ docker cp tmpapp:/projectPath/HelloQt6 ./HelloQt6
 ```
 If you do not want to use the cache, or if you want to start building the same image anew, use:
 ```bash
-$ docker build -t qtcrossbuild . --no-cache
+$ docker build -t qtcrossjet . --no-cache
 ```
 
 ~~However, if you prefer not to follow these steps, I have shared the tar files that I compiled for the Raspberry Pi, along with the related sysroot and toolchain. You can download them. In this case, you will need to have the correct dependencies. It's your choice.~~
