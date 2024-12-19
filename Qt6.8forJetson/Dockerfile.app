@@ -1,4 +1,4 @@
-FROM qtcrossbuild:latest
+FROM qtcrossjet string:latest
 
 # Update the repoPath according to yours
 ARG projectDir=project

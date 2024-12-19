@@ -2,7 +2,7 @@ FROM qtcrossbuild:latest
 
 # Update the repoPath according to yours
 ARG projectDir=project
-ARG repoPath=/home/ulas/Development/QTonRaspberryPi/
+ARG repoPath=/home/ulas/QTonRaspberryPi/
 
 RUN rm -rf $repoPath$projectDir
 
