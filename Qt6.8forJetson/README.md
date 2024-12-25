@@ -4,9 +4,15 @@ This is a complete tutorial that you can learn how to debug the application with
 
 The primary advantage of Docker is its ability to isolate the build environment. This means you can build Qt without needing a Jetson Development Boards (real hardware) and regardless of your host OS type, as long as you can run Docker (along with QEMU). Additionally, you won’t need to handle dependencies anymore (and I’m not kidding). This approach is easier and less painful.
 
-Watch the video for more details (This is for raspberry pi, for the jetson will be uploaded):
+Watch the video for more details:
+
+[![Youtube video link](https://img.youtube.com/vi/xQ8PkT8Utfc/0.jpg)](//www.youtube.com/watch?v=xQ8PkT8Utfc?t=0s "ulas dikme")
+
+This is previous video, detailed explanation is in here too.
 
 [![Youtube video link](https://img.youtube.com/vi/5XvQ_fLuBX0/0.jpg)](//www.youtube.com/watch?v=5XvQ_fLuBX0?t=0s "ulas dikme")
+
+
 
 For remote debugging and follow up [click](https://www.youtube.com/watch?v=RWNWAMT5UkM?t=0s).
 
