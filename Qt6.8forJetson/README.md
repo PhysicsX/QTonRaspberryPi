@@ -152,7 +152,7 @@ First, we will create a ubuntu  20/22 environment and emulate it. Then, we need 
 Run the command to create ubuntu image. This command is for Nx. But if you change the version numbers according to table then you 
 can build the qt for other boards.
 ```bash
-$ docker buildx build --platform linux/arm64 --load -f dockerFileJetson --build-arg UBUNTU_VERSION=20.04 --build-arg CUDA_VERSION=11-4 --build-arg UVUNTU_VERSION_SHORT=2004 --build-arg JETPACK_VERSION=r35.2 --build-arg BOARD_TYPE=t194 -t jetsonimage .
+$ docker buildx build --platform linux/arm64 --load -f DockerFileJetson --build-arg UBUNTU_VERSION=20.04 --build-arg CUDA_VERSION=11-4 --build-arg UVUNTU_VERSION_SHORT=2004 --build-arg JETPACK_VERSION=r35.2 --build-arg BOARD_TYPE=t194 -t jetsonimage .
 ```
 When it finishes, you will find a file named 'jetsonSysroot.tar.gz' in the '/' directory within the image.
 Let's copy it to the same location where the Dockerfile exists. 
