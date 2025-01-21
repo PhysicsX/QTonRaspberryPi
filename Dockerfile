@@ -54,6 +54,7 @@ RUN { \
     libgmp-dev \
     libmpfr-dev \
     libmpc-dev \
+    libpq-dev \
     flex \
     gawk \
     texinfo \
@@ -155,6 +156,7 @@ RUN { \
         -DCMAKE_INSTALL_PREFIX=/usr/local/qt6 \
         -DCMAKE_TOOLCHAIN_FILE=/build/toolchain.cmake \
         -DQT_FEATURE_xcb=ON -DFEATURE_xcb_xlib=ON \
+        -DFEATURE_sql_psql=ON \
         -DQT_FEATURE_xlib=ON && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
