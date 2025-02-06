@@ -1,5 +1,5 @@
-# Cross compilation of Qt6.8.0 Jetson Orin/Nx/Nano with Docker(Base and QML packages) and Remote Debugging with Vscode
-In this content, you will find a way to cross-compile Qt 6.8.0 for Jetson Orin/Nx/Nano(ubuntu os) hardware using Docker isolation.
+# Cross compilation of Qt6.8.1 Jetson Orin/Nx/Nano with Docker(Base and QML packages) and Remote Debugging with Vscode
+In this content, you will find a way to cross-compile Qt 6.8.1 for Jetson Orin/Nx/Nano(ubuntu os) hardware using Docker isolation.
 This is a complete tutorial that you can learn how to debug the application with vscode.
 
 The primary advantage of Docker is its ability to isolate the build environment. This means you can build Qt without needing a Jetson Development Boards (real hardware) and regardless of your host OS type, as long as you can run Docker (along with QEMU). Additionally, you won’t need to handle dependencies anymore (and I’m not kidding). This approach is easier and less painful.
@@ -18,7 +18,7 @@ For remote debugging and follow up [click](https://www.youtube.com/watch?v=RWNWA
 
 I tested this on Ubuntu 22 and 20(as host). Regardless of the version, Qt is successfully cross-compiled and builds a 'Hello World' application (with QML) for Jetson Orin/Nx/Nano.
 
-The steps will show you how to prepare your build environment (in this case, Ubuntu) and run the Docker commands to build Qt 6.8.0. But as I mentioned, you don't need to use Ubuntu; as long as you can run the Docker engine and QEMU, you should achieve the same result on any platform.
+The steps will show you how to prepare your build environment (in this case, Ubuntu) and run the Docker commands to build Qt 6.8.1. But as I mentioned, you don't need to use Ubuntu; as long as you can run the Docker engine and QEMU, you should achieve the same result on any platform.
 
 If you want to check with virtual machine you can find tutorial [Here](https://github.com/PhysicsX/QTonRaspberryPi/tree/main/QtRaspberryPi6.6.1). Steps are quite same, for this case you need raspberry pi. It is classical way that you can find in this repository. Or If you want more infromation, check old videos about it.
 If you want to understand theory for cross complation of Qt for rasppberry pi without Docker in detail, you can watch this [video](https://www.youtube.com/watch?v=oWpomXg9yj0?t=0s) which shows how to compile Qt 6.3.0 for raspberry pi(only toolchain is not compiled).
@@ -115,7 +115,7 @@ Verify Buildx installation
 $ docker buildx ls
 ```
 
-# Compile Qt 6.8.0 with Docker
+# Compile Qt 6.8.1 with Docker
 
 When I experimented with this idea, I expected to create a single Dockerfile with different stages, allowing me to switch between them even if they involved different hardware architectures. However, it didn't work as expected, so I ended up creating two separate Dockerfiles.
 
@@ -164,7 +164,7 @@ $ docker cp temp-arm:/jetsonSysroot.tar.gz ./jetsonSysroot.tar.gz
 ```
 This jetsonSysroot.tar.gz file will be copied by the another image that is why location of the tar file is important. You do not need to extract it. Do not touch it.
 
-Now it is time to create ubuntu 22 image and compile the Qt 6.8.0.
+Now it is time to create ubuntu 22 image and compile the Qt 6.8.1.
 In one of the previous commands you used DockerFileNx, this file is written for Jetson boards, now we are going to use only Dockerfile which is default name that means we do not need to specify path or name explicitly. But if  you want you can change the name, you already now how you can pass the file name (with -f)
 
 ```bash

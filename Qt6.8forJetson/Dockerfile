@@ -135,16 +135,16 @@ RUN wget --no-check-certificate 'https://raw.githubusercontent.com/riscv/riscv-p
 # Create necessary directories and download Qt source
 RUN mkdir -p /qt6/src /qt6/host-build /qt6/nx-build \
  && cd /qt6/src \
- && wget --no-check-certificate https://download.qt.io/official_releases/qt/6.8/6.8.0/submodules/qtbase-everywhere-src-6.8.0.tar.xz \
- && wget --no-check-certificate https://download.qt.io/official_releases/qt/6.8/6.8.0/submodules/qtshadertools-everywhere-src-6.8.0.tar.xz \
- && wget --no-check-certificate https://download.qt.io/official_releases/qt/6.8/6.8.0/submodules/qtdeclarative-everywhere-src-6.8.0.tar.xz \
- && tar xf qtbase-everywhere-src-6.8.0.tar.xz -C /qt6/host-build \
- && tar xf qtshadertools-everywhere-src-6.8.0.tar.xz -C /qt6/host-build \
- && tar xf qtdeclarative-everywhere-src-6.8.0.tar.xz -C /qt6/host-build | tee -a /build.log
+ && wget --no-check-certificate https://download.qt.io/official_releases/qt/6.8/6.8.1/submodules/qtbase-everywhere-src-6.8.1.tar.xz \
+ && wget --no-check-certificate https://download.qt.io/official_releases/qt/6.8/6.8.1/submodules/qtshadertools-everywhere-src-6.8.1.tar.xz \
+ && wget --no-check-certificate https://download.qt.io/official_releases/qt/6.8/6.8.1/submodules/qtdeclarative-everywhere-src-6.8.1.tar.xz \
+ && tar xf qtbase-everywhere-src-6.8.1.tar.xz -C /qt6/host-build \
+ && tar xf qtshadertools-everywhere-src-6.8.1.tar.xz -C /qt6/host-build \
+ && tar xf qtdeclarative-everywhere-src-6.8.1.tar.xz -C /qt6/host-build | tee -a /build.log
 
 # Compile Qt for the host
 RUN { \
-    cd /qt6/host-build/qtbase-everywhere-src-6.8.0 && \
+    cd /qt6/host-build/qtbase-everywhere-src-6.8.1 && \
     echo "Compile qtbase for host" | tee -a /build.log && \
     cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/qt6/host && \
     ninja && \
@@ -153,7 +153,7 @@ RUN { \
 
 RUN { \
     echo "Compile qtshadertools for host" | tee -a /build.log && \
-    cd /qt6/host-build/qtshadertools-everywhere-src-6.8.0 && \
+    cd /qt6/host-build/qtshadertools-everywhere-src-6.8.1 && \
     /qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install .; \
@@ -161,7 +161,7 @@ RUN { \
 
 RUN { \
     echo "Compile qtdeclarative for host" | tee -a /build.log && \
-    cd /qt6/host-build/qtdeclarative-everywhere-src-6.8.0 && \
+    cd /qt6/host-build/qtdeclarative-everywhere-src-6.8.1 && \
     /qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install .; \
@@ -177,16 +177,16 @@ ENV SYSROOT=/opt/sysroot
 
 # Compile Qt for the target
 RUN cd /qt6/src && \
-    tar xf qtbase-everywhere-src-6.8.0.tar.xz -C /qt6/nx-build && \
-    tar xf qtshadertools-everywhere-src-6.8.0.tar.xz -C /qt6/nx-build && \
-    tar xf qtdeclarative-everywhere-src-6.8.0.tar.xz -C /qt6/nx-build
+    tar xf qtbase-everywhere-src-6.8.1.tar.xz -C /qt6/nx-build && \
+    tar xf qtshadertools-everywhere-src-6.8.1.tar.xz -C /qt6/nx-build && \
+    tar xf qtdeclarative-everywhere-src-6.8.1.tar.xz -C /qt6/nx-build
 
 ARG GCC_VERSION
 
 # Build Qt for the target using the toolchain file
 RUN { \
     echo "Compile qtbase for nx" | tee -a /build.log && \
-    cd /qt6/nx-build/qtbase-everywhere-src-6.8.0 && \
+    cd /qt6/nx-build/qtbase-everywhere-src-6.8.1 && \
     cmake -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DINPUT_opengl=es2 \
@@ -197,6 +197,7 @@ RUN { \
     -DCMAKE_INSTALL_PREFIX=/usr/local/qt6 \
     -DCMAKE_TOOLCHAIN_FILE=/opt/toolchain.cmake \
     -DGCC_VERSION=${GCC_VERSION} \ 
+    -DFEATURE_sql_psql=ON \
     -DFEATURE_xcb_xlib=ON \
     -DQT_FEATURE_xlib=ON && \
     ninja && \
@@ -205,7 +206,7 @@ RUN { \
 
 RUN { \
     echo "Compile qtshadertools for nx" | tee -a /build.log && \
-    cd /qt6/nx-build/qtshadertools-everywhere-src-6.8.0 && \
+    cd /qt6/nx-build/qtshadertools-everywhere-src-6.8.1 && \
     /qt6/nx/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install .; \
@@ -213,7 +214,7 @@ RUN { \
 
 RUN { \
     echo "Compile qtdeclarative for nx" | tee -a /build.log && \
-    cd /qt6/nx-build/qtdeclarative-everywhere-src-6.8.0 && \
+    cd /qt6/nx-build/qtdeclarative-everywhere-src-6.8.1 && \
     /qt6/nx/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install .; \
