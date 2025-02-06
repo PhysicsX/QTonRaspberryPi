@@ -76,6 +76,7 @@ RUN apt-get update && apt-get install -y  \
     libxrandr-dev \
     libglu1-mesa-dev \
     libxkbcommon-dev \
+    libpq-dev \
     libxkbcommon-x11-dev | tee -a /build.log
 
 # Create the sysroot tarball
