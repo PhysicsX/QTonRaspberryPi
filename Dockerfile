@@ -176,6 +176,38 @@ RUN { \
 RUN tar -czvf qt-host-binaries.tar.gz -C /build/qt6/host .
 RUN tar -czvf qt-pi-binaries.tar.gz -C /build/qt6/pi .
 
+# Copy the toolchain file
+COPY opencvToolchain.cmake /build/
+
+# Build Opencv
+RUN { \
+    echo "Cross Compile Opencv" && \
+    mkdir -p /build/opencvBuild && \
+    git clone --depth=1 https://github.com/opencv/opencv.git && \
+    git clone --depth=1 https://github.com/opencv/opencv_contrib.git && \
+    mkdir -p /build/opencv/build && \
+    cd /build/opencv/build && \
+    cmake -D CMAKE_BUILD_TYPE=Release \
+          -D CMAKE_INSTALL_PREFIX=/build/opencvBuild \
+          -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
+          -D CMAKE_TOOLCHAIN_FILE=/build/opencvToolchain.cmake \
+          -D OPENCV_ENABLE_NONFREE=ON \
+          -D WITH_GSTREAMER=ON \
+          -D WITH_V4L=ON \
+          -D WITH_OPENGL=ON \
+          -D ENABLE_NEON=ON \
+          -D ENABLE_VFPV3=ON \
+          -D BUILD_TESTS=OFF \
+          -D BUILD_PERF_TESTS=OFF \
+          -D BUILD_EXAMPLES=OFF \
+          .. && \
+          cmake --build . --parallel 4 && \
+          cmake --install . && \
+    echo "Cross Compile Opencv completed"; \
+} 2>&1 | tee -a /build.log
+
+RUN tar -czvf opencv-binaries.tar.gz -C /build/opencvBuild .
+
 # Set up project directory
 RUN mkdir /build/project
 COPY project /build/project
