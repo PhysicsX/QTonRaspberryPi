@@ -12,7 +12,6 @@ RUN { \
     git \
     build-essential \
     make \
-    cmake \
     rsync \
     sed \
     libclang-dev \
@@ -97,9 +96,6 @@ RUN mkdir sysroot sysroot/usr sysroot/opt
 COPY rasp.tar.gz /build/rasp.tar.gz
 RUN tar xvfz /build/rasp.tar.gz -C /build/sysroot
 
-# Copy the toolchain file
-COPY toolchain.cmake /build/
-
 # Build and install CMake from source
 RUN { \
     echo "Building CMake from source" && \
@@ -110,93 +106,40 @@ RUN { \
     echo "CMake build completed"; \
 } 2>&1 | tee -a /build.log
 
+# Copy the toolchain file
+COPY opencvToolchain.cmake /build/
+
+# Build Opencv
 RUN { \
     set -e && \
     echo "Fix symbollic link" && \
     wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py && \
     chmod +x sysroot-relativelinks.py && \
     python3 sysroot-relativelinks.py /build/sysroot && \
-    mkdir -p qt6 qt6/host qt6/pi qt6/host-build qt6/pi-build qt6/src && \
-    cd qt6/src && \
-    wget https://download.qt.io/official_releases/qt/6.8/6.8.1/submodules/qtbase-everywhere-src-6.8.1.tar.xz && \
-    wget https://download.qt.io/official_releases/qt/6.8/6.8.1/submodules/qtshadertools-everywhere-src-6.8.1.tar.xz && \
-    wget https://download.qt.io/official_releases/qt/6.8/6.8.1/submodules/qtdeclarative-everywhere-src-6.8.1.tar.xz && \
-    cd ../host-build && \
-    tar xf ../src/qtbase-everywhere-src-6.8.1.tar.xz && \
-    tar xf ../src/qtshadertools-everywhere-src-6.8.1.tar.xz && \
-    tar xf ../src/qtdeclarative-everywhere-src-6.8.1.tar.xz && \
-    echo "Compile qtbase for host" && \
-    cd qtbase-everywhere-src-6.8.1 && \
-    cmake -GNinja -DCMAKE_BUILD_TYPE=Release \
-        -DQT_BUILD_EXAMPLES=OFF \
-        -DQT_BUILD_TESTS=OFF \
-        -DCMAKE_INSTALL_PREFIX=/build/qt6/host && \
-    cmake --build . --parallel 4 && \
-    cmake --install . && \
-    echo "Compile shader for host" && \
-    cd ../qtshadertools-everywhere-src-6.8.1 && \
-    /build/qt6/host/bin/qt-configure-module . && \
-    cmake --build . --parallel 4 && \
-    cmake --install . && \
-    echo "Compile declerative for host" && \
-    cd ../qtdeclarative-everywhere-src-6.8.1 && \
-    /build/qt6/host/bin/qt-configure-module . && \
-    cmake --build . --parallel 4 && \
-    cmake --install . && \
-    cd ../../pi-build && \
-    tar xf ../src/qtbase-everywhere-src-6.8.1.tar.xz && \
-    tar xf ../src/qtshadertools-everywhere-src-6.8.1.tar.xz && \
-    tar xf ../src/qtdeclarative-everywhere-src-6.8.1.tar.xz && \
-    echo "Compile qtbase for rasp" && \
-    cd qtbase-everywhere-src-6.8.1 && \
-    cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DINPUT_opengl=es2 \
-        -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF \
-        -DQT_HOST_PATH=/build/qt6/host \
-        -DCMAKE_STAGING_PREFIX=/build/qt6/pi \
-        -DCMAKE_INSTALL_PREFIX=/usr/local/qt6 \
-        -DCMAKE_TOOLCHAIN_FILE=/build/toolchain.cmake \
-        -DQT_FEATURE_xcb=ON -DFEATURE_xcb_xlib=ON \
-        -DFEATURE_sql_psql=ON \
-        -DQT_FEATURE_xlib=ON && \
-    cmake --build . --parallel 4 && \
-    cmake --install . && \
-    echo "Compile shader for rasp" && \
-    cd ../qtshadertools-everywhere-src-6.8.1 && \
-    /build/qt6/pi/bin/qt-configure-module . && \
-    cmake --build . --parallel 4 && \
-    cmake --install . && \
-    echo "Compile declerative for rasp" && \
-    cd ../qtdeclarative-everywhere-src-6.8.1 && \
-    /build/qt6/pi/bin/qt-configure-module . && \
-    cmake --build . --parallel 4 && \
-    cmake --install . && \
-    echo "Compilation is finished"; \
-} 2>&1 | tee -a /build.log
-
-RUN tar -czvf qt-host-binaries.tar.gz -C /build/qt6/host .
-RUN tar -czvf qt-pi-binaries.tar.gz -C /build/qt6/pi .
-
-# Copy the toolchain file
-COPY opencvToolchain.cmake /build/
-
-# Build Opencv
-RUN { \
-    echo "Cross Compile Opencv" && \
+    echo "Cross Compile Opencv from source" && \
+    export LD_LIBRARY_PATH=/build/sysroot/usr/lib/aarch64-linux-gnu:$LD_LIBRARY_PATH && \
+    echo $LD_LIBRARY_PATH && \
     mkdir -p /build/opencvBuild && \
     git clone --depth=1 https://github.com/opencv/opencv.git && \
     git clone --depth=1 https://github.com/opencv/opencv_contrib.git && \
     mkdir -p /build/opencv/build && \
     cd /build/opencv/build && \
-    cmake -D CMAKE_BUILD_TYPE=Release \
+    cmake \
+          -G "Unix Makefiles" \ 
+          -D CMAKE_BUILD_TYPE=Release \
           -D CMAKE_INSTALL_PREFIX=/build/opencvBuild \
           -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
           -D CMAKE_TOOLCHAIN_FILE=/build/opencvToolchain.cmake \
+          #-D CMAKE_TOOLCHAIN_FILE=/build/opencv/platforms/linux/aarch64-gnu.toolchain.cmake \
+          #-D ARM_LINUX_SYSROOT=/build/sysroot \
           -D OPENCV_ENABLE_NONFREE=ON \
           -D WITH_GSTREAMER=ON \
           -D WITH_V4L=ON \
           -D WITH_OPENGL=ON \
-          -D ENABLE_NEON=ON \
-          -D ENABLE_VFPV3=ON \
+          -D WITH_GTK=OFF \     
+          -D WITH_QT=OFF \
+          -D OPENCV_PYTHON3_INSTALL_PATH=OFF \       
+          -D BUILD_opencv_highgui=ON \
           -D BUILD_TESTS=OFF \
           -D BUILD_PERF_TESTS=OFF \
           -D BUILD_EXAMPLES=OFF \
@@ -208,13 +151,82 @@ RUN { \
 
 RUN tar -czvf opencv-binaries.tar.gz -C /build/opencvBuild .
 
-# Set up project directory
-RUN mkdir /build/project
-COPY project /build/project
+# # Copy the toolchain file
+# COPY toolchain.cmake /build/
 
-# Build the project using Qt for Raspberry Pi
-RUN { \
-    cd /build/project && \
-    /build/qt6/pi/bin/qt-cmake . && \
-    cmake --build .; \
-} 2>&1 | tee -a /build.log
+# RUN { \
+#     set -e && \
+#     echo "Fix symbollic link" && \
+#     wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py && \
+#     chmod +x sysroot-relativelinks.py && \
+#     python3 sysroot-relativelinks.py /build/sysroot && \
+#     mkdir -p qt6 qt6/host qt6/pi qt6/host-build qt6/pi-build qt6/src && \
+#     cd qt6/src && \
+#     wget https://download.qt.io/official_releases/qt/6.8/6.8.1/submodules/qtbase-everywhere-src-6.8.1.tar.xz && \
+#     wget https://download.qt.io/official_releases/qt/6.8/6.8.1/submodules/qtshadertools-everywhere-src-6.8.1.tar.xz && \
+#     wget https://download.qt.io/official_releases/qt/6.8/6.8.1/submodules/qtdeclarative-everywhere-src-6.8.1.tar.xz && \
+#     cd ../host-build && \
+#     tar xf ../src/qtbase-everywhere-src-6.8.1.tar.xz && \
+#     tar xf ../src/qtshadertools-everywhere-src-6.8.1.tar.xz && \
+#     tar xf ../src/qtdeclarative-everywhere-src-6.8.1.tar.xz && \
+#     echo "Compile qtbase for host" && \
+#     cd qtbase-everywhere-src-6.8.1 && \
+#     cmake -GNinja -DCMAKE_BUILD_TYPE=Release \
+#         -DQT_BUILD_EXAMPLES=OFF \
+#         -DQT_BUILD_TESTS=OFF \
+#         -DCMAKE_INSTALL_PREFIX=/build/qt6/host && \
+#     cmake --build . --parallel 4 && \
+#     cmake --install . && \
+#     echo "Compile shader for host" && \
+#     cd ../qtshadertools-everywhere-src-6.8.1 && \
+#     /build/qt6/host/bin/qt-configure-module . && \
+#     cmake --build . --parallel 4 && \
+#     cmake --install . && \
+#     echo "Compile declerative for host" && \
+#     cd ../qtdeclarative-everywhere-src-6.8.1 && \
+#     /build/qt6/host/bin/qt-configure-module . && \
+#     cmake --build . --parallel 4 && \
+#     cmake --install . && \
+#     cd ../../pi-build && \
+#     tar xf ../src/qtbase-everywhere-src-6.8.1.tar.xz && \
+#     tar xf ../src/qtshadertools-everywhere-src-6.8.1.tar.xz && \
+#     tar xf ../src/qtdeclarative-everywhere-src-6.8.1.tar.xz && \
+#     echo "Compile qtbase for rasp" && \
+#     cd qtbase-everywhere-src-6.8.1 && \
+#     cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DINPUT_opengl=es2 \
+#         -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF \
+#         -DQT_HOST_PATH=/build/qt6/host \
+#         -DCMAKE_STAGING_PREFIX=/build/qt6/pi \
+#         -DCMAKE_INSTALL_PREFIX=/usr/local/qt6 \
+#         -DCMAKE_TOOLCHAIN_FILE=/build/toolchain.cmake \
+#         -DQT_FEATURE_xcb=ON -DFEATURE_xcb_xlib=ON \
+#         -DFEATURE_sql_psql=ON \
+#         -DQT_FEATURE_xlib=ON && \
+#     cmake --build . --parallel 4 && \
+#     cmake --install . && \
+#     echo "Compile shader for rasp" && \
+#     cd ../qtshadertools-everywhere-src-6.8.1 && \
+#     /build/qt6/pi/bin/qt-configure-module . && \
+#     cmake --build . --parallel 4 && \
+#     cmake --install . && \
+#     echo "Compile declerative for rasp" && \
+#     cd ../qtdeclarative-everywhere-src-6.8.1 && \
+#     /build/qt6/pi/bin/qt-configure-module . && \
+#     cmake --build . --parallel 4 && \
+#     cmake --install . && \
+#     echo "Compilation is finished"; \
+# } 2>&1 | tee -a /build.log
+
+# RUN tar -czvf qt-host-binaries.tar.gz -C /build/qt6/host .
+# RUN tar -czvf qt-pi-binaries.tar.gz -C /build/qt6/pi .
+
+# # Set up project directory
+# RUN mkdir /build/project
+# COPY project /build/project
+
+# # Build the project using Qt for Raspberry Pi
+# RUN { \
+#     cd /build/project && \
+#     /build/qt6/pi/bin/qt-cmake . && \
+#     cmake --build .; \
+# } 2>&1 | tee -a /build.log
