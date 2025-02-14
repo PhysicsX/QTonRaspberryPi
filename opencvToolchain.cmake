@@ -11,6 +11,11 @@ set(TARGET_ARCHITECTURE aarch64-linux-gnu)
 set(CMAKE_SYSROOT ${TARGET_SYSROOT})
 set(CMAKE_FIND_ROOT_PATH ${CMAKE_SYSROOT})
 
+# Configure the pkg-config environment variables
+set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${CMAKE_SYSROOT}/usr/lib/${TARGET_ARCHITECTURE}/pkgconfig")
+set(ENV{PKG_CONFIG_LIBDIR} "/usr/lib/pkgconfig:/usr/share/pkgconfig:${CMAKE_SYSROOT}/usr/lib/${TARGET_ARCHITECTURE}/pkgconfig:${CMAKE_SYSROOT}/usr/lib/pkgconfig")
+set(ENV{PKG_CONFIG_SYSROOT_DIR} "${CMAKE_SYSROOT}")
+
 # Set the C and C++ compilers
 set(CMAKE_C_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-gcc-12)
 set(CMAKE_CXX_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-g++-12)
@@ -23,22 +28,20 @@ set(CMAKE_CXX_FLAGS "-march=armv8.2-a+dotprod+fp16 -mtune=cortex-a72 -ftree-vect
 set(OPENGL_LIB_PATH "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu")
 set(MATH_LIB_PATH "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu")
 
-
 # Remove find_package(OpenGL) and set variables manually
-set(OpenGL_INCLUDE_DIR "${CMAKE_SYSROOT}/usr/include")
-set(OpenGL_GL_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libGL.so")
-set(OpenGL_GLU_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libGLU.so")
-set(OpenGL_EGL_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libEGL.so")
-set(OpenGL_GLES2_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libGLESv2.so")
+# set(OPENGL_INCLUDE_DIR "${CMAKE_SYSROOT}/usr/include")
+# set(OPENGL_gl_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libGL.so")
+# set(OPENGL_glu_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libGLU.so")
+# set(OPENGL_egl_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libEGL.so")
+# set(OPENGL_glesv2_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libGLESv2.so")
+# set(OPENGL_glx_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libGLX.so")
 
 set(CMAKE_EXE_LINKER_FLAGS_INIT "--sysroot=${CMAKE_SYSROOT} \
     -L${CMAKE_SYSROOT}/usr/lib \
     -Wl,-rpath-link,${CMAKE_SYSROOT}/lib:${CMAKE_SYSROOT}/usr/lib \
     -L${MATH_LIB_PATH} -L${OPENGL_LIB_PATH} \
     -Wl,-rpath-link,${MATH_LIB_PATH}:${OPENGL_LIB_PATH} \
-    -lm -lGLEW -lGLU -lGL -lEGL")  # Order matters: GLEW before GL/GLU
-
-set(OpenGL_FOUND TRUE)  # Force OpenGL detection
+    -lm -lGLEW -lGLU -lGL -lEGL -lX11 -lGLX -lXext -lXrandr")  # Order matters: GLEW before GL/GLU
 
 set(CMAKE_SHARED_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT}")
 set(CMAKE_MODULE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS_INIT}")
