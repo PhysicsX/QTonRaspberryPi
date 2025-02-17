@@ -286,7 +286,6 @@ Enjoy.
 For reference the qt is compiled with below parameters in this example 
 
 ```bash
--- Configure summary:
 
 Building for: linux-g++ (arm64, CPU features: cx16 neon)
 Compiler: gcc 9.4.0
@@ -301,7 +300,14 @@ Build options:
   Relocatable ............................ yes
   Using precompiled headers .............. yes
   Using Link Time Optimization (LTCG) .... no
-  Using Intel CET ........................ no
+  Using Intel Control-flow Enforcement Technology (CET)  no
+  Using Glibc function fortification ..... yes
+  Using -ftrivial-auto-var-init=pattern .. no
+  Using -fstack-protector-strong ......... yes
+  Using -fstack-clash-protection ......... yes
+  Using libstdc++ assertions ............. yes
+  Using libc++ hardening ................. no
+  Using -z relro -z now when linking ..... yes
   Target compiler supports:
     ARM Extensions ....................... NEON
   Sanitizers:
@@ -338,6 +344,7 @@ Common build options:
   Linker can resolve circular dependencies  yes
 Qt Core:
   backtrace .............................. yes
+  C++23 <stacktrace> ..................... no
   DoubleConversion ....................... yes
     Using system DoubleConversion ........ no
   CLONE_PIDFD support in forkfd .......... yes
@@ -358,8 +365,8 @@ Qt Core:
 Qt Sql:
   SQL item models ........................ yes
 Qt Network:
-  getifaddrs() ........................... yes
-  IPv6 ifname ............................ yes
+  getifaddrs() ........................... no
+  IPv6 ifname ............................ no
   libproxy ............................... no
   Linux AF_NETLINK ....................... yes
   DTLS ................................... no
@@ -406,6 +413,8 @@ Qt Gui:
     OpenGL ES 3.1 ........................ yes
     OpenGL ES 3.2 ........................ yes
   Vulkan ................................. no
+  Metal .................................. no
+  QGraphicsFrameCapture .................. no
   Session Management ..................... yes
 Features used by QPA backends:
   evdev .................................. yes
@@ -466,23 +475,15 @@ Qt Sql Drivers:
   MySql .................................. no
   OCI (Oracle) ........................... no
   ODBC ................................... no
-  PostgreSQL ............................. no
+  PostgreSQL ............................. yes
   SQLite ................................. yes
     Using system provided SQLite ......... no
   Mimer .................................. no
- 
-
 Note: Disabling X11 Accessibility Bridge: D-Bus or AT-SPI is missing.
 Note: Due to CMAKE_STAGING_PREFIX usage and an unfixed CMake bug,
       to ensure correct build time rpaths, directory-level install
       rules like ninja src/gui/install will not work.
       Check QTBUG-102592 for further details.
 
--- 
-
-Qt is now configured for building. Just run 'cmake --build . --parallel'
-
-Once everything is built, you must run 'cmake --install .'
-Qt will be installed into '/usr/local/qt6'
-
+```
 
