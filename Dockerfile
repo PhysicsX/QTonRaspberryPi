@@ -4,6 +4,8 @@ FROM debian:bookworm
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
+ARG BUILD_OPENCV=FALSE
+
 # Update and install necessary packages
 RUN { \
     set -e && \
@@ -123,8 +125,10 @@ RUN ( \
     ln -sf /build/sysroot/usr/lib/aarch64-linux-gnu/openmpi/libmpi.so.40 /build/sysroot/usr/lib/aarch64-linux-gnu/libmpi.so; \
 )2>&1 | tee -a /build.log
 
+ARG BUILD_OPENCV
+
 # Build Opencv
-RUN { \
+RUN if [ "$BUILD_OPENCV" = "ON" ]; then { \
     set -e && \
     echo "Cross Compile Opencv from source" && \
     mkdir -p /build/opencvBuild && \
@@ -154,10 +158,9 @@ RUN { \
           .. && \
           cmake --build . --parallel 4 && \
           cmake --install . && \
-    echo "Cross Compile Opencv completed"; \
-} 2>&1 | tee -a /build.log
-
-RUN tar -czvf opencv-binaries.tar.gz -C /build/opencvBuild .
+    echo "Cross Compile Opencv completed" \
+    tar -czvf opencv-binaries.tar.gz -C /build/opencvBuild .; \
+} 2>&1 | tee -a /build.log; fi
 
 # Copy the toolchain file
 COPY toolchain.cmake /build/
@@ -239,10 +242,11 @@ RUN { \
 RUN mkdir /build/QtOpencvExample
 COPY QtOpencvExample /build/QtOpencvExample
 
+ARG BUILD_OPENCV
 # Build the project using Qt and Opencv for Raspberry Pi
-RUN { \
+RUN if [ "$BUILD_OPENCV" = "ON" ]; then { \
     cd /build/QtOpencvExample && \
     mkdir build && cd build && \
     cmake -DCMAKE_TOOLCHAIN_FILE=/build/QtOpencvExample/toolchain.cmake .. && \
     make ; \
-} 2>&1 | tee -a /build.log
+} 2>&1 | tee -a /build.log; fi
