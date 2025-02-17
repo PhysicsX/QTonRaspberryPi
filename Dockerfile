@@ -89,6 +89,16 @@ RUN { \
 # Set the working directory to /build
 WORKDIR /build
 
+# Build and install CMake from source
+RUN ( \
+    echo "Building CMake from source" && \
+    mkdir cmakeBuild && cd cmakeBuild && \
+    git clone https://github.com/Kitware/CMake.git && \
+    cd CMake && \
+    ./bootstrap && make -j$(nproc) && make install && \
+    echo "CMake build completed"; \
+ ) 2>&1 | tee -a /build.log
+
 # Create sysroot directory
 RUN mkdir sysroot sysroot/usr sysroot/opt
 
@@ -96,26 +106,26 @@ RUN mkdir sysroot sysroot/usr sysroot/opt
 COPY rasp.tar.gz /build/rasp.tar.gz
 RUN tar xvfz /build/rasp.tar.gz -C /build/sysroot
 
-# Build and install CMake from source
-RUN { \
-    echo "Building CMake from source" && \
-    mkdir cmakeBuild && cd cmakeBuild && \
-    git clone https://github.com/Kitware/CMake.git && \
-    cd CMake && \
-    ./bootstrap && make -j$(nproc) && make install && \
-    echo "CMake build completed"; \
-} 2>&1 | tee -a /build.log
-
 # Copy the toolchain file
 COPY opencvToolchain.cmake /build/
+COPY sysroot-relativelinks.py /build/
+
+RUN ( \
+    set -e && \
+    echo "Fix symbollic link" && \
+    chmod +x sysroot-relativelinks.py && \
+    python3 sysroot-relativelinks.py /build/sysroot && \
+    unlink /build/sysroot/usr/lib/aarch64-linux-gnu/libblas.so && \
+    ln -sf /build/sysroot/usr/lib/aarch64-linux-gnu/atlas/libblas.so.3.10.3 /build/sysroot/usr/lib/aarch64-linux-gnu/libblas.so && \
+    unlink /build/sysroot/usr/lib/aarch64-linux-gnu/liblapack.so && \
+    ln -sf /build/sysroot/usr/lib/aarch64-linux-gnu/atlas/liblapack.so.3.10.3 /build/sysroot/usr/lib/aarch64-linux-gnu/liblapack.so && \
+    unlink /build/sysroot/usr/lib/aarch64-linux-gnu/libmpi.so && \
+    ln -sf /build/sysroot/usr/lib/aarch64-linux-gnu/openmpi/libmpi.so.40 /build/sysroot/usr/lib/aarch64-linux-gnu/libmpi.so; \
+)2>&1 | tee -a /build.log
 
 # Build Opencv
 RUN { \
     set -e && \
-    echo "Fix symbollic link" && \
-    wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py && \
-    chmod +x sysroot-relativelinks.py && \
-    python3 sysroot-relativelinks.py /build/sysroot && \
     echo "Cross Compile Opencv from source" && \
     mkdir -p /build/opencvBuild && \
     git clone --branch 4.9.0 --depth=1 https://github.com/opencv/opencv.git && \
@@ -223,4 +233,16 @@ RUN { \
     cd /build/project && \
     /build/qt6/pi/bin/qt-cmake . && \
     cmake --build .; \
+} 2>&1 | tee -a /build.log
+
+# Set up QtOpencvExample directory
+RUN mkdir /build/QtOpencvExample
+COPY QtOpencvExample /build/QtOpencvExample
+
+# Build the project using Qt and Opencv for Raspberry Pi
+RUN { \
+    cd /build/QtOpencvExample && \
+    mkdir build && cd build && \
+    cmake -DCMAKE_TOOLCHAIN_FILE=/build/QtOpencvExample/toolchain.cmake .. && \
+    make ; \
 } 2>&1 | tee -a /build.log
