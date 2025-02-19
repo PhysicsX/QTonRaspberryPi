@@ -110,19 +110,16 @@ RUN tar xvfz /build/rasp.tar.gz -C /build/sysroot
 
 # Copy the toolchain file
 COPY opencvToolchain.cmake /build/
-COPY sysroot-relativelinks.py /build/
+COPY fix_symlinks.py /build/
 
 RUN ( \
     set -e && \
     echo "Fix symbollic link" && \
+    wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py && \
     chmod +x sysroot-relativelinks.py && \
     python3 sysroot-relativelinks.py /build/sysroot && \
-    unlink /build/sysroot/usr/lib/aarch64-linux-gnu/libblas.so && \
-    ln -sf /build/sysroot/usr/lib/aarch64-linux-gnu/atlas/libblas.so.3.10.3 /build/sysroot/usr/lib/aarch64-linux-gnu/libblas.so && \
-    unlink /build/sysroot/usr/lib/aarch64-linux-gnu/liblapack.so && \
-    ln -sf /build/sysroot/usr/lib/aarch64-linux-gnu/atlas/liblapack.so.3.10.3 /build/sysroot/usr/lib/aarch64-linux-gnu/liblapack.so && \
-    unlink /build/sysroot/usr/lib/aarch64-linux-gnu/libmpi.so && \
-    ln -sf /build/sysroot/usr/lib/aarch64-linux-gnu/openmpi/libmpi.so.40 /build/sysroot/usr/lib/aarch64-linux-gnu/libmpi.so; \
+    chmod +x fix_symlinks.py && \
+    python3 fix_symlinks.py /build/sysroot . \
 )2>&1 | tee -a /build.log
 
 ARG BUILD_OPENCV
