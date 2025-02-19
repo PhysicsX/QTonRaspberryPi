@@ -47,5 +47,5 @@ RUN { \
 
 WORKDIR /build
 
-RUN tar cvfz rasp.tar.gz -C / lib usr/include usr/lib
+RUN tar cvfz rasp.tar.gz -C / lib usr/include usr/lib etc/alternatives
 
