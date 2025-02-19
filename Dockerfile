@@ -128,7 +128,7 @@ RUN ( \
 ARG BUILD_OPENCV
 
 # Build Opencv
-RUN if [ "$BUILD_OPENCV" = "ON" ]; then { \
+RUN if [ "$BUILD_OPENCV" = "ON" ]; then \
     set -e && \
     echo "Cross Compile Opencv from source" && \
     mkdir -p /build/opencvBuild && \
@@ -156,11 +156,11 @@ RUN if [ "$BUILD_OPENCV" = "ON" ]; then { \
           -D BUILD_PERF_TESTS=OFF \
           -D BUILD_EXAMPLES=OFF \
           .. && \
-          cmake --build . --parallel 4 && \
-          cmake --install . && \
-    echo "Cross Compile Opencv completed" \
-    tar -czvf opencv-binaries.tar.gz -C /build/opencvBuild .; \
-} 2>&1 | tee -a /build.log; fi
+    cmake --build . --parallel 4 && \
+    cmake --install . && \
+    echo "Cross Compile Opencv completed" && \
+    tar -czvf opencv-binaries.tar.gz -C /build/opencvBuild . \
+; fi 2>&1 | tee -a /build.log
 
 # Copy the toolchain file
 COPY toolchain.cmake /build/

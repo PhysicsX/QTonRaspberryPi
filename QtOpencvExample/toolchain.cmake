@@ -14,8 +14,8 @@ set(CMAKE_SYSROOT /build/sysroot)
 set(CMAKE_FIND_ROOT_PATH ${CMAKE_SYSROOT})
 
 # Set compiler optimizations for ARM
-set(CMAKE_C_FLAGS "-march=armv8.2-a+dotprod+fp16 -mtune=cortex-a72 -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
-set(CMAKE_CXX_FLAGS "-march=armv8.2-a+dotprod+fp16 -mtune=cortex-a72 -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS "-march=armv8-a -mtune=generic -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "-march=armv8-a -mtune=generic -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
 
 # Set linker flags
 set(CMAKE_EXE_LINKER_FLAGS "-L${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu")

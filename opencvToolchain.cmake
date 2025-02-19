@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.25)
 include_guard(GLOBAL)
 
 # Set the system name and processor for cross-compilation
@@ -21,20 +21,14 @@ set(CMAKE_C_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-gcc-12)
 set(CMAKE_CXX_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-g++-12)
 
 # Set compiler optimizations for ARM
-set(CMAKE_C_FLAGS "-march=armv8.2-a+dotprod+fp16 -mtune=cortex-a72 -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
-set(CMAKE_CXX_FLAGS "-march=armv8.2-a+dotprod+fp16 -mtune=cortex-a72 -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS "-march=armv8-a -mtune=generic -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "-march=armv8-a -mtune=generic -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
+# set(CMAKE_C_FLAGS "-march=armv8.2-a+dotprod+fp16 -mtune=cortex-a72 -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
+# set(CMAKE_CXX_FLAGS "-march=armv8.2-a+dotprod+fp16 -mtune=cortex-a72 -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
 
 # Set linker flags to use sysroot libraries + OpenGL + Math
 set(OPENGL_LIB_PATH "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu")
 set(MATH_LIB_PATH "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu")
-
-# Remove find_package(OpenGL) and set variables manually
-# set(OPENGL_INCLUDE_DIR "${CMAKE_SYSROOT}/usr/include")
-# set(OPENGL_gl_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libGL.so")
-# set(OPENGL_glu_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libGLU.so")
-# set(OPENGL_egl_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libEGL.so")
-# set(OPENGL_glesv2_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libGLESv2.so")
-# set(OPENGL_glx_LIBRARY "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/libGLX.so")
 
 set(CMAKE_EXE_LINKER_FLAGS_INIT "--sysroot=${CMAKE_SYSROOT} \
     -L${CMAKE_SYSROOT}/usr/lib \
