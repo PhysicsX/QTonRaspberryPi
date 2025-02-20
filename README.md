@@ -163,7 +163,7 @@ Extract it under /usr/local or wherever you want and do not forget to add the pa
 ulas@raspberrypi:~ $ ./HelloQt6
 Hello world
 ```
-# Cross Compilation Opencv for raspberry pi
+# Compilation Opencv with Docker
 To enable opencv (4.9.0) cross compilation during the x86 image creation, it is needed to make BUILD_OPENCV flag ON.
 
 ```bash
@@ -196,6 +196,7 @@ When you run the application after setting path correctly. Note that you need to
 ```bash
 $ ./QtOpencvHello
 ```
+<img src="https://github.com/user-attachments/assets/b5e47b9e-b84a-4439-aeca-c728e0edf699" width="400">
 
 
 # Debugging of compilation
