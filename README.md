@@ -1,5 +1,5 @@
-# Cross compilation of Qt6.8.1 For Raspberry pi 3/4/5 with Docker(Base and QML packages) and Remote Debugging with Vscode
-In this content, you will find a way to cross-compile Qt 6.8.1 for Raspberry Pi hardware using Docker isolation.
+# Cross compilation of Qt6.8.1 and Opencv For Raspberry pi 3/4/5 with Docker(Base and QML packages) and Remote Debugging with Vscode
+In this content, you will find a way to cross-compile Qt 6.8.1 and Opencv (4.9.0) for Raspberry Pi hardware using Docker isolation.
 This is a complete tutorial that you can learn how to debug the application with vscode.
 
 The primary advantage of Docker is its ability to isolate the build environment. This means you can build Qt without needing a Raspberry Pi (real hardware) and regardless of your host OS type, as long as you can run Docker (along with QEMU). Additionally, you won’t need to handle dependencies anymore (and I’m not kidding). This approach is easier and less painful.
@@ -163,6 +163,40 @@ Extract it under /usr/local or wherever you want and do not forget to add the pa
 ulas@raspberrypi:~ $ ./HelloQt6
 Hello world
 ```
+# Cross Compilation Opencv for raspberry pi
+To enable opencv (4.9.0) cross compilation during the x86 image creation, it is needed to make BUILD_OPENCV flag ON.
+
+```bash
+docker build --build-arg BUILD_OPENCV=ON -t qtcrossbuild .
+```
+
+This will compile the opencv with Qt. Qt will be compiled for default.
+
+To copy opencv libraries you need to have container from this image like above. You can use the same container.
+
+```bash
+$ docker create --name tmpbuild qtcrossbuild
+$ docker cp tmpbuild:/build/QtOpencvExample/QtOpencvHello  ./QtOpencvHello 
+$ file QtOpencvHello
+QtOpencvExample/build/QtOpencvHello: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (GNU/Linux), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=e846e63fec33e431bfdc1e70ad6d6b10c138992e, for GNU/Linux 3.7.0, not stripped
+
+```
+Then you can copy the tar file to raspberry pi.
+```bash
+$ docker cp tmpbuild:/build/opencv-binaries.tar.gz ./opencv-binaries.tar.gz
+$ scp opencv-binaries.tar.gz ulas@192.168.16.20:/home/ulas/
+$ ssh rasp@192.168.16.25
+$ ulas@raspberrypi:~ sudo mkdir /usr/local/qt6
+$ ulas@raspberrypi:~ sudo tar -xvf opencv-binaries.tar.gz -C /usr/local/opencv
+$ ulas@raspberrypi:~ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/opencv/lib/
+$ scp QtOpencvHello ulas@192.168.16.20:/home/ulas/ 
+```
+When you run the application after setting path correctly. Note that you need to extract Qt binaries and export the path for Qt also, becuase example needs Qt and Opencv together.
+
+```bash
+$ ./QtOpencvHello
+```
+
 
 # Debugging of compilation
 Nothing is free! Okay now we find a nice way to compile or build Qt applications but there is a tradeoff. Debugging is really hard. So If you want to change Dockerfile then first you sould build or test the steps on VM to be sure. If you know what you are doing then do not worry.
