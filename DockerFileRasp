@@ -41,8 +41,8 @@ RUN { \
     libx265-dev gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
     gstreamer1.0-plugins-bad libgtk-3-dev libatlas-base-dev gfortran libgl1-mesa-dev \
     libgtkgl2.0-dev libgtkglext1-dev libtbb-dev libglew-dev libglu1-mesa-dev \
-    gstreamer1.0-plugins-ugly gstreamer1.0-libav \
-    libgstreamer-plugins-bad1.0-dev libavutil-dev ;\
+    gstreamer1.0-plugins-ugly gstreamer1.0-libav libblas-dev liblapack-dev \
+    libopenmpi-dev libgstreamer-plugins-bad1.0-dev libavutil-dev ;\
 } 2>&1 | tee -a /build.log
 
 WORKDIR /build
