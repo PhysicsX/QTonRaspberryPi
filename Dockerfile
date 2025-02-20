@@ -112,15 +112,12 @@ RUN tar xvfz /build/rasp.tar.gz -C /build/sysroot
 COPY opencvToolchain.cmake /build/
 COPY fix_symlinks.py /build/
 
-RUN ( \
-    set -e && \
-    echo "Fix symbollic link" && \
+RUN set -e && \
+    echo "Fix symbolic link" && \
     wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py && \
     chmod +x sysroot-relativelinks.py && \
-    python3 sysroot-relativelinks.py /build/sysroot && \
-    chmod +x fix_symlinks.py && \
-    python3 fix_symlinks.py /build/sysroot . \
-)2>&1 | tee -a /build.log
+    python3 sysroot-relativelinks.py /build/sysroot 2>&1 | tee -a /build.log
+
 
 ARG BUILD_OPENCV
 
