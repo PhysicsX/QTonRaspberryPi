@@ -487,5 +487,104 @@ Once everything is built, you must run 'cmake --install .'
 Qt will be installed into '/usr/local/qt6'
 ```
 
+```bash
+for opencv
+-- General configuration for OpenCV 4.9.0 =====================================
+--   Version control:               4.9.0
+-- 
+--   Extra modules:
+--     Location (extra):            /build/opencv_contrib/modules
+--     Version control (extra):     4.9.0
+-- 
+--   Platform:
+--     Timestamp:                   2025-02-19T19:59:54Z
+--     Host:                        Linux 6.8.0-52-generic x86_64
+--     Target:                      Linux aarch64
+--     CMake:                       4.0.20250219-g628423f
+--     CMake generator:             Unix Makefiles
+--     CMake build tool:            /usr/bin/gmake
+--     Configuration:               Release
+-- 
+--   CPU/HW features:
+--     Baseline:                    NEON FP16
+--       required:                  NEON
+--       disabled:                  VFPV3
+--     Dispatched code generation:  NEON_DOTPROD NEON_FP16 NEON_BF16
+--       requested:                 NEON_FP16 NEON_BF16 NEON_DOTPROD
+--       NEON_DOTPROD (1 files):    + NEON_DOTPROD
+--       NEON_FP16 (2 files):       + NEON_FP16
+--       NEON_BF16 (0 files):       + NEON_BF16
+-- 
+--   C/C++:
+--     Built as dynamic libs?:      YES
+--     C++ standard:                11
+--     C++ Compiler:                /usr/bin/aarch64-linux-gnu-g++-12  (ver 12.2.0)
+--     C++ flags (Release):         -march=armv8-a -mtune=generic -ftree-vectorize --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Wnon-virtual-dtor -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wundef -Winit-self -Wpointer-arith -Wshadow -Wsign-promo -Wuninitialized -Wsuggest-override -Wno-delete-non-virtual-dtor -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections    -fvisibility=hidden -fvisibility-inlines-hidden -O3 -DNDEBUG  -DNDEBUG
+--     C++ flags (Debug):           -march=armv8-a -mtune=generic -ftree-vectorize --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Wnon-virtual-dtor -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wundef -Winit-self -Wpointer-arith -Wshadow -Wsign-promo -Wuninitialized -Wsuggest-override -Wno-delete-non-virtual-dtor -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections    -fvisibility=hidden -fvisibility-inlines-hidden -g  -O0 -DDEBUG -D_DEBUG
+--     C Compiler:                  /usr/bin/aarch64-linux-gnu-gcc-12
+--     C flags (Release):           -march=armv8-a -mtune=generic -ftree-vectorize --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wundef -Winit-self -Wpointer-arith -Wshadow -Wuninitialized -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections    -fvisibility=hidden -O3 -DNDEBUG  -DNDEBUG
+--     C flags (Debug):             -march=armv8-a -mtune=generic -ftree-vectorize --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wundef -Winit-self -Wpointer-arith -Wshadow -Wuninitialized -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections    -fvisibility=hidden -g  -O0 -DDEBUG -D_DEBUG
+--     Linker flags (Release):      --sysroot=/build/sysroot     -L/build/sysroot/usr/lib     -Wl,-rpath-link,/build/sysroot/lib:/build/sysroot/usr/lib     -L/build/sysroot/usr/lib/aarch64-linux-gnu -L/build/sysroot/usr/lib/aarch64-linux-gnu     -Wl,-rpath-link,/build/sysroot/usr/lib/aarch64-linux-gnu:/build/sysroot/usr/lib/aarch64-linux-gnu     -lm -lGLEW -lGLU -lGL -lEGL -lX11 -lGLX -lXext -lXrandr  -Wl,--gc-sections -Wl,--as-needed -Wl,--no-undefined  
+--     Linker flags (Debug):        --sysroot=/build/sysroot     -L/build/sysroot/usr/lib     -Wl,-rpath-link,/build/sysroot/lib:/build/sysroot/usr/lib     -L/build/sysroot/usr/lib/aarch64-linux-gnu -L/build/sysroot/usr/lib/aarch64-linux-gnu     -Wl,-rpath-link,/build/sysroot/usr/lib/aarch64-linux-gnu:/build/sysroot/usr/lib/aarch64-linux-gnu     -lm -lGLEW -lGLU -lGL -lEGL -lX11 -lGLX -lXext -lXrandr  -Wl,--gc-sections -Wl,--as-needed -Wl,--no-undefined  
+--     ccache:                      NO
+--     Precompiled headers:         NO
+--     Extra dependencies:          dl m pthread rt
+--     3rdparty dependencies:
+-- 
+--   OpenCV modules:
+--     To be built:                 aruco bgsegm bioinspired calib3d ccalib core datasets dnn dnn_objdetect dnn_superres dpm face features2d flann freetype fuzzy gapi hfs highgui img_hash imgcodecs imgproc intensity_transform line_descriptor mcc ml objdetect optflow phase_unwrapping photo plot quality rapid reg rgbd saliency shape stereo stitching structured_light superres surface_matching text tracking video videoio videostab wechat_qrcode xfeatures2d ximgproc xobjdetect xphoto
+--     Disabled:                    world
+--     Disabled by dependency:      -
+--     Unavailable:                 alphamat cannops cudaarithm cudabgsegm cudacodec cudafeatures2d cudafilters cudaimgproc cudalegacy cudaobjdetect cudaoptflow cudastereo cudawarping cudev cvv hdf java julia matlab ovis python2 python3 sfm ts viz
+--     Applications:                apps
+--     Documentation:               NO
+--     Non-free algorithms:         YES
+-- 
+--   GUI:                           NONE
+--     OpenGL support:              NO
+-- 
+--   Media I/O: 
+--     ZLib:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libz.a (ver 1.2.13)
+--     JPEG:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libjpeg.so (ver 62)
+--     WEBP:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libwebp.so (ver encoder: 0x020f)
+--     PNG:                         /build/sysroot/usr/lib/aarch64-linux-gnu/libpng.so (ver 1.6.39)
+--     TIFF:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libtiff.so (ver 42 / 4.5.0)
+--     JPEG 2000:                   build (ver 2.5.0)
+--     HDR:                         YES
+--     SUNRASTER:                   YES
+--     PXM:                         YES
+--     PFM:                         YES
+-- 
+--   Video I/O:
+--     DC1394:                      YES (2.2.6)
+--     FFMPEG:                      YES
+--       avcodec:                   YES (59.37.100)
+--       avformat:                  YES (59.27.100)
+--       avutil:                    YES (57.28.100)
+--       swscale:                   YES (6.7.100)
+--       avresample:                NO
+--     GStreamer:                   YES (1.22.0)
+--     v4l/v4l2:                    YES (linux/videodev2.h)
+-- 
+--   Parallel framework:            pthreads
+-- 
+--   Trace:                         YES (with Intel ITT)
+-- 
+--   Other third-party libraries:
+--     Lapack:                      NO
+--     Custom HAL:                  YES (carotene (ver 0.0.1, Auto detected))
+--     Protobuf:                    build (3.19.1)
+--     Flatbuffers:                 builtin/3rdparty (23.5.9)
+-- 
+--   OpenCL:                        YES (no extra features)
+--     Include path:                /build/opencv/3rdparty/include/opencl/1.2
+--     Link libraries:              Dynamic load
+-- 
+--   Python (for build):            /usr/bin/python3
+-- 
+--   Install to:                    /build/opencvBuild
+-- -----------------------------------------------------------------
+-- 
 
+```
 
