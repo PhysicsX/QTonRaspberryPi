@@ -110,7 +110,6 @@ RUN tar xvfz /build/rasp.tar.gz -C /build/sysroot
 
 # Copy the toolchain file
 COPY opencvToolchain.cmake /build/
-COPY fix_symlinks.py /build/
 
 RUN set -e && \
     echo "Fix symbolic link" && \
@@ -153,6 +152,7 @@ RUN if [ "$BUILD_OPENCV" = "ON" ]; then \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     echo "Cross Compile Opencv completed" && \
+    cd /build && \
     tar -czvf opencv-binaries.tar.gz -C /build/opencvBuild . \
 ; fi 2>&1 | tee -a /build.log
 
