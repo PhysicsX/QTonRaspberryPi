@@ -1,4 +1,4 @@
-# Cross compilation of Qt6.8.1 and Opencv For Raspberry pi 3/4/5 with Docker(Base and QML packages) and Remote Debugging with Vscode
+# Cross compilation of Qt6.8.1 and OpenCV For Raspberry pi 3/4/5 with Docker(Base and QML packages) and Remote Debugging with Vscode
 In this content, you will find a way to cross-compile Qt 6.8.1 and Opencv (4.9.0) for Raspberry Pi hardware using Docker isolation.
 This is a complete tutorial that you can learn how to debug the application with vscode.
 
@@ -176,7 +176,7 @@ To copy opencv libraries you need to have container from this image like above. 
 
 ```bash
 $ docker create --name tmpbuild qtcrossbuild
-$ docker cp tmpbuild:/build/QtOpencvExample/QtOpencvHello  ./QtOpencvHello 
+$ docker cp tmpbuild:/build/QtOpencvExample/build/QtOpencvHello  ./QtOpencvHello 
 $ file QtOpencvHello
 QtOpencvExample/build/QtOpencvHello: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (GNU/Linux), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=e846e63fec33e431bfdc1e70ad6d6b10c138992e, for GNU/Linux 3.7.0, not stripped
 
