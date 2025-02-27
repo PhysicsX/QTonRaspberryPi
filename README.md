@@ -185,11 +185,11 @@ Then you can copy the tar file to raspberry pi.
 ```bash
 $ docker cp tmpbuild:/build/opencv-binaries.tar.gz ./opencv-binaries.tar.gz
 $ scp opencv-binaries.tar.gz ulas@192.168.16.20:/home/ulas/
+$ scp QtOpencvHello ulas@192.168.16.20:/home/ulas/ 
 $ ssh rasp@192.168.16.25
-$ ulas@raspberrypi:~ sudo mkdir /usr/local/qt6
+$ ulas@raspberrypi:~ sudo mkdir /usr/local/opencv
 $ ulas@raspberrypi:~ sudo tar -xvf opencv-binaries.tar.gz -C /usr/local/opencv
 $ ulas@raspberrypi:~ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/opencv/lib/
-$ scp QtOpencvHello ulas@192.168.16.20:/home/ulas/ 
 ```
 When you run the application after setting path correctly. Note that you need to extract Qt binaries and export the path for Qt also, becuase example needs Qt and Opencv together.
 
