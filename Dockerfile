@@ -163,15 +163,15 @@ RUN { \
     set -e && \
     mkdir -p qt6 qt6/host qt6/pi qt6/host-build qt6/pi-build qt6/src && \
     cd qt6/src && \
-    wget https://download.qt.io/official_releases/qt/6.8/6.8.1/submodules/qtbase-everywhere-src-6.8.1.tar.xz && \
-    wget https://download.qt.io/official_releases/qt/6.8/6.8.1/submodules/qtshadertools-everywhere-src-6.8.1.tar.xz && \
-    wget https://download.qt.io/official_releases/qt/6.8/6.8.1/submodules/qtdeclarative-everywhere-src-6.8.1.tar.xz && \
+    wget https://download.qt.io/official_releases/qt/6.8/6.8.2/submodules/qtbase-everywhere-src-6.8.2.tar.xz && \
+    wget https://download.qt.io/official_releases/qt/6.8/6.8.2/submodules/qtshadertools-everywhere-src-6.8.2.tar.xz && \
+    wget https://download.qt.io/official_releases/qt/6.8/6.8.2/submodules/qtdeclarative-everywhere-src-6.8.2.tar.xz && \
     cd ../host-build && \
-    tar xf ../src/qtbase-everywhere-src-6.8.1.tar.xz && \
-    tar xf ../src/qtshadertools-everywhere-src-6.8.1.tar.xz && \
-    tar xf ../src/qtdeclarative-everywhere-src-6.8.1.tar.xz && \
+    tar xf ../src/qtbase-everywhere-src-6.8.2.tar.xz && \
+    tar xf ../src/qtshadertools-everywhere-src-6.8.2.tar.xz && \
+    tar xf ../src/qtdeclarative-everywhere-src-6.8.2.tar.xz && \
     echo "Compile qtbase for host" && \
-    cd qtbase-everywhere-src-6.8.1 && \
+    cd qtbase-everywhere-src-6.8.2 && \
     cmake -GNinja -DCMAKE_BUILD_TYPE=Release \
         -DQT_BUILD_EXAMPLES=OFF \
         -DQT_BUILD_TESTS=OFF \
@@ -179,21 +179,21 @@ RUN { \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     echo "Compile shader for host" && \
-    cd ../qtshadertools-everywhere-src-6.8.1 && \
+    cd ../qtshadertools-everywhere-src-6.8.2 && \
     /build/qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     echo "Compile declerative for host" && \
-    cd ../qtdeclarative-everywhere-src-6.8.1 && \
+    cd ../qtdeclarative-everywhere-src-6.8.2 && \
     /build/qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     cd ../../pi-build && \
-    tar xf ../src/qtbase-everywhere-src-6.8.1.tar.xz && \
-    tar xf ../src/qtshadertools-everywhere-src-6.8.1.tar.xz && \
-    tar xf ../src/qtdeclarative-everywhere-src-6.8.1.tar.xz && \
+    tar xf ../src/qtbase-everywhere-src-6.8.2.tar.xz && \
+    tar xf ../src/qtshadertools-everywhere-src-6.8.2.tar.xz && \
+    tar xf ../src/qtdeclarative-everywhere-src-6.8.2.tar.xz && \
     echo "Compile qtbase for rasp" && \
-    cd qtbase-everywhere-src-6.8.1 && \
+    cd qtbase-everywhere-src-6.8.2 && \
     cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DINPUT_opengl=es2 \
         -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF \
         -DQT_HOST_PATH=/build/qt6/host \
@@ -206,12 +206,12 @@ RUN { \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     echo "Compile shader for rasp" && \
-    cd ../qtshadertools-everywhere-src-6.8.1 && \
+    cd ../qtshadertools-everywhere-src-6.8.2 && \
     /build/qt6/pi/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     echo "Compile declerative for rasp" && \
-    cd ../qtdeclarative-everywhere-src-6.8.1 && \
+    cd ../qtdeclarative-everywhere-src-6.8.2 && \
     /build/qt6/pi/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
