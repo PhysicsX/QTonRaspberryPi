@@ -190,16 +190,6 @@ RUN { \
         -DCMAKE_INSTALL_PREFIX=/build/qt6/host && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
-    echo "Compile shader for host" && \
-    cd ../qtshadertools-everywhere-src-6.8.2 && \
-    /build/qt6/host/bin/qt-configure-module . && \
-    cmake --build . --parallel 4 && \
-    cmake --install . && \
-    echo "Compile declerative for host" && \
-    cd ../qtdeclarative-everywhere-src-6.8.2 && \
-    /build/qt6/host/bin/qt-configure-module . && \
-    cmake --build . --parallel 4 && \
-    cmake --install . && \
     cd ../../pi-build && \
     tar xf ../src/qtbase-everywhere-src-6.8.2.tar.xz && \
     tar xf ../src/qtshadertools-everywhere-src-6.8.2.tar.xz && \
