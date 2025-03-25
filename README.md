@@ -8,6 +8,8 @@ Watch the video for more details:
 
 [![Youtube video link](https://img.youtube.com/vi/5XvQ_fLuBX0/0.jpg)](//www.youtube.com/watch?v=5XvQ_fLuBX0?t=0s "ulas dikme")
 
+For opencv [Compilation Opencv with Docker](#compilation-opencv-with-docker) <a name="Compilation Opencv with Docker"></a>
+
 For remote debugging and follow up [click](https://www.youtube.com/watch?v=RWNWAMT5UkM?t=0s).
 
 I tested this on Ubuntu 22 and 20. Regardless of the version, Qt is successfully compiled and builds a 'Hello World' application (with QML) for the Raspberry Pi.
@@ -164,6 +166,10 @@ ulas@raspberrypi:~ $ ./HelloQt6
 Hello world
 ```
 # Compilation Opencv with Docker
+Video:
+
+[![Youtube video link](https://img.youtube.com/vi/1dr1e2saxpo/0.jpg)](//www.youtube.com/watch?v=1dr1e2saxpo?t=0s "ulas dikme")
+
 To enable opencv (4.9.0) cross compilation during the x86 image creation, it is needed to make BUILD_OPENCV flag ON.
 
 ```bash
