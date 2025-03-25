@@ -130,26 +130,38 @@ RUN if [ "$BUILD_OPENCV" = "ON" ]; then \
     mkdir -p /build/opencv/build && \
     cd /build/opencv/build && \
     cmake \
-          -G "Unix Makefiles" \ 
-          -D CMAKE_BUILD_TYPE=Release \
-          -D CMAKE_INSTALL_PREFIX=/build/opencvBuild \
-          -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
-          -D CMAKE_TOOLCHAIN_FILE=/build/opencvToolchain.cmake \
-          -D OPENCV_ENABLE_NONFREE=ON \
-          -D WITH_GSTREAMER=ON \
-          -D WITH_FFMPEG=ON \
-          -D WITH_V4L=ON \
-          -D WITH_OPENGL=ON \
-          -D WITH_GTK=OFF \     
-          -D WITH_QT=OFF \
-          -D WITH_X11=ON \
-          -D OPENCV_PYTHON3_INSTALL_PATH=OFF \       
-          -D BUILD_opencv_highgui=ON \
-          -D BUILD_TESTS=OFF \
-          -D BUILD_PERF_TESTS=OFF \
-          -D BUILD_EXAMPLES=OFF \
-          .. && \
-    cmake --build . --parallel 4 && \
+        -G "Unix Makefiles" \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/build/opencvBuild \
+        -DCMAKE_TOOLCHAIN_FILE=/build/opencvToolchain.cmake \
+        -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
+        -DCMAKE_C_FLAGS="-march=armv8-a -mtune=cortex-a53 -O2 --sysroot=/build/sysroot" \
+        -DCMAKE_CXX_FLAGS="-march=armv8-a -mtune=cortex-a53 -O2 --sysroot=/build/sysroot" \
+        -DCMAKE_C_FLAGS_RELEASE="-march=armv8-a -mtune=cortex-a53 -O2 --sysroot=/build/sysroot" \
+        -DCMAKE_CXX_FLAGS_RELEASE="-march=armv8-a -mtune=cortex-a53 -O2 --sysroot=/build/sysroot" \
+        -DOPENCV_ENABLE_NONFREE=ON \
+        -DWITH_GSTREAMER=ON \
+        -DWITH_FFMPEG=ON \
+        -DWITH_V4L=ON \
+        -DWITH_OPENGL=ON \
+        -DWITH_GTK=OFF \
+        -DWITH_QT=OFF \
+        -DWITH_X11=ON \
+        -DBUILD_opencv_highgui=ON \
+        -DBUILD_TESTS=OFF \
+        -DBUILD_PERF_TESTS=OFF \
+        -DBUILD_EXAMPLES=OFF \
+        -DOPENCV_ENABLE_CPU_DISPATCH=OFF \
+        -DCPU_BASELINE="NEON" \
+        -DCPU_DISPATCH="" \
+        -DENABLE_NEON=ON \
+        -DENABLE_VFPV3=OFF \
+        -DENABLE_FP16=OFF \
+        -DENABLE_BF16=OFF \
+        -DENABLE_SVE=OFF \
+        -DENABLE_SVE2=OFF \
+        .. && \
+    make -j4 VERBOSE=1 && \
     cmake --install . && \
     echo "Cross Compile Opencv completed" && \
     cd /build && \
