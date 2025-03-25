@@ -497,33 +497,28 @@ for opencv
 --     Version control (extra):     4.9.0
 -- 
 --   Platform:
---     Timestamp:                   2025-02-19T19:59:54Z
---     Host:                        Linux 6.8.0-52-generic x86_64
+--     Timestamp:                   2025-03-25T19:51:40Z
+--     Host:                        Linux 6.11.0-19-generic x86_64
 --     Target:                      Linux aarch64
---     CMake:                       4.0.20250219-g628423f
+--     CMake:                       4.0.20250325-g080c1a4
 --     CMake generator:             Unix Makefiles
 --     CMake build tool:            /usr/bin/gmake
 --     Configuration:               Release
 -- 
 --   CPU/HW features:
---     Baseline:                    NEON FP16
+--     Baseline:                    NEON
 --       required:                  NEON
 --       disabled:                  VFPV3
---     Dispatched code generation:  NEON_DOTPROD NEON_FP16 NEON_BF16
---       requested:                 NEON_FP16 NEON_BF16 NEON_DOTPROD
---       NEON_DOTPROD (1 files):    + NEON_DOTPROD
---       NEON_FP16 (2 files):       + NEON_FP16
---       NEON_BF16 (0 files):       + NEON_BF16
 -- 
 --   C/C++:
 --     Built as dynamic libs?:      YES
 --     C++ standard:                11
 --     C++ Compiler:                /usr/bin/aarch64-linux-gnu-g++-12  (ver 12.2.0)
---     C++ flags (Release):         -march=armv8-a -mtune=generic -ftree-vectorize --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Wnon-virtual-dtor -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wundef -Winit-self -Wpointer-arith -Wshadow -Wsign-promo -Wuninitialized -Wsuggest-override -Wno-delete-non-virtual-dtor -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections    -fvisibility=hidden -fvisibility-inlines-hidden -O3 -DNDEBUG  -DNDEBUG
---     C++ flags (Debug):           -march=armv8-a -mtune=generic -ftree-vectorize --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Wnon-virtual-dtor -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wundef -Winit-self -Wpointer-arith -Wshadow -Wsign-promo -Wuninitialized -Wsuggest-override -Wno-delete-non-virtual-dtor -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections    -fvisibility=hidden -fvisibility-inlines-hidden -g  -O0 -DDEBUG -D_DEBUG
+--     C++ flags (Release):         -march=armv8-a -mtune=cortex-a72 -O2 --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Wnon-virtual-dtor -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wundef -Winit-self -Wpointer-arith -Wshadow -Wsign-promo -Wuninitialized -Wsuggest-override -Wno-delete-non-virtual-dtor -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections   -fvisibility=hidden -fvisibility-inlines-hidden -march=armv8-a -mtune=cortex-a53 -O2 --sysroot=/build/sysroot  -DNDEBUG
+--     C++ flags (Debug):           -march=armv8-a -mtune=cortex-a72 -O2 --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Wnon-virtual-dtor -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wundef -Winit-self -Wpointer-arith -Wshadow -Wsign-promo -Wuninitialized -Wsuggest-override -Wno-delete-non-virtual-dtor -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections   -fvisibility=hidden -fvisibility-inlines-hidden -g  -DDEBUG -D_DEBUG
 --     C Compiler:                  /usr/bin/aarch64-linux-gnu-gcc-12
---     C flags (Release):           -march=armv8-a -mtune=generic -ftree-vectorize --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wundef -Winit-self -Wpointer-arith -Wshadow -Wuninitialized -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections    -fvisibility=hidden -O3 -DNDEBUG  -DNDEBUG
---     C flags (Debug):             -march=armv8-a -mtune=generic -ftree-vectorize --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wundef -Winit-self -Wpointer-arith -Wshadow -Wuninitialized -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections    -fvisibility=hidden -g  -O0 -DDEBUG -D_DEBUG
+--     C flags (Release):           -march=armv8-a -mtune=cortex-a72 -O2 --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wundef -Winit-self -Wpointer-arith -Wshadow -Wuninitialized -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections   -fvisibility=hidden -march=armv8-a -mtune=cortex-a53 -O2 --sysroot=/build/sysroot  -DNDEBUG
+--     C flags (Debug):             -march=armv8-a -mtune=cortex-a72 -O2 --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wundef -Winit-self -Wpointer-arith -Wshadow -Wuninitialized -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections   -fvisibility=hidden -g  -DDEBUG -D_DEBUG
 --     Linker flags (Release):      --sysroot=/build/sysroot     -L/build/sysroot/usr/lib     -Wl,-rpath-link,/build/sysroot/lib:/build/sysroot/usr/lib     -L/build/sysroot/usr/lib/aarch64-linux-gnu -L/build/sysroot/usr/lib/aarch64-linux-gnu     -Wl,-rpath-link,/build/sysroot/usr/lib/aarch64-linux-gnu:/build/sysroot/usr/lib/aarch64-linux-gnu     -lm -lGLEW -lGLU -lGL -lEGL -lX11 -lGLX -lXext -lXrandr  -Wl,--gc-sections -Wl,--as-needed -Wl,--no-undefined  
 --     Linker flags (Debug):        --sysroot=/build/sysroot     -L/build/sysroot/usr/lib     -Wl,-rpath-link,/build/sysroot/lib:/build/sysroot/usr/lib     -L/build/sysroot/usr/lib/aarch64-linux-gnu -L/build/sysroot/usr/lib/aarch64-linux-gnu     -Wl,-rpath-link,/build/sysroot/usr/lib/aarch64-linux-gnu:/build/sysroot/usr/lib/aarch64-linux-gnu     -lm -lGLEW -lGLU -lGL -lEGL -lX11 -lGLX -lXext -lXrandr  -Wl,--gc-sections -Wl,--as-needed -Wl,--no-undefined  
 --     ccache:                      NO
@@ -544,7 +539,7 @@ for opencv
 --     OpenGL support:              NO
 -- 
 --   Media I/O: 
---     ZLib:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libz.a (ver 1.2.13)
+--     ZLib:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libz.so (ver 1.2.13)
 --     JPEG:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libjpeg.so (ver 62)
 --     WEBP:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libwebp.so (ver encoder: 0x020f)
 --     PNG:                         /build/sysroot/usr/lib/aarch64-linux-gnu/libpng.so (ver 1.6.39)
@@ -584,7 +579,6 @@ for opencv
 -- 
 --   Install to:                    /build/opencvBuild
 -- -----------------------------------------------------------------
--- 
 
 ```
 
