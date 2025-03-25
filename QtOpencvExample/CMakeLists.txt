@@ -5,13 +5,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_PREFIX_PATH "/build/sysroot/usr/lib/aarch64-linux-gnu")
 
 set(Qt6_DIR "/build/qt6/pi/lib/cmake/Qt6")
-set(OpenCV_DIR "/build/opencvBuild")     # Update for cross-compiled OpenCV
+set(OpenCV_DIR "/build/opencvBuild/lib/cmake/opencv4")     # Update for cross-compiled OpenCV
 
 set(CMAKE_MODULE_PATH "/build/qt6/pi/lib/cmake/Qt6/platforms" ${CMAKE_MODULE_PATH})
 find_package(Qt6 REQUIRED COMPONENTS Gui Widgets OpenGL)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets Gui)
-find_package(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED CONFIG)
 
 include_directories(${Qt6_INCLUDE_DIRS})
 message(STATUS "Qt6 Include Dirs: ${Qt6_INCLUDE_DIRS}")
