@@ -21,8 +21,8 @@ set(CMAKE_C_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-gcc-12)
 set(CMAKE_CXX_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-g++-12)
 
 # Set compiler optimizations for ARM
-set(CMAKE_C_FLAGS "-march=armv8-a -mtune=generic -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
-set(CMAKE_CXX_FLAGS "-march=armv8-a -mtune=generic -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS "-march=armv8-a -mtune=cortex-a72 -O2 --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "-march=armv8-a -mtune=cortex-a72 -O2 --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
 # set(CMAKE_C_FLAGS "-march=armv8.2-a+dotprod+fp16 -mtune=cortex-a72 -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
 # set(CMAKE_CXX_FLAGS "-march=armv8.2-a+dotprod+fp16 -mtune=cortex-a72 -ftree-vectorize --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
 
