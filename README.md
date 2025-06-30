@@ -130,14 +130,14 @@ $ docker cp temp-arm:/build/rasp.tar.gz ./rasp.tar.gz
 ```
 This rasp.tar.gz file will be copied by the another image that is why location of the tar file is important. You do not need to extract it. Do not touch it.
 
-Now it is time to create ubuntu 22 image and compile the Qt 6.9.0.
+Now it is time to create debian bookworm image and compile the Qt 6.9.0. Idea of the image selection is that if both images are match then it is not needed to compile specific toolchain. Because most of the time related cross toolchain is available in the repository. This process can be done using ubuntu as well but in this case spefici toolchain(gcc) should be compiled for the target. This will take time.
 In one of the previous commands you used DockerFileRasp, this file is written for raspberry pi, now we are going to use only Dockerfile which is default name that means we do not need to specify path or name explicitly. But if  you want you can change the name, you already now how you can pass the file name (with -f)
 
 ```bash
 $ docker build -t qtcrossbuild .
 ```
 
-As you see there is no buildx in this command because buildx uses qemu and we do not need qemu for x86 ubuntu. After some time, ( I tested with 16GB RAM and it took around couple of hours) you see that image will be created without an error. After this, you can find HelloQt6 binary which is ready to run on Raspberry pi, in the /build/project directory in the image. So lets copy it. As we did before, you need to create temporary container to copy it.
+As you see there is no buildx in this command because buildx uses qemu and we do not need qemu for x86 debian. After some time, ( I tested with 16GB RAM and it took around couple of hours) you see that image will be created without an error. After this, you can find HelloQt6 binary which is ready to run on Raspberry pi, in the /build/project directory in the image. So lets copy it. As we did before, you need to create temporary container to copy it.
 
 ```bash
 $ docker create --name tmpbuild qtcrossbuild
