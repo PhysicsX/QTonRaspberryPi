@@ -130,7 +130,7 @@ $ docker cp temp-arm:/build/rasp.tar.gz ./rasp.tar.gz
 ```
 This rasp.tar.gz file will be copied by the another image that is why location of the tar file is important. You do not need to extract it. Do not touch it.
 
-Now it is time to create debian bookworm image and compile the Qt 6.9.1. Idea of the image selection is that if both images are match then it is not needed to compile specific toolchain. Because most of the time related cross toolchain is available in the repository. This process can be done using ubuntu as well but in this case spefici toolchain(gcc) should be compiled for the target. This will take time.
+Now it is time to create debian trixie image and compile the Qt 6.9.1. Idea of the image selection is that if both images are match then it is not needed to compile specific toolchain. Because most of the time related cross toolchain is available in the repository. This process can be done using ubuntu as well but in this case spefici toolchain(gcc) should be compiled for the target. This will take time.
 In one of the previous commands you used DockerFileRasp, this file is written for raspberry pi, now we are going to use only Dockerfile which is default name that means we do not need to specify path or name explicitly. But if  you want you can change the name, you already now how you can pass the file name (with -f)
 
 ```bash
