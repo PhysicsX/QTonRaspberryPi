@@ -25,7 +25,7 @@ RUN { \
     libxcb1-dev libxcb-glx0-dev libxcb-keysyms1-dev libxcb-image0-dev libxcb-shm0-dev \
     libxcb-icccm4-dev libxcb-sync-dev libxcb-xfixes0-dev libxcb-shape0-dev \
     libxcb-randr0-dev libxcb-render-util0-dev libxcb-util-dev libxcb-xinerama0-dev \
-    libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev \
+    libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libxcb-cursor-dev libxcb-xinput-dev \
     libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev mesa-common-dev libgbm-dev libglx-dev \
     libdrm-dev \
     # sound

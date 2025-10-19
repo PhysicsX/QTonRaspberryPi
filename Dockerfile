@@ -1,5 +1,5 @@
-# Use Debian 12 (Bookworm) as the base image
-FROM debian:bookworm
+# Use Debian 12 (Bootrixiekworm) as the base image
+FROM debian:trixie
 
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -76,10 +76,10 @@ RUN { \
     perl \
     patch \
     m4 \
-    libncurses5-dev \
+    libncurses-dev \
     gettext  \
-    gcc-12-aarch64-linux-gnu \
-    g++-12-aarch64-linux-gnu \
+    gcc-14-aarch64-linux-gnu \
+    g++-14-aarch64-linux-gnu \
     binutils-aarch64-linux-gnu \
     libc6-arm64-cross \
     libc6-dev-arm64-cross \
@@ -188,6 +188,16 @@ RUN { \
         -DQT_BUILD_EXAMPLES=OFF \
         -DQT_BUILD_TESTS=OFF \
         -DCMAKE_INSTALL_PREFIX=/build/qt6/host && \
+    cmake --build . --parallel 4 && \
+    cmake --install . && \
+    echo "Compile shader for host" && \
+    cd ../qtshadertools-everywhere-src-6.9.1 && \
+    /build/qt6/host/bin/qt-configure-module . && \
+    cmake --build . --parallel 4 && \
+    cmake --install . && \
+    echo "Compile declerative for host" && \
+    cd ../qtdeclarative-everywhere-src-6.9.1 && \
+    /build/qt6/host/bin/qt-configure-module . && \
     cmake --build . --parallel 4 && \
     cmake --install . && \
     cd ../../pi-build && \
