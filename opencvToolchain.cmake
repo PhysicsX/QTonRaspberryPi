@@ -17,8 +17,8 @@ set(ENV{PKG_CONFIG_LIBDIR} "/usr/lib/pkgconfig:/usr/share/pkgconfig:${CMAKE_SYSR
 set(ENV{PKG_CONFIG_SYSROOT_DIR} "${CMAKE_SYSROOT}")
 
 # Set the C and C++ compilers
-set(CMAKE_C_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-gcc-12)
-set(CMAKE_CXX_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-g++-12)
+set(CMAKE_C_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-gcc-14)
+set(CMAKE_CXX_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-g++-14)
 
 # Set compiler optimizations for ARM
 set(CMAKE_C_FLAGS "-march=armv8-a -mtune=cortex-a72 -O2 --sysroot=${CMAKE_SYSROOT}" CACHE STRING "" FORCE)
