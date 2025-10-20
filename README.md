@@ -291,13 +291,9 @@ Enjoy.
 For reference the qt is compiled with below parameters in this example 
 
 ```bash
--- Configuration summary shown below. It has also been written to /build/qt6/pi-build/qtbase-everywhere-src-6.9.1/config.summary
--- Configure with --log-level=STATUS or higher to increase CMake's message verbosity. The log level does not persist across reconfigurations.
- 
--- Configure summary:
 
-Building for: devices/linux-rasp-pi4-aarch64 (arm64, CPU features: cx16 neon)
-Compiler: gcc 12.2.0
+Building for: linux-g++ (arm64, CPU features: cx16 neon)
+Compiler: gcc 14.2.0
 Build options:
   Mode ................................... release
   Optimize release build for size ........ no
@@ -309,9 +305,16 @@ Build options:
   Relocatable ............................ yes
   Using precompiled headers .............. yes
   Using Link Time Optimization (LTCG) .... no
-  Using Intel CET ........................ no
+  Using Intel Control-flow Enforcement Technology (CET)  no
+  Using Glibc function fortification ..... yes
+  Using -ftrivial-auto-var-init=pattern .. yes
+  Using -fstack-protector-strong ......... yes
+  Using -fstack-clash-protection ......... yes
+  Using libstdc++ assertions ............. yes
+  Using libc++ hardening ................. no
+  Using -z relro -z now when linking ..... yes
   Target compiler supports:
-    ARM Extensions ....................... NEON
+    ARM Extensions ....................... NEON AES SVE
   Sanitizers:
     Addresses ............................ no
     Threads .............................. no
@@ -346,11 +349,13 @@ Common build options:
   Linker can resolve circular dependencies  yes
 Qt Core:
   backtrace .............................. yes
+  C++23 <stacktrace> ..................... no
   DoubleConversion ....................... yes
     Using system DoubleConversion ........ no
   CLONE_PIDFD support in forkfd .......... yes
   GLib ................................... yes
   ICU .................................... yes
+  std::chrono::tzdb QTZ backend .......... no
   Using system libb2 ..................... no
   Built-in copy of the MIME database ..... yes
   Application permissions ................ yes
@@ -366,8 +371,8 @@ Qt Core:
 Qt Sql:
   SQL item models ........................ yes
 Qt Network:
-  getifaddrs() ........................... yes
-  IPv6 ifname ............................ yes
+  getifaddrs() ........................... no
+  IPv6 ifname ............................ no
   libproxy ............................... no
   Linux AF_NETLINK ....................... yes
   DTLS ................................... yes
@@ -386,6 +391,7 @@ Core tools:
   qmake .................................. yes
 Qt Gui:
   Accessibility .......................... yes
+  Emoji Segmenter ........................ yes
   FreeType ............................... yes
     Using system FreeType ................ yes
   HarfBuzz ............................... yes
@@ -414,7 +420,10 @@ Qt Gui:
     OpenGL ES 3.1 ........................ yes
     OpenGL ES 3.2 ........................ yes
   Vulkan ................................. no
+  Metal .................................. no
+  QGraphicsFrameCapture .................. no
   Session Management ..................... yes
+  Multi-threaded image and painting helpers  yes
 Features used by QPA backends:
   evdev .................................. yes
   libinput ............................... yes
@@ -423,6 +432,7 @@ Features used by QPA backends:
   mtdev .................................. yes
   tslib .................................. yes
   xkbcommon .............................. yes
+  vxworksevdev ........................... no
   X11 specific:
     xlib ................................. yes
     XCB Xlib ............................. yes
@@ -460,6 +470,7 @@ QPA backends:
     Direct 2D 1.1 ........................ no
     DirectWrite .......................... no
     DirectWrite 3 ........................ no
+    DirectWrite COLRv1 Support ........... no
 Qt Widgets:
   GTK+ ................................... no
   Styles ................................. Fusion Windows
@@ -470,7 +481,7 @@ Qt PrintSupport:
   CUPS ................................... yes
 Qt Sql Drivers:
   DB2 (IBM) .............................. no
-  InterBase .............................. yes
+  InterBase .............................. no
   MySql .................................. no
   OCI (Oracle) ........................... no
   ODBC ................................... no
@@ -478,19 +489,12 @@ Qt Sql Drivers:
   SQLite ................................. yes
     Using system provided SQLite ......... no
   Mimer .................................. no
- 
-
+Note: Disabling X11 Accessibility Bridge: D-Bus or AT-SPI is missing.
 Note: Due to CMAKE_STAGING_PREFIX usage and an unfixed CMake bug,
       to ensure correct build time rpaths, directory-level install
       rules like ninja src/gui/install will not work.
       Check QTBUG-102592 for further details.
 
--- 
-
-Qt is now configured for building. Just run 'cmake --build . --parallel'
-
-Once everything is built, you must run 'cmake --install .'
-Qt will be installed into '/usr/local/qt6'
 ```
 
 ```bash
@@ -503,10 +507,10 @@ for opencv
 --     Version control (extra):     4.9.0
 -- 
 --   Platform:
---     Timestamp:                   2025-03-25T19:51:40Z
---     Host:                        Linux 6.11.0-19-generic x86_64
+--     Timestamp:                   2025-10-19T20:39:08Z
+--     Host:                        Linux 6.11.0-26-generic x86_64
 --     Target:                      Linux aarch64
---     CMake:                       4.0.20250325-g080c1a4
+--     CMake:                       4.2.20251019-gc7089d6
 --     CMake generator:             Unix Makefiles
 --     CMake build tool:            /usr/bin/gmake
 --     Configuration:               Release
@@ -519,10 +523,10 @@ for opencv
 --   C/C++:
 --     Built as dynamic libs?:      YES
 --     C++ standard:                11
---     C++ Compiler:                /usr/bin/aarch64-linux-gnu-g++-12  (ver 12.2.0)
+--     C++ Compiler:                /usr/bin/aarch64-linux-gnu-g++-14  (ver 14.2.0)
 --     C++ flags (Release):         -march=armv8-a -mtune=cortex-a72 -O2 --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Wnon-virtual-dtor -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wundef -Winit-self -Wpointer-arith -Wshadow -Wsign-promo -Wuninitialized -Wsuggest-override -Wno-delete-non-virtual-dtor -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections   -fvisibility=hidden -fvisibility-inlines-hidden -march=armv8-a -mtune=cortex-a53 -O2 --sysroot=/build/sysroot  -DNDEBUG
 --     C++ flags (Debug):           -march=armv8-a -mtune=cortex-a72 -O2 --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Wnon-virtual-dtor -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wundef -Winit-self -Wpointer-arith -Wshadow -Wsign-promo -Wuninitialized -Wsuggest-override -Wno-delete-non-virtual-dtor -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections   -fvisibility=hidden -fvisibility-inlines-hidden -g  -DDEBUG -D_DEBUG
---     C Compiler:                  /usr/bin/aarch64-linux-gnu-gcc-12
+--     C Compiler:                  /usr/bin/aarch64-linux-gnu-gcc-14
 --     C flags (Release):           -march=armv8-a -mtune=cortex-a72 -O2 --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wundef -Winit-self -Wpointer-arith -Wshadow -Wuninitialized -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections   -fvisibility=hidden -march=armv8-a -mtune=cortex-a53 -O2 --sysroot=/build/sysroot  -DNDEBUG
 --     C flags (Debug):             -march=armv8-a -mtune=cortex-a72 -O2 --sysroot=/build/sysroot   -fsigned-char -W -Wall -Wreturn-type -Waddress -Wsequence-point -Wformat -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wundef -Winit-self -Wpointer-arith -Wshadow -Wuninitialized -Wno-comment -Wimplicit-fallthrough=3 -Wno-strict-overflow -fdiagnostics-show-option -pthread -fomit-frame-pointer -ffunction-sections -fdata-sections   -fvisibility=hidden -g  -DDEBUG -D_DEBUG
 --     Linker flags (Release):      --sysroot=/build/sysroot     -L/build/sysroot/usr/lib     -Wl,-rpath-link,/build/sysroot/lib:/build/sysroot/usr/lib     -L/build/sysroot/usr/lib/aarch64-linux-gnu -L/build/sysroot/usr/lib/aarch64-linux-gnu     -Wl,-rpath-link,/build/sysroot/usr/lib/aarch64-linux-gnu:/build/sysroot/usr/lib/aarch64-linux-gnu     -lm -lGLEW -lGLU -lGL -lEGL -lX11 -lGLX -lXext -lXrandr  -Wl,--gc-sections -Wl,--as-needed -Wl,--no-undefined  
@@ -533,10 +537,10 @@ for opencv
 --     3rdparty dependencies:
 -- 
 --   OpenCV modules:
---     To be built:                 aruco bgsegm bioinspired calib3d ccalib core datasets dnn dnn_objdetect dnn_superres dpm face features2d flann freetype fuzzy gapi hfs highgui img_hash imgcodecs imgproc intensity_transform line_descriptor mcc ml objdetect optflow phase_unwrapping photo plot quality rapid reg rgbd saliency shape stereo stitching structured_light superres surface_matching text tracking video videoio videostab wechat_qrcode xfeatures2d ximgproc xobjdetect xphoto
+--     To be built:                 aruco bgsegm bioinspired calib3d ccalib core datasets dnn dnn_objdetect dnn_superres dpm face features2d flann fuzzy gapi hfs highgui img_hash imgcodecs imgproc intensity_transform line_descriptor mcc ml objdetect optflow phase_unwrapping photo plot quality rapid reg rgbd saliency shape stereo stitching structured_light superres surface_matching text tracking video videoio videostab wechat_qrcode xfeatures2d ximgproc xobjdetect xphoto
 --     Disabled:                    world
 --     Disabled by dependency:      -
---     Unavailable:                 alphamat cannops cudaarithm cudabgsegm cudacodec cudafeatures2d cudafilters cudaimgproc cudalegacy cudaobjdetect cudaoptflow cudastereo cudawarping cudev cvv hdf java julia matlab ovis python2 python3 sfm ts viz
+--     Unavailable:                 alphamat cannops cudaarithm cudabgsegm cudacodec cudafeatures2d cudafilters cudaimgproc cudalegacy cudaobjdetect cudaoptflow cudastereo cudawarping cudev cvv freetype hdf java julia matlab ovis python2 python3 sfm ts viz
 --     Applications:                apps
 --     Documentation:               NO
 --     Non-free algorithms:         YES
@@ -545,11 +549,11 @@ for opencv
 --     OpenGL support:              NO
 -- 
 --   Media I/O: 
---     ZLib:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libz.so (ver 1.2.13)
+--     ZLib:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libz.so (ver 1.3.1)
 --     JPEG:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libjpeg.so (ver 62)
---     WEBP:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libwebp.so (ver encoder: 0x020f)
---     PNG:                         /build/sysroot/usr/lib/aarch64-linux-gnu/libpng.so (ver 1.6.39)
---     TIFF:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libtiff.so (ver 42 / 4.5.0)
+--     WEBP:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libwebp.so (ver encoder: 0x0210)
+--     PNG:                         /build/sysroot/usr/lib/aarch64-linux-gnu/libpng.so (ver 1.6.48)
+--     TIFF:                        /build/sysroot/usr/lib/aarch64-linux-gnu/libtiff.so (ver 42 / 4.7.0)
 --     JPEG 2000:                   build (ver 2.5.0)
 --     HDR:                         YES
 --     SUNRASTER:                   YES
@@ -559,12 +563,12 @@ for opencv
 --   Video I/O:
 --     DC1394:                      YES (2.2.6)
 --     FFMPEG:                      YES
---       avcodec:                   YES (59.37.100)
---       avformat:                  YES (59.27.100)
---       avutil:                    YES (57.28.100)
---       swscale:                   YES (6.7.100)
+--       avcodec:                   YES (61.19.101)
+--       avformat:                  YES (61.7.100)
+--       avutil:                    YES (59.39.100)
+--       swscale:                   YES (8.3.100)
 --       avresample:                NO
---     GStreamer:                   YES (1.22.0)
+--     GStreamer:                   YES (1.26.2)
 --     v4l/v4l2:                    YES (linux/videodev2.h)
 -- 
 --   Parallel framework:            pthreads
@@ -585,6 +589,9 @@ for opencv
 -- 
 --   Install to:                    /build/opencvBuild
 -- -----------------------------------------------------------------
-
+-- 
+-- Configuring done (31.7s)
+-- Generating done (0.5s)
+-- Build files have been written to: /build/opencv/build
 ```
 

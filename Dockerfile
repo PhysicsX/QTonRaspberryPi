@@ -1,4 +1,4 @@
-# Use Debian 12 (Bootrixiekworm) as the base image
+# Use Debian 12 (trixie) as the base image
 FROM debian:trixie
 
 # Avoid interactive prompts during package installation

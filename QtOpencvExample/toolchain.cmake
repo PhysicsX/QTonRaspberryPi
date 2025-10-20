@@ -6,8 +6,8 @@ set(TARGET_ARCHITECTURE aarch64-linux-gnu)
 set(CMAKE_SYSROOT ${TARGET_SYSROOT})
 
 # Set the C and C++ compilers
-set(CMAKE_C_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-gcc-12)
-set(CMAKE_CXX_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-g++-12)
+set(CMAKE_C_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-gcc-14)
+set(CMAKE_CXX_COMPILER /usr/bin/${TARGET_ARCHITECTURE}-g++-14)
 
 # Define the sysroot path (adjust this to your sysroot location)
 set(CMAKE_SYSROOT /build/sysroot)
